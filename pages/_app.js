@@ -1,0 +1,86 @@
+import Head from "next/head";
+import "../styles/globals.css";
+import Link from "next/link";
+import { ethers } from "ethers";
+import Web3Modal from "web3modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlusCircle,
+  faUserCircle,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
+
+function Marketplace({ Component, pageProps }) {
+  const styles = {
+    parent: {
+      zIndex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      height: "90px",
+      padding: "0px 128px",
+      background: "#fff",
+      boxShadow: "0 1px 10px rgb(151 164 175 / 10%)",
+    },
+  };
+
+  async function connectWallet() {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    provider.getSigner();
+    
+  }
+
+  return (
+    // <div style={{backgroundColor: "#EDF5FF", height: "100vh"}}>
+    <div style={{ height: "100vh" }}>
+      <Head>
+        <title>AAK Ventures</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <div style={styles.parent}>
+        <div>
+          <Link href="/">
+            <img src="AAKLogo.svg" style={{ cursor: "pointer" }} />
+          </Link>
+        </div>
+        <nav>
+          <div className="flex">
+            {/* <Link href="/create-item">
+              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
+                <FontAwesomeIcon icon={faPlusCircle} /> CREATE
+              </a>
+            </Link> */}
+            <Link href="/my-assets">
+              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
+                <FontAwesomeIcon icon={faUserCircle} /> MY ASSETS
+              </a>
+            </Link>
+            {/* <Link href="/items-created">
+              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
+                Assets Created
+              </a>
+            </Link> */}
+            {/* <Link href="/aak-swap">
+              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
+                Aero-Swap
+              </a>
+            </Link> */}
+            <button
+              className="mr-8 font-bold"
+              style={{ color: "#3079AB" }}
+              onClick={connectWallet}
+            >
+              <FontAwesomeIcon icon={faWallet} /> CONNECT WALLET
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      <Component {...pageProps} />
+    </div>
+  );
+}
+
+export default Marketplace;
