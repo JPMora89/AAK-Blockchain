@@ -145,7 +145,7 @@ export default function CreateItem() {
         setprogressBar()
       ) : (
         <>
-          <div className="flex justify-center" style={{ height: "100vh" }}>
+          <div className="flex justify-center">
             <div className="w-1/2 flex flex-col pb-12">
               <h1
                 className="py-10 text-3xl flex "
