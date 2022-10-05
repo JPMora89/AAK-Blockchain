@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -6,6 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const privateKey = process.env.PRIVATE_KEY;
 const infuraId = process.env.INFURA_KEY;
+const ETHERSCAN_API_KEY  = process.env.ETHERSCAN_API_KEY;
 
 module.exports = {
   defaultNetwork: "hardhat",
@@ -31,4 +33,9 @@ module.exports = {
       },
     },
   },
+  etherscan: {
+    apiKey: {
+      goerli: ETHERSCAN_API_KEY
+    }
+  }
 };
