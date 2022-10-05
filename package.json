@@ -17,6 +17,7 @@
         "@openzeppelin/contracts": "^4.2.0",
         "axios": "^0.21.1",
         "chai": "^4.3.4",
+        "dotenv": "^16.0.3",
         "ethers": "^5.4.1",
         "hardhat": "^2.4.1",
         "ipfs-http-client": "50.1.2",
