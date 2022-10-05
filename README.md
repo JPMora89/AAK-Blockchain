@@ -73,6 +73,16 @@ Whilst you can use the same accounts over and over when testing, every time you 
 - *Nextjs* to build the components
 - *Ethers* to intercat with the blockchain
 
+### Latest smart contract deployment:
+## In Goerli testnet:
+```
+nftMarket deployed to: 0xfF1E2DD362Da94955713eD23A419c43624e0813a
+Explorer link: https://goerli.etherscan.io/address/0xfF1E2DD362Da94955713eD23A419c43624e0813a
+nft deployed to: 0xB58d50E712c455E34f91F97A168Bfa1c3c08706c
+Explorer link: https://goerli.etherscan.io/address/0xB58d50E712c455E34f91F97A168Bfa1c3c08706c
+```
+## In Mainnet
+
 
 
 
