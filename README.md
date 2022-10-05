@@ -43,6 +43,11 @@ To run test cases:
 ```
 npm run test
 ```
+- Verify on etherscan
+```
+npx hardhat verify --network goerli <YOUR_CONTRACT_ADDRESS>
+```
+
 
 
 To see the front-end on your localhost run: 
