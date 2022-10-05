@@ -6,7 +6,19 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "clean": "npx hardhat clean",
+        "chain": "npx hardhat node",
+        "compile": "npx hardhat compile",
+        "deploy": "npx hardhat run --network localhost scripts/deploy.js",
+        "deploy:rinkeby": "npx hardhat run --network rinkeby scripts/deploy.js",
+        "deploy:ropsten": "npx hardhat run --network ropsten scripts/deploy.js",
+        "deploy:goerli": "npx hardhat run --network goerli scripts/deploy.js",
+        "deploy:kovan": "npx hardhat run --network kovan scripts/deploy.js",
+        "deploy:mainnet": "npx hardhat run --network mainnet scripts/deploy.js",
+        "deploy:bsctest": "npx hardhat run --network kovan scripts/deploy.js",
+        "deploy:bscmain": "npx hardhat run --network bscmain scripts/deploy.js",
+        "test": "npx hardhat test"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.1.1",
