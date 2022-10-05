@@ -9,3 +9,7 @@ typechain-types
 .DS_Store
 .vscode
 
+#next
+.next
+build
+
