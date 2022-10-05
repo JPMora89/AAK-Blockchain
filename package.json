@@ -26,6 +26,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
         "@fortawesome/react-fontawesome": "^0.1.18",
         "@nomiclabs/hardhat-ethers": "^2.0.2",
+        "@nomiclabs/hardhat-etherscan": "^3.1.0",
         "@openzeppelin/contracts": "^4.2.0",
         "axios": "^0.21.1",
         "chai": "^4.3.4",
