@@ -17,6 +17,10 @@ module.exports = {
       url: `https://ropsten.infura.io/v3/${infuraId}`,
       accounts: [`${privateKey}`],
     },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${infuraId}`,
+      accounts: [`${privateKey}`],
+    }
   },
   solidity: {
     version: "0.8.4",
