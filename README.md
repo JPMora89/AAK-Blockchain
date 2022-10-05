@@ -25,12 +25,25 @@ docker run -it aak-smart-contracts/docker-contracts /bin/bash
 Then run this command in order to run a private test node provided by hardhat with 20 accounts: 
 ```
 npx hardhat node&
-``` 
+```
+To compile:
+```
+npm run compile
+```
 
-Then run the scripts in order to deploy the smart contracts: 
+Then run the scripts in order to deploy the smart contracts on hardhat local testnet: 
 ```
-npx hardhat run scripts/deploy.js --network localhost
+npm run deploy
 ```
+Then run the scripts in order to deploy the smart contracts on `Goerli` testnet: 
+```
+npm run deploy:goerli
+```
+To run test cases:
+```
+npm run test
+```
+
 
 To see the front-end on your localhost run: 
 ```
