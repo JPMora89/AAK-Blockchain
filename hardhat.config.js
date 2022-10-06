@@ -1,8 +1,13 @@
 require("@nomiclabs/hardhat-waffle");
-const fs = require("fs");
-const privateKey =
-  fs.readFileSync(".secret").toString().trim() || "01234567890123456789";
-const infuraId = fs.readFileSync(".infuraid").toString().trim() || "";
+require("@nomiclabs/hardhat-etherscan");
+const dotenv = require('dotenv');
+const path = require('path');
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+const privateKey = process.env.PRIVATE_KEY;
+const infuraId = process.env.INFURA_KEY;
+const ETHERSCAN_API_KEY  = process.env.ETHERSCAN_API_KEY;
 
 module.exports = {
   defaultNetwork: "hardhat",
@@ -14,6 +19,10 @@ module.exports = {
       url: `https://ropsten.infura.io/v3/${infuraId}`,
       accounts: [`${privateKey}`],
     },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${infuraId}`,
+      accounts: [`${privateKey}`],
+    }
   },
   solidity: {
     version: "0.8.4",
@@ -24,4 +33,9 @@ module.exports = {
       },
     },
   },
+  etherscan: {
+    apiKey: {
+      goerli: ETHERSCAN_API_KEY
+    }
+  }
 };
