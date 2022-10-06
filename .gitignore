@@ -1,2 +1,15 @@
 .secret
+.env
 node_modules
+coverage.json
+typechain
+typechain-types
+
+#Mac
+.DS_Store
+.vscode
+
+#next
+.next
+build
+
