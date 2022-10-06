@@ -13,3 +13,4 @@ typechain-types
 .next
 build
 
+.env.local
