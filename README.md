@@ -13,6 +13,11 @@ Imagine OpenSea attached to the AAK platform. So anyone can create, mint and sha
 There are some extra function that will be more useful later as we make this more complex, that will allow the user to see the contracts they created, anything they purchased from others, allow others to see their portfolio etc...
 
 An important next step will be to use **NFT Fragmentation** which will allow this all thing to come alive, so users can dynamically share ownership of their NFT's (contracts, licenses, their work in general). 
+## Environmental Variable Files:
+`.env` -> Used for smart contract development
+`.env.local` -> Used for Next js frontend app
+
+Rename `.env.example` to `.env` and `.env.local.example` to `.env.local`. Then put the values fo environment variables.
 
 ## HIW: 
 
