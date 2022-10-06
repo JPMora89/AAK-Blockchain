@@ -30,8 +30,11 @@ export default function Home() {
     loadNFTs();
   }, []);
   async function loadNFTs() {
-    const provider = new ethers.providers.JsonRpcProvider(
-      `https://ropsten.infura.io/v3/49a4c057194246e4a0d9775e69aefe5d`
+ 
+    const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`; 
+  
+    const provider = new ethers.providers.StaticJsonRpcProvider(
+      infuraId
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
     const marketContract = new ethers.Contract(
