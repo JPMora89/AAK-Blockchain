@@ -13,6 +13,11 @@ Imagine OpenSea attached to the AAK platform. So anyone can create, mint and sha
 There are some extra function that will be more useful later as we make this more complex, that will allow the user to see the contracts they created, anything they purchased from others, allow others to see their portfolio etc...
 
 An important next step will be to use **NFT Fragmentation** which will allow this all thing to come alive, so users can dynamically share ownership of their NFT's (contracts, licenses, their work in general). 
+## Environmental Variable Files:
+`.env` -> Used for smart contract development
+`.env.local` -> Used for Next js frontend app
+
+Rename `.env.example` to `.env` and `.env.local.example` to `.env.local`. Then put the values fo environment variables.
 
 ## HIW: 
 
@@ -25,12 +30,30 @@ docker run -it aak-smart-contracts/docker-contracts /bin/bash
 Then run this command in order to run a private test node provided by hardhat with 20 accounts: 
 ```
 npx hardhat node&
-``` 
+```
+To compile:
+```
+npm run compile
+```
 
-Then run the scripts in order to deploy the smart contracts: 
+Then run the scripts in order to deploy the smart contracts on hardhat local testnet: 
 ```
-npx hardhat run scripts/deploy.js --network localhost
+npm run deploy
 ```
+Then run the scripts in order to deploy the smart contracts on `Goerli` testnet: 
+```
+npm run deploy:goerli
+```
+To run test cases:
+```
+npm run test
+```
+- Verify on etherscan
+```
+npx hardhat verify --network goerli <YOUR_CONTRACT_ADDRESS>
+```
+
+
 
 To see the front-end on your localhost run: 
 ```
@@ -59,6 +82,16 @@ Whilst you can use the same accounts over and over when testing, every time you 
 ### Frontend
 - *Nextjs* to build the components
 - *Ethers* to intercat with the blockchain
+
+### Latest smart contract deployment:
+## In Goerli testnet:
+```
+nftMarket deployed to: 0xfF1E2DD362Da94955713eD23A419c43624e0813a
+Explorer link: https://goerli.etherscan.io/address/0xfF1E2DD362Da94955713eD23A419c43624e0813a
+nft deployed to: 0xB58d50E712c455E34f91F97A168Bfa1c3c08706c
+Explorer link: https://goerli.etherscan.io/address/0xB58d50E712c455E34f91F97A168Bfa1c3c08706c
+```
+## In Mainnet
 
 
 
