@@ -4,12 +4,12 @@ import { create as ipfsHttpClient } from "ipfs-http-client";
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Web3Storage } from 'web3.storage'
+import { NFTStorage } from 'nft.storage'
 
+console.log("NFT storage");
+console.log(process.env.NEXT_PUBLIC_NFT_STORAGE_KEY);
 // Construct with token and endpoint
-const client = new Web3Storage({ token: API_TOKEN })
-
-// const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+const client = new NFTStorage({ token: `${process.env.NEXT_PUBLIC_NFT_STORAGE_KEY}` });
 
 import { nftaddress, nftmarketaddress } from "../config";
 
@@ -64,12 +64,15 @@ export default function CreateItem() {
 
   async function onChange(e) {
     const file = e.target.files[0];
-    console.log(e.target.files, "files");
+    console.log(file);
+    
     try {
-      const added = await client.add(file, {
-        progress: (prog) => console.log(`received: ${prog}`),
-      });
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      console.log("Uploading file: ");
+      console.log(file);
+      const rootCid = await client.put(file) // Promise<CIDString>
+      const url = `https://${rootCid}.ipfs.w3s.link`;
+      console.log("Upload complete");
+      console.log(url);
       setFileUrl(url);
     } catch (error) {
       console.log("Error uploading file: ", error);
@@ -91,8 +94,10 @@ export default function CreateItem() {
       origin: pathToAAK,
     });
     try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      var file = new File([data], "metadata.json", {type: "application/json"})
+      const rootCid = await client.put(file)
+     
+      const url = `https://${rootCid}.ipfs.w3s.link`;
       /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
       createSale(url);
     } catch (error) {
@@ -228,6 +233,7 @@ export default function CreateItem() {
                   type="file"
                   name="Asset"
                   className="my-6"
+                  id="image"
                   onChange={onChange}
                   style={{ display: "none" }}
                 />
