@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import { useRouter } from "next/router";
@@ -6,8 +6,7 @@ import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import { NFTStorage } from 'nft.storage'
 
-console.log("NFT storage");
-console.log(process.env.NEXT_PUBLIC_NFT_STORAGE_KEY);
+
 // Construct with token and endpoint
 const client = new NFTStorage({ token: `${process.env.NEXT_PUBLIC_NFT_STORAGE_KEY}` });
 
@@ -20,6 +19,8 @@ export default function CreateItem() {
   const [submitloading, setSubmitLoading] = useState(false);
   const router = useRouter();
   const [pathToAAK, setPathToAAK] = useState("");
+  // 👇️ create a ref for the file input
+  const inputRef = useRef(null);
 
   const styles = {
     customFileUpload: {
@@ -65,41 +66,29 @@ export default function CreateItem() {
   async function onChange(e) {
     const file = e.target.files[0];
     console.log(file);
-    
-    try {
-      console.log("Uploading file: ");
-      console.log(file);
-      const rootCid = await client.put(file) // Promise<CIDString>
-      const url = `https://${rootCid}.ipfs.w3s.link`;
-      console.log("Upload complete");
-      console.log(url);
-      setFileUrl(url);
-    } catch (error) {
-      console.log("Error uploading file: ", error);
-    }
-    console.log("form", formInput);
   }
   async function createMarket() {
-    setSubmitLoading(true);
+    // setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
-    if (!name || !price || !fileUrl) return;
-    /* first, upload to IPFS */
-    const data = JSON.stringify({
-      name,
-      description,
-      image: fileUrl,
-      type,
-      doc,
-      terms,
-      origin: pathToAAK,
-    });
+    // if (!name || !price || !fileUrl) return;
+    // /* first, upload to IPFS */
+    // const data = JSON.stringify({
+    //   name,
+    //   description,
+    //   image: fileUrl,
+    //   type,
+    //   doc,
+    //   terms,
+    //   origin: pathToAAK,
+    // });
     try {
-      var file = new File([data], "metadata.json", {type: "application/json"})
-      const rootCid = await client.put(file)
-     
-      const url = `https://${rootCid}.ipfs.w3s.link`;
-      /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-      createSale(url);
+      // var file = new File([data], "metadata.json", {type: "application/json"})
+      // const rootCid = await client.put(file)
+      // const url = `https://${rootCid}.ipfs.w3s.link`;
+      // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+      // createSale(url);
+      console.log("Input Ref:");
+      console.log(inputRef.current.files[0]);
     } catch (error) {
       console.log("Error uploading file: ", error);
     }
@@ -234,6 +223,7 @@ export default function CreateItem() {
                   name="Asset"
                   className="my-6"
                   id="image"
+                  ref={inputRef}
                   onChange={onChange}
                   style={{ display: "none" }}
                 />
