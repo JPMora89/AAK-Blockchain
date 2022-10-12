@@ -4,8 +4,12 @@ import { create as ipfsHttpClient } from "ipfs-http-client";
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import { Web3Storage } from 'web3.storage'
 
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+// Construct with token and endpoint
+const client = new Web3Storage({ token: API_TOKEN })
+
+// const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 import { nftaddress, nftmarketaddress } from "../config";
 
