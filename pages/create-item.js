@@ -97,17 +97,22 @@ export default function CreateItem() {
       const metadata = await client.store({
         name: name,
         description: description,
+        price: price,
+        type: type,
+        doc: doc,
+        terms: terms,
         image: file
       });
       console.log(metadata);
       const cid = metadata.ipnft;
       console.log("CID", cid);
-      console.log(`https://ipfs.io/ipfs/${cid}/metadata.json`);
+      const url = `https://ipfs.io/ipfs/${cid}/metadata.json`;
+      console.log(url);
       // var file = new File([data], "metadata.json", {type: "application/json"})
       // const rootCid = await client.put(file)
       // const url = `https://${rootCid}.ipfs.w3s.link`;
       // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-      // createSale(url);
+      createSale(url);
       setSubmitLoading(false);
       
     } catch (error) {
