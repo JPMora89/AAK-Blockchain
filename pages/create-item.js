@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
-import { create as ipfsHttpClient } from "ipfs-http-client";
+
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -66,11 +66,22 @@ export default function CreateItem() {
   async function onChange(e) {
     const file = e.target.files[0];
     console.log(file);
+     const metadata = await client.store({
+        name: "Test",
+        description: "Test",
+        image: file
+      });
   }
   async function createMarket() {
-    // setSubmitLoading(true);
+    setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
-    // if (!name || !price || !fileUrl) return;
+    const file = inputRef.current.files[0];
+    console.log("File:");
+    console.log(file);
+    if (!name || !price || !file){
+      console.error("Incomplete inputs"); 
+      return;
+    } 
     // /* first, upload to IPFS */
     // const data = JSON.stringify({
     //   name,
@@ -82,13 +93,23 @@ export default function CreateItem() {
     //   origin: pathToAAK,
     // });
     try {
+      console.log(client);
+      const metadata = await client.store({
+        name: name,
+        description: description,
+        image: file
+      });
+      console.log(metadata);
+      const cid = metadata.ipnft;
+      console.log("CID", cid);
+      console.log(`https://ipfs.io/ipfs/${cid}/metadata.json`);
       // var file = new File([data], "metadata.json", {type: "application/json"})
       // const rootCid = await client.put(file)
       // const url = `https://${rootCid}.ipfs.w3s.link`;
       // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
       // createSale(url);
-      console.log("Input Ref:");
-      console.log(inputRef.current.files[0]);
+      setSubmitLoading(false);
+      
     } catch (error) {
       console.log("Error uploading file: ", error);
     }
