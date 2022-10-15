@@ -48,6 +48,8 @@ export default function Home() {
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
+        console.log("Meta:");
+        console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
         let item = {
           price,
@@ -65,6 +67,7 @@ export default function Home() {
         return item;
       })
     );
+    
     setNfts(items);
     setLoadingState("loaded");
     console.log("items", items);
@@ -121,7 +124,7 @@ export default function Home() {
               className="border shadow rounded-xl overflow-scroll bg-black text-white"
               style={{ height: "80vh" }}
             >
-              <img src={nft.image} />
+              <img src={"https://ipfs.io/ipfs/"+nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
               <div style={styles.nftContent}>
                 <a
                   href={`https://www.aaktelescience.com/${nft.origin}`}
