@@ -12,11 +12,16 @@ contract NFT is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     address contractAddress;
 
+    modifier onlyMarketplace() {
+        require(msg.sender == contractAddress, "Not called by marketplace");
+        _;
+    }
+
     constructor(address marketplaceAddress) ERC721("AAK Metamarket", "AAM") {
         contractAddress = marketplaceAddress;
     }
 
-    function createToken(string memory tokenURI, address nftOwner) public returns (uint256) {
+    function createToken(string memory tokenURI, address nftOwner) public returns (uint256) onlyMarketplace {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _mint(nftOwner, newItemId);
