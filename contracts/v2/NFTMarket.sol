@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFTMarket is ReentrancyGuard, Ownable {
   using Counters for Counters.Counter;
@@ -28,7 +28,7 @@ contract NFTMarket is ReentrancyGuard, Ownable {
   }
 
   struct MarketItem {
-    uint256 nftID,
+    uint256 nftID;
     bool new_env;
     uint creatorUserID;
     string creatorUsername;
@@ -63,7 +63,9 @@ contract NFTMarket is ReentrancyGuard, Ownable {
       
   }
 
-  function createAssetPending() external {
+  function createAssetPending(
+
+  ) external {
       
   }
 
