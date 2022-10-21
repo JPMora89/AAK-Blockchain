@@ -5,11 +5,13 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./NFT.sol";
 
 contract NFTMarket is ReentrancyGuard, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _itemIds;
   Counters.Counter private _itemsSold;
+  NFT public nftContract;
 
   address payable owner;
   uint256 listingPrice = 0.001 ether;       // price to list, to be discussed later  
@@ -55,6 +57,16 @@ contract NFTMarket is ReentrancyGuard, Ownable {
   // list of hashes of user id + nftID + asset name + asset type + asset description  
   bytes[] allHashes;
 
+ function assignDeployedAddressToInstance(address nftContractAddress) public returns(bool){
+    nftContract=NFT(nftContractAddress);
+    return true;
+  }
+
+ function createHash(bytes memory data) internal pure returns (bytes32)
+  {
+    return keccak256(data);
+  }
+
   function getMarketItemStatus() external view{
       
   }
@@ -63,18 +75,27 @@ contract NFTMarket is ReentrancyGuard, Ownable {
       
   }
 
-  function createAssetPending(
-
-  ) external {
-      
+  function createAssetPending(MarketItem memory data) public  returns(bool) {
+  bytes memory hash= abi.encode(createHash(abi.encodePacked(data.creatorUserID, data.nftID, data.assetName,data.assetType,data.assetDescription)));
+  marketItems[hash]=data;
+  allHashes.push(hash);
+  return true;
   }
 
-  function approvePendingAsset() external {
-      
+  function approvePendingAsset(bytes memory hash,string memory tokenUri) external returns(bool) {
+  uint tokenId= nftContract.createToken(tokenUri,msg.sender);
+  marketItems[hash].nftID=tokenId;
+  marketItems[hash].status=Status.Created;
+  return true;
   }
 
-  function createAsset() external {
-      
+  function createAsset(MarketItem memory data,string memory tokenUri) external returns(bool) {
+  uint tokenId= nftContract.createToken(tokenUri,msg.sender);
+  data.nftID= tokenId;
+  bytes memory hash= abi.encode(createHash(abi.encodePacked(data.creatorUserID, data.nftID, data.assetName,data.assetType,data.assetDescription)));
+  marketItems[hash]=data;
+  allHashes.push(hash);
+  return true;
   }
 
   function buyAsset() external {
