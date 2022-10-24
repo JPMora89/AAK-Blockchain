@@ -13,7 +13,7 @@ contract NFTMarket is ReentrancyGuard, Ownable {
   Counters.Counter private _itemsSold;
   NFT public nftContract;
 
-  address payable owner;
+  
   uint256 listingPrice = 0.001 ether;       // price to list, to be discussed later  
   enum AssetType {
       SmartContract, 
@@ -26,7 +26,7 @@ contract NFTMarket is ReentrancyGuard, Ownable {
   enum Status {Pending, Created, Sold }
 
   constructor() {
-    owner = payable(msg.sender);  // this is the address that deploys the contract => AAK
+   
   }
 
   struct MarketItem {
