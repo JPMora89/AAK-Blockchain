@@ -67,12 +67,20 @@ contract NFTMarket is ReentrancyGuard, Ownable {
     return keccak256(data);
   }
 
-  function getMarketItemStatus() external view{
-      
+  function getStatusStringValue(Status value) internal pure returns (string memory) {
+      require(uint8(value) <= 3);
+      if (Status.Pending == value) return "Pending";
+      else if (Status.Created == value) return "Created";
+      else return "Sold";
   }
 
-  function getMarketItem() external view{
-      
+  function getMarketItemStatus(bytes memory hash) external view returns(string memory){
+    string memory status=getStatusStringValue(marketItems[hash].status);
+    return status;
+  }
+
+  function getMarketItem(bytes memory hash) external view returns(MarketItem memory){
+      return marketItems[hash];
   }
 
   function createAssetPending(MarketItem memory data) public  returns(bool) {
@@ -102,11 +110,19 @@ contract NFTMarket is ReentrancyGuard, Ownable {
       
   }
 
-  function getAllMarketItem() external view onlyOwner{
-      
+  function getAllMarketItem(uint lowerBoundary,uint upperBoundary) external view onlyOwner returns(MarketItem [] memory )
+  {
+    uint hashesLength= allHashes.length;
+    require(hashesLength >= 1,"assets are empty");
+    require((lowerBoundary <= hashesLength) && !(lowerBoundary < 0),"lower boundary should be less or equal to size and non negative");
+    require((upperBoundary <= hashesLength) && !(upperBoundary < 0),"upper boundary should be less or equal to size and non negative");
+    MarketItem [] memory allMarkets;
+    uint count=0;
+    for(uint i=lowerBoundary; i<= upperBoundary; i++)
+    {
+       allMarkets[count++]=marketItems[allHashes[i]];
+    }
+    return allMarkets;    
   }
-
-  
-
   
 }
