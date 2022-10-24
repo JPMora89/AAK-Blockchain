@@ -1,5 +1,7 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-etherscan");
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-etherscan";
+// require("@nomiclabs/hardhat-waffle");
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -9,7 +11,7 @@ const privateKey = process.env.PRIVATE_KEY;
 const infuraId = process.env.INFURA_KEY;
 const ETHERSCAN_API_KEY  = process.env.ETHERSCAN_API_KEY;
 
-module.exports = {
+const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
@@ -35,7 +37,9 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      goerli: ETHERSCAN_API_KEY
+      goerli: ETHERSCAN_API_KEY as string
     }
   }
 };
+
+export default config;
