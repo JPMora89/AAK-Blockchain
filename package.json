@@ -18,6 +18,14 @@
         "deploy:mainnet": "npx hardhat run --network mainnet scripts/deploy.js",
         "deploy:bsctest": "npx hardhat run --network kovan scripts/deploy.js",
         "deploy:bscmain": "npx hardhat run --network bscmain scripts/deploy.js",
+        "deployv2": "npx hardhat run --network localhost scripts/deployv2.ts",
+        "deployv2:rinkeby": "npx hardhat run --network rinkeby scripts/deployv2.ts",
+        "deployv2:ropsten": "npx hardhat run --network ropsten scripts/deployv2.ts",
+        "deployv2:goerli": "npx hardhat run --network goerli scripts/deployv2.ts",
+        "deployv2:kovan": "npx hardhat run --network kovan scripts/deployv2.ts",
+        "deployv2:mainnet": "npx hardhat run --network mainnet scripts/deployv2.ts",
+        "deployv2:bsctest": "npx hardhat run --network kovan scripts/deployv2.ts",
+        "deployv2:bscmain": "npx hardhat run --network bscmain scripts/deployv2.ts",
         "test": "npx hardhat test"
     },
     "dependencies": {
