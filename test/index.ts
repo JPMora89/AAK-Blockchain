@@ -12,8 +12,19 @@ describe("Test suite", function () {
     const [owner, otherAccount] = await ethers.getSigners();
 
     const Aero = await ethers.getContractFactory("Aero");
-    // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
     const aero = await Aero.deploy();
+
+    const NFTMarketV2 = await ethers.getContractFactory("NFTMarketV2");
+    const nftMarketV2 = await NFTMarketV2.deploy();
+
+    const NFTV2 = await ethers.getContractFactory("NFTV2");
+    const nftv2 = await NFTV2.deploy(nftMarketV2.address);
+    console.log("Aero deployed at:", aero.address);
+    console.log("NFT V2 deployed at:", nftv2.address);
+    console.log("NFT market deployed at:", nftMarketV2.address);
+    
+  
+    // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
     console.log();
     
     return { aero, owner, otherAccount };
