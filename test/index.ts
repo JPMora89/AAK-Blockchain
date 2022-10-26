@@ -31,7 +31,7 @@ describe("Test suite", function () {
 
   describe("Deployment", function () {
     it("Should mint aero token", async function () {
-      const { aero, owner } = await loadFixture(deployOneYearLockFixture);
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
       let totalSupply1 = (await aero.totalSupply()).toString();
       
       
@@ -44,6 +44,20 @@ describe("Test suite", function () {
     //   expect(await lock.unlockTime()).to.equal(unlockTime);
     });
 
+    it('description', async () => {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
+      
+    })
+
+    it('description', async () => {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
+      
+    })
+
+    it('description', async () => {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
+      
+    })
   
 
 
