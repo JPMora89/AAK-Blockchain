@@ -44,4 +44,40 @@ describe("NFTMarket", function() {
     }))
     console.log('items: ', items)
   })
+  it.only('should create the signature for verification', async function (){
+
+    const pKey = new ethers.Wallet.createRandom();
+    const provider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/b93d91e7f1d442f28e9d8536b47e0b44")
+    const signer = new ethers.Wallet(pKey, provider);
+  
+    const domainData = {
+      name: "AAK",
+      version: "2",
+      chainId: 5,
+      verifyingContract: "0x1C56346CD2A2Bf3202F771f50d3D14a367B48070",
+      salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558"
+    };
+
+    // The data to sign
+    const value =  {
+      content: 'signature is giving the permit!'
+    };
+    // The named list of all type definitions
+    const types = {
+      Message: [
+          { name: 'content', type: 'string' }
+      ]
+    };
+
+    const result = await signer._signTypedData(domainData, types, value);
+    let sig = ethers.utils.splitSignature(result);
+    const {v, r, s} = sig;
+    console.log('v', v);
+    console.log('r', r);
+    console.log('s', s);
+    expect(v).to.be.an('Number');
+    expect(r).to.be.an('String');
+    expect(s).to.be.an('String');
+
+  })
 })
