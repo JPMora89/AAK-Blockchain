@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/NFT.sol": {
-      "lastModificationDate": 1666604617033,
+      "lastModificationDate": 1666605081706,
       "contentHash": "4be30c389cdb1634d143d4f4d323e100",
       "sourceName": "contracts/NFT.sol",
       "solcConfig": {
@@ -157,8 +157,8 @@
       ]
     },
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1665768160802,
-      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "lastModificationDate": 1666786341163,
+      "contentHash": "4ff3cd2f6272c9a6516e9ee4f2b967d3",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -185,7 +185,7 @@
       },
       "imports": [],
       "versionPragmas": [
-        ">=0.4.22 <0.9.0"
+        ">= 0.4.22 <0.9.0"
       ],
       "artifacts": [
         "console"
@@ -478,7 +478,7 @@
       ]
     },
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/RFT.sol": {
-      "lastModificationDate": 1666604624843,
+      "lastModificationDate": 1666605081707,
       "contentHash": "9ea606ce489f319d1dd5a34a873f92dd",
       "sourceName": "contracts/RFT.sol",
       "solcConfig": {
@@ -931,7 +931,7 @@
       ]
     },
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/NFTMarket.sol": {
-      "lastModificationDate": 1666604620450,
+      "lastModificationDate": 1666605081706,
       "contentHash": "e4d1b9f8f721ca62f232403759af47df",
       "sourceName": "contracts/NFTMarket.sol",
       "solcConfig": {
