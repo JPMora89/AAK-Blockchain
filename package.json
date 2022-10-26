@@ -33,6 +33,7 @@
         "@fortawesome/free-brands-svg-icons": "^6.1.1",
         "@fortawesome/free-solid-svg-icons": "^6.1.1",
         "@fortawesome/react-fontawesome": "^0.1.18",
+        "@nomicfoundation/hardhat-toolbox": "^1.0.2",
         "@nomiclabs/hardhat-ethers": "^2.0.2",
         "@nomiclabs/hardhat-etherscan": "^3.1.0",
         "@openzeppelin/contracts": "^4.2.0",
@@ -41,7 +42,6 @@
         "chai": "^4.3.4",
         "dotenv": "^16.0.3",
         "ethers": "^5.4.1",
-        "@nomicfoundation/hardhat-toolbox": "^1.0.2",
         "hardhat": "^2.12.0",
         "next": "^12.3.1",
         "nft.storage": "^7.0.0",
@@ -52,6 +52,7 @@
     },
     "devDependencies": {
         "@nomiclabs/hardhat-waffle": "^2.0.3",
+        "@types/react": "18.0.23",
         "autoprefixer": "^10.2.6",
         "eslint": "7.29.0",
         "eslint-config-next": "11.0.1",
