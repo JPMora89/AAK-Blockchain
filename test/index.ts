@@ -26,7 +26,7 @@ describe("Test suite", function () {
   
     // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
  
-    return { aero, owner, otherAccount };
+    return { aero, nftv2, nftMarketV2, owner, otherAccount };
   }
 
   describe("Deployment", function () {
