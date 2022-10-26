@@ -25,15 +25,22 @@ describe("Test suite", function () {
     
   
     // const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-    console.log();
-    
+ 
     return { aero, owner, otherAccount };
   }
 
   describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { aero } = await loadFixture(deployOneYearLockFixture);
-      expect(1).to.equal(1); 
+    it("Should mint aero token", async function () {
+      const { aero, owner } = await loadFixture(deployOneYearLockFixture);
+      let totalSupply1 = (await aero.totalSupply()).toString();
+      
+      
+      let ethersToWei = ethers.utils.parseUnits("100", "ether");
+      let tx = await aero.mint(owner.address, ethersToWei);
+      await tx.wait();
+      let totalSupply2 = (await aero.totalSupply()).toString();
+      expect(totalSupply1).to.eq("0");
+      expect(totalSupply2).to.eq("100000000000000000000");
     //   expect(await lock.unlockTime()).to.equal(unlockTime);
     });
 
