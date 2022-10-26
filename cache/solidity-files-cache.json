@@ -778,47 +778,6 @@
         "ECDSA"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFTMarket.sol": {
-      "lastModificationDate": 1666604895825,
-      "contentHash": "c2ed37830581ef5169330143cdf3d0b3",
-      "sourceName": "contracts/v2/NFTMarket.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/Counters.sol",
-        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./NFT.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.17"
-      ],
-      "artifacts": [
-        "NFTMarket"
-      ]
-    },
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
       "lastModificationDate": 1665767433589,
       "contentHash": "402cec08d80c01e96ba8d27963975f8d",
@@ -889,45 +848,6 @@
       ],
       "artifacts": [
         "Ownable"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFT.sol": {
-      "lastModificationDate": 1666604811221,
-      "contentHash": "e10368633a9d423e6ea5a5835cbe51ab",
-      "sourceName": "contracts/v2/NFT.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/utils/Counters.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.17"
-      ],
-      "artifacts": [
-        "NFT"
       ]
     },
     "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/NFTMarket.sol": {
@@ -1084,6 +1004,86 @@
       ],
       "artifacts": [
         "Pausable"
+      ]
+    },
+    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFTV2.sol": {
+      "lastModificationDate": 1666790535131,
+      "contentHash": "79c3544d41bab962366a5be883f92830",
+      "sourceName": "contracts/v2/NFTV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NFTV2"
+      ]
+    },
+    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFTMarketV2.sol": {
+      "lastModificationDate": 1666790580359,
+      "contentHash": "9f8ac263c5e7b6cbab8eb08d856b748b",
+      "sourceName": "contracts/v2/NFTMarketV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./NFTV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NFTMarketV2"
       ]
     }
   }
