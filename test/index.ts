@@ -44,6 +44,41 @@ describe("Test suite", function () {
     //   expect(await lock.unlockTime()).to.equal(unlockTime);
     });
 
+    it.only('should create the signature for verification', async function (){
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
+      const signer = owner;
+    
+      const domainData = {
+        name: "AAK",
+        version: "2",
+        chainId: 5,
+        verifyingContract: "0x1C56346CD2A2Bf3202F771f50d3D14a367B48070",
+        salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558"
+      };
+  
+      // The data to sign
+      const value =  {
+        content: 'signature is giving the permit!'
+      };
+      // The named list of all type definitions
+      const types = {
+        Message: [
+            { name: 'content', type: 'string' }
+        ]
+      };
+  
+      const result = await signer._signTypedData(domainData, types, value);
+      let sig = ethers.utils.splitSignature(result);
+      const {v, r, s} = sig;
+      console.log('v', v);
+      console.log('r', r);
+      console.log('s', s);
+      expect(v).to.be.an('Number');
+      expect(r).to.be.an('String');
+      expect(s).to.be.an('String');
+  
+    })
+
     it('description', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
       
