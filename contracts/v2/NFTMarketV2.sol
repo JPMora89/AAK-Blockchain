@@ -6,12 +6,14 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./NFTV2.sol";
+import "./Aero.sol";
 
 contract NFTMarketV2 is ReentrancyGuard, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _itemIds;
   Counters.Counter private _itemsSold;
   NFTV2 public nftContract;
+  Aero public aeroContract;
 
   
   uint256 listingPrice = 0.001 ether;       // price to list, to be discussed later  
@@ -24,9 +26,28 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
   }
 
   enum Status {Pending, Created, Sold }
+  struct  Content {
+  string content;
+  address from;
+  address to;
+  }
 
-  constructor() {
-   
+  bytes32 constant CONTENT_TYPEHASH = keccak256("Content(string content,address from,address to)");
+  string  public constant name     = "AAK";
+  string  public constant version  = "2";
+  bytes32 public DOMAIN_SEPARATOR;
+
+
+  constructor(uint256 chainId_) {
+    DOMAIN_SEPARATOR = keccak256(abi.encode(
+    keccak256(
+      "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+    ),
+    keccak256(bytes(name)),
+    keccak256(bytes(version)),
+    chainId_,
+    address(this)
+  ));
   }
 
   struct MarketItem {
@@ -57,8 +78,9 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
   // list of hashes of user id + nftID + asset name + asset type + asset description  
   bytes[] allHashes;
 
- function assignDeployedAddressToInstance(address nftContractAddress) public returns(bool){
+ function assignDeployedAddressToInstance(address nftContractAddress, address aeroContractAddress) public returns(bool){
     nftContract=NFTV2(nftContractAddress);
+    aeroContract= Aero(aeroContractAddress);
     return true;
   }
 
@@ -106,8 +128,18 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
   return true;
   }
 
-  function buyAsset() external {
-      
+  function permit(Content memory content,address signer, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+      bytes32 digest= keccak256(abi.encodePacked("\x19\x01",DOMAIN_SEPARATOR,keccak256(abi.encode(CONTENT_TYPEHASH,keccak256(bytes(content.content)),content.from,content.to))));
+      return signer == ecrecover(digest, v, r, s);
+  }
+
+  function buyAsset(  Content memory content,address signer, uint8 v, bytes32 r, bytes32 s, uint amount, uint _tokenId) external returns(bool) {
+    //to is the seller who sells ERC721
+    //from is the buyer who pays erc20 for NFT
+    require(permit(content,signer,v,r,s),"invalid permit");
+    aeroContract.transferFrom(content.from, content.to, amount);
+    nftContract.transferFrom(content.to, content.from, _tokenId);
+    return true;
   }
 
   function getAllMarketItem(uint lowerBoundary,uint upperBoundary) external view onlyOwner returns(MarketItem [] memory )
@@ -123,6 +155,10 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
        allMarkets[count++]=marketItems[allHashes[i]];
     }
     return allMarkets;    
+  }
+
+  function getAllHashesLength() public view returns(uint){
+    return allHashes.length;
   }
   
 }

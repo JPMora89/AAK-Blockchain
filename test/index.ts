@@ -52,18 +52,21 @@ describe("Test suite", function () {
         name: "AAK",
         version: "2",
         chainId: 5,
-        verifyingContract: "0x1C56346CD2A2Bf3202F771f50d3D14a367B48070",
-        salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558"
+        verifyingContract: "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8",
       };
   
       // The data to sign
       const value =  {
-        content: 'signature is giving the permit!'
+        content: 'signature is giving the permit!',
+        from:'0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
+        to:'0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8'
       };
       // The named list of all type definitions
       const types = {
         Message: [
-            { name: 'content', type: 'string' }
+            { name: 'content', type: 'string'},
+            {name:'from', type: 'string'},
+            {name:'to', type: 'string'}
         ]
       };
   
