@@ -4,6 +4,7 @@ export default function handler(req, res) {
     buyer_username,
     buyer_name,
     buyer_metamask_id,
+    project_owner_metamask_id,
     asset_id,
     r,
     s,
@@ -15,6 +16,7 @@ export default function handler(req, res) {
     buyer_name == null ||
     buyer_metamask_id == null ||
     asset_id == null ||
+    project_owner_metamask_id == null ||
     r == null ||
     s == null ||
     v == null 
