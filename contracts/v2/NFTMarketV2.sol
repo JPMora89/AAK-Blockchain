@@ -128,15 +128,12 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
   return true;
   }
 
-  function permit(Content memory content,address signer, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
-      bytes32 digest= keccak256(abi.encodePacked("\x19\x01",DOMAIN_SEPARATOR,keccak256(abi.encode(CONTENT_TYPEHASH,keccak256(bytes(content.content)),content.from,content.to))));
-      return signer == ecrecover(digest, v, r, s);
-  }
+  
 
   function buyAsset(  Content memory content,address signer, uint8 v, bytes32 r, bytes32 s, uint amount, uint _tokenId) external returns(bool) {
     //to is the seller who sells ERC721
     //from is the buyer who pays erc20 for NFT
-    require(permit(content,signer,v,r,s),"invalid permit");
+    aeroContract.permit(content,signer,v,r,s);
     aeroContract.transferFrom(content.from, content.to, amount);
     nftContract.transferFrom(content.to, content.from, _tokenId);
     return true;
