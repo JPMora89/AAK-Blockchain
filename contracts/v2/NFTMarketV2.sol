@@ -26,28 +26,9 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
   }
 
   enum Status {Pending, Created, Sold }
-  struct  Content {
-  string content;
-  address from;
-  address to;
-  }
 
-  bytes32 constant CONTENT_TYPEHASH = keccak256("Content(string content,address from,address to)");
-  string  public constant name     = "AAK";
-  string  public constant version  = "2";
-  bytes32 public DOMAIN_SEPARATOR;
-
-
-  constructor(uint256 chainId_) {
-    DOMAIN_SEPARATOR = keccak256(abi.encode(
-    keccak256(
-      "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-    ),
-    keccak256(bytes(name)),
-    keccak256(bytes(version)),
-    chainId_,
-    address(this)
-  ));
+  constructor() {
+    
   }
 
   struct MarketItem {
@@ -130,12 +111,12 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
 
   
 
-  function buyAsset(  Content memory content,address signer, uint8 v, bytes32 r, bytes32 s, uint amount, uint _tokenId) external returns(bool) {
+  function buyAsset(address signer, address nftOwner, uint256 value,uint256 deadline,  uint8 v, bytes32 r, bytes32 s, uint amount, uint _tokenId) external returns(bool) {
     //to is the seller who sells ERC721
     //from is the buyer who pays erc20 for NFT
-    aeroContract.permit(content,signer,v,r,s);
-    aeroContract.transferFrom(content.from, content.to, amount);
-    nftContract.transferFrom(content.to, content.from, _tokenId);
+    aeroContract.permit(signer, nftOwner, value, deadline, v, r, s);
+    aeroContract.transferFrom(signer, nftOwner, amount);
+    nftContract.transferFrom(nftOwner, signer, _tokenId);
     return true;
   }
 
