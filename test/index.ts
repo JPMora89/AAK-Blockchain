@@ -2,6 +2,7 @@ import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
+const hre = require("hardhat");
 
 describe("Test suite", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -44,44 +45,110 @@ describe("Test suite", function () {
     //   expect(await lock.unlockTime()).to.equal(unlockTime);
     });
 
-    it.only('should create the signature for verification', async function (){
-      const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
+    it('should create the signature for verification via Aero contract', async function (){
+      const { aero, owner} = await loadFixture(deployOneYearLockFixture);
       const signer = owner;
-    
+      const chainId = hre.network.config.chainId;
+
       const domainData = {
-        name: "AAK",
-        version: "2",
-        chainId: 5,
-        verifyingContract: "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8",
+        name: "Aero",
+        version: '1',
+        chainId: chainId,
+        verifyingContract: aero.address,
+      };
+      const deadline = ethers.constants.MaxUint256;
+      const nonce = await aero.nonces(owner.address);
+      const val=1;
+      console.log('ChainId', chainId)
+      // The named list of all type definitions
+      const types = {
+        Permit: [
+            {name:'owner',type:'address'},
+            {name:'spender',type:'address'},
+            {name:'value',type:'uint256'},
+            {name:'nonce',type:'uint256'},
+            {name:'deadline',type:'uint256'},
+        ]
       };
   
       // The data to sign
       const value =  {
-        content: 'signature is giving the permit!',
-        from:'0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-        to:'0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8'
+        owner:owner.address,
+        spender:aero.address,
+        value:val.toString(),
+        nonce: nonce.toHexString(),
+        deadline,
       };
-      // The named list of all type definitions
-      const types = {
-        Message: [
-            { name: 'content', type: 'string'},
-            {name:'from', type: 'string'},
-            {name:'to', type: 'string'}
-        ]
-      };
-  
+
       const result = await signer._signTypedData(domainData, types, value);
       let sig = ethers.utils.splitSignature(result);
-      const {v, r, s} = sig;
+      const {v, r, s} =  sig;
+      console.log('owner', owner.address);
+     
       console.log('v', v);
       console.log('r', r);
       console.log('s', s);
+      const data = await  aero.permit(owner.address,aero.address,val.toString(),deadline,v,r,s);
+      console.log('Permit Response', data)
       expect(v).to.be.an('Number');
       expect(r).to.be.an('String');
       expect(s).to.be.an('String');
   
     })
+    it(' should create the signature for verification Via nftMarketV2 Contract', async function (){
+      const { aero, nftv2, nftMarketV2, owner } = await loadFixture(deployOneYearLockFixture);
+      await nftMarketV2.assignDeployedAddressToInstance(nftv2.address, aero.address)
+      await aero.mint(owner.address,100);
+      const signer = owner;
+      const chainId = hre.network.config.chainId;
 
+      const domainData = {
+        name: "Aero",
+        version: '1',
+        chainId: chainId,
+        verifyingContract: aero.address,
+      };
+      const deadline = ethers.constants.MaxUint256;
+      const nonce = await aero.nonces(owner.address);
+      const val=1;
+      console.log('ChainId', chainId)
+      // The named list of all type definitions
+      const types = {
+        Permit: [
+            {name:'owner',type:'address'},
+            {name:'spender',type:'address'},
+            {name:'value',type:'uint256'},
+            {name:'nonce',type:'uint256'},
+            {name:'deadline',type:'uint256'},
+        ]
+      };
+  
+      // The data to sign
+      const value =  {
+        owner:owner.address,
+        spender:aero.address,
+        value:val.toString(),
+        nonce: nonce.toHexString(),
+        deadline,
+      };
+
+      const result = await signer._signTypedData(domainData, types, value);
+      let sig = ethers.utils.splitSignature(result);
+      const {v, r, s} =  sig;
+      console.log('owner', owner.address);
+      console.log('owner Erc 20 balance', await (await aero.balanceOf(owner.address)).toNumber());
+     
+      console.log('v', v);
+      console.log('r', r);
+      console.log('s', s);
+      
+      const data = await  nftMarketV2.buyAsset(owner.address,aero.address,val.toString(),deadline,v,r,s,aero.address,0);
+      console.log('Permit Response', data)
+      expect(v).to.be.an('Number');
+      expect(r).to.be.an('String');
+      expect(s).to.be.an('String');
+  
+    })
     it('description', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } = await loadFixture(deployOneYearLockFixture);
       
