@@ -162,21 +162,21 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
     }
 
     function buyAsset(
-        address signer,
-        address nftOwner,
+        address owner,
+        address spender,
         uint256 value,
         uint256 deadline,
         uint8 v,
         bytes32 r,
         bytes32 s,
-        uint256 amount,
-        uint256 _tokenId
+        address nftOwner,
+        uint256 amount
     ) external returns (bool) {
         //to is the seller who sells ERC721
         //from is the buyer who pays erc20 for NFT
-        aeroContract.permit(signer, nftOwner, value, deadline, v, r, s);
-        aeroContract.transferFrom(signer, address(this), amount);
-        nftContract.transferFrom(nftOwner, signer, _tokenId);
+        aeroContract.permit(owner, spender, value, deadline, v, r, s);
+        aeroContract.transferFrom(owner,nftOwner, amount);
+        // nftContract.transferFrom(nftOwner, owner, _tokenId);
         return true;
     }
 
