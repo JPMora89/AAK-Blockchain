@@ -7,5 +7,7 @@ export default function handler(req, res) {
         }
       res.status(200).json({msg: "Success" })
     }
-    res.status(400).json({ msg: 'Bad request' });
+    else{
+        res.status(400).json({ msg: 'Bad request' });  
+    }
 }
