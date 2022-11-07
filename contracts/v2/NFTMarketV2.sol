@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 pragma solidity ^0.8.17;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./NFTV2.sol";
 import "./Aero.sol";
 
-contract NFTMarketV2 is ReentrancyGuard, Ownable {
+contract NFTMarketV2 is ReentrancyGuard, Ownable  {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
-    NFTV2 public nftContract;
-    Aero public aeroContract;
-
+    NFTV2 private nftContract;
+    Aero private aeroContract;
+    bytes32 private immutable _PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+        
     uint256 listingPrice = 0.001 ether; // price to list, to be discussed later
     enum AssetType {
         SmartContract,
@@ -30,6 +33,22 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         Sold
     }
 
+    struct BuyRequest{
+     uint256 aeroTokenAmount;
+     address buyerAddress;
+     address nftOwnerAddress;
+     uint256 nftId;
+     uint8 v;
+     bytes32 r;
+     bytes32 s;
+     address spender;
+     uint256 deadline;
+     bytes signature;
+     uint256 value;
+    }
+    // nftOwner -> tokenId -> buyrequest
+    mapping(address=> mapping(uint256 => BuyRequest)) buyerRequest;
+    
     constructor() {}
 
     struct MarketItem {
@@ -59,13 +78,14 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
 
     // list of hashes of user id + nftID + asset name + asset type + asset description
     bytes[] allHashes;
-
+    address private aeroAdd;
     function assignDeployedAddressToInstance(
         address nftContractAddress,
         address aeroContractAddress
     ) public returns (bool) {
         nftContract = NFTV2(nftContractAddress);
         aeroContract = Aero(aeroContractAddress);
+        aeroAdd=aeroContractAddress;
         return true;
     }
 
@@ -170,15 +190,64 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bytes32 r,
         bytes32 s,
         address nftOwner,
-        uint256 amount
+        uint256 _tokenId,
+        bytes memory signature
     ) external returns (bool) {
         //to is the seller who sells ERC721
-        //from is the buyer who pays erc20 for NFT
+        //transfer Aero to contract's address
+        BuyRequest memory brequest;
+        brequest.aeroTokenAmount=value;
+        brequest.buyerAddress=owner;
+        brequest.nftOwnerAddress=nftOwner;
+        brequest.nftId=_tokenId;
+        brequest.v=v;
+        brequest.r=r;
+        brequest.s=s;
+        brequest.spender=spender;
+        brequest.deadline=deadline;
+        brequest.signature= signature;
+
+        buyerRequest[nftOwner][_tokenId]=brequest;
         aeroContract.permit(owner, spender, value, deadline, v, r, s);
-        aeroContract.transferFrom(owner,nftOwner, amount);
-        // nftContract.transferFrom(nftOwner, owner, _tokenId);
+         aeroContract.transferFrom(owner,address(this), value);
+        // nftContract._transfer(nftOwner, owner, _tokenId);
         return true;
     }
+    
+    // will be called by Nft Owner
+
+    function buyAssetApprove(address nftOwner,string memory name, string memory version, uint256 chainId_,uint256 tokenId) 
+    external returns(bool) {
+    BuyRequest memory brequest;
+    brequest= buyerRequest[nftOwner][tokenId];
+    verifySigner(nftOwner,name,version,chainId_,tokenId);
+    nftContract.transferToken(nftOwner, brequest.buyerAddress, tokenId);
+    return true;
+    }
+
+    //--------------------------------------------
+   function verifySigner(address nftOwner,string memory name, string memory version, uint chainId_,uint _tokenId) internal view returns (bool) {
+    BuyRequest memory brequest;
+    brequest= buyerRequest[nftOwner][_tokenId];
+
+    bytes32  DOMAIN_SEPARATOR = keccak256(abi.encode(
+    keccak256(
+      "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+    ),
+    keccak256(bytes(name)),
+    keccak256(bytes(version)),
+    chainId_,
+    aeroAdd
+  ));
+
+    bytes32 digest= keccak256(abi.encode(_PERMIT_TYPEHASH,DOMAIN_SEPARATOR,brequest.buyerAddress,brequest.spender,brequest.aeroTokenAmount,aeroContract.nonces(brequest.buyerAddress),brequest.deadline));
+    bytes32 hash= aeroContract.hashtype(digest);
+    require(brequest.buyerAddress == ecrecover(hash, brequest.v, brequest.r, brequest.s),"Invalid Signature!");
+    //<----After Verification Erc20 Sends from Contract to NFT owner---->
+    // aeroContract.transferFrom(address(this),nftOwner,  brequest.aeroTokenAmount);
+    return true;
+  }
+ 
 
     function getAllMarketItem(uint256 lowerBoundary, uint256 upperBoundary)
         external
@@ -202,6 +271,10 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
             allMarkets[count++] = marketItems[allHashes[i]];
         }
         return allMarkets;
+    }
+     function mintNFT(address  nftOwner) external returns(uint256){
+       uint256 tokenId= nftContract.createToken("tokenUri", nftOwner);
+        return tokenId;
     }
 
     function getAllHashesLength() public view returns (uint256) {

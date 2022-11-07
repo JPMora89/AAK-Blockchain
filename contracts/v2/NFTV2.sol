@@ -29,4 +29,7 @@ contract NFTV2 is ERC721URIStorage {
         _setTokenURI(newItemId, tokenURI);
         return newItemId;
     }
+     function transferToken(address nftOwner, address to, uint _tokenId)external {
+    _transfer(nftOwner, to, _tokenId);
+    }
 }
