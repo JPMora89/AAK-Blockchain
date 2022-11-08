@@ -12,15 +12,15 @@ export default function handler(req, res) {
       v
     } = req.body;
     if (
-      user_id == null ||
-      buyer_username == null ||
-      buyer_name == null ||
-      buyer_metamask_id == null ||
-      asset_id == null ||
-      project_owner_metamask_id == null ||
-      r == null ||
-      s == null ||
-      v == null
+      user_id === null ||
+      buyer_username === null ||
+      buyer_name === null ||
+      buyer_metamask_id === null ||
+      asset_id === null ||
+      project_owner_metamask_id === null ||
+      r === null ||
+      s === null ||
+      v === null
     ) {
       res.status(400).json({ msg: 'Bad request' });
     }
