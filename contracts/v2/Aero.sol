@@ -31,8 +31,5 @@ contract Aero is ERC20, ERC20Burnable, Pausable, Ownable,EIP712, ERC20Permit {
     {
         super._beforeTokenTransfer(from, to, amount);
     }
-    function  hashtype(bytes32 structHash)external view returns(bytes32){
-     bytes32 data= _hashTypedDataV4(structHash);
-     return data;
-    }
+   
 }

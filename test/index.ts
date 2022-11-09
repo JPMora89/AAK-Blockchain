@@ -102,9 +102,8 @@ describe('Test suite', function () {
       expect(s).to.be.an('String')
     })
     it(' should create the signature for verification Via nftMarketV2 Contract', async function () {
-      const { aero, nftv2, nftMarketV2, owner } = await loadFixture(
-        deployOneYearLockFixture
-      )
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
       await nftMarketV2.assignDeployedAddressToInstance(
         nftv2.address,
         aero.address
@@ -156,17 +155,17 @@ describe('Test suite', function () {
       console.log('r', r)
       console.log('s', s)
 
+      let tokenid = 1
       const data = await nftMarketV2.buyAsset(
         owner.address,
         nftMarketV2.address,
-        val.toString(),
+        val,
         deadline,
         v,
         r,
         s,
-        nftMarketV2.address,
-        val.toString(),
-        result.toString()
+        otherAccount.address,
+        tokenid
       )
       console.log('Permit Response', data)
       expect(v).to.be.an('Number')
@@ -174,18 +173,17 @@ describe('Test suite', function () {
       expect(s).to.be.an('String')
     })
     it.only(' should transfer token after permit', async function () {
-      const { aero, nftv2, nftMarketV2, owner } = await loadFixture(
-        deployOneYearLockFixture
-      )
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
       await nftMarketV2.assignDeployedAddressToInstance(
         nftv2.address,
         aero.address
       )
 
       // <--------------Mint-ERC20--------------->
-      await aero.mint(owner.address, 100)
+      await aero.mint(owner.address, 100000)
       // <--------------Mint-ERC721--------------->
-      const nftId = await nftMarketV2.mintNFT(nftMarketV2.address)
+      const nftId = await nftMarketV2.mintNFT(otherAccount.address)
       console.log('--NftId--', nftId)
       const signer = owner
       const chainId = hre.network.config.chainId
@@ -198,8 +196,10 @@ describe('Test suite', function () {
       }
       const deadline = ethers.constants.MaxUint256
       const nonce = await aero.nonces(owner.address)
-      const val = 1
+      const val = 2
       console.log('ChainId', chainId)
+      console.log('Owner', owner)
+
       // The named list of all type definitions
       const types = {
         Permit: [
@@ -215,7 +215,7 @@ describe('Test suite', function () {
       const value = {
         owner: owner.address,
         spender: nftMarketV2.address,
-        value: val.toString(),
+        value: val,
         nonce: nonce.toHexString(),
         deadline,
       }
@@ -233,25 +233,78 @@ describe('Test suite', function () {
       console.log('r', r)
       console.log('s', s)
       console.log('deadline', deadline)
+      let tokenid = 1
+
+      //<-------ERC721 Permit----------->
+      console.log('<-------ERC721 Permit----------->')
+      const ERC721_Nonce = await nftv2.nonces(tokenid)
+
+      const ERC721_TYPE = {
+        Permit: [
+          { name: 'spender', type: 'address' },
+          { name: 'tokenId', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      }
+
+      const ERC721_VALUE = {
+        spender: nftMarketV2.address,
+        tokenId: tokenid,
+        nonce: ERC721_Nonce.toHexString(),
+        deadline: deadline,
+      }
+
+      const domainDataNFT = {
+        name: 'AAK Metamarket',
+        version: '1',
+        chainId: chainId,
+        verifyingContract: nftMarketV2.address,
+      }
+
+      const resultNFT = await otherAccount._signTypedData(
+        domainDataNFT,
+        ERC721_TYPE,
+        ERC721_VALUE
+      )
+      let sigNft = ethers.utils.splitSignature(resultNFT)
+      const { v: vN, r: rN, s: sN } = sigNft
 
       const data = await nftMarketV2.buyAsset(
         owner.address,
         nftMarketV2.address,
-        val.toString(),
+        val,
         deadline,
         v,
         r,
         s,
-        nftMarketV2.address,
-        val.toString(),
-        result.toString()
+        otherAccount.address,
+        tokenid
+      )
+      console.log(
+        'Balance of contract NFT M',
+        await aero.balanceOf(nftMarketV2.address)
+      )
+      console.log(
+        'Balance of contract owner',
+        await aero.balanceOf(owner.address)
+      )
+
+      console.log(
+        'Allowance',
+        await aero.allowance(owner.address, nftMarketV2.address)
       )
       await nftMarketV2.buyAssetApprove(
-        nftMarketV2.address,
-        'Aero',
-        '1',
-        chainId,
-        val.toString()
+        otherAccount.address,
+        tokenid,
+        v,
+        r,
+        s,
+        deadline,
+        nonce,
+        vN,
+        rN,
+        sN
       )
       expect(v).to.be.an('Number')
       expect(r).to.be.an('String')
