@@ -6,8 +6,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
+import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 
-contract Aero is ERC20, ERC20Burnable, Pausable, Ownable, ERC20Permit {
+
+contract Aero is ERC20, ERC20Burnable, Pausable, Ownable,EIP712, ERC20Permit {
     constructor() ERC20("Aero", "AER") ERC20Permit("Aero") {}
 
     function pause() public onlyOwner {
@@ -29,4 +31,5 @@ contract Aero is ERC20, ERC20Burnable, Pausable, Ownable, ERC20Permit {
     {
         super._beforeTokenTransfer(from, to, amount);
     }
+   
 }

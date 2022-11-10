@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/NFT.sol": {
-      "lastModificationDate": 1666605081706,
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/NFT.sol": {
+      "lastModificationDate": 1667595406514,
       "contentHash": "4be30c389cdb1634d143d4f4d323e100",
       "sourceName": "contracts/NFT.sol",
       "solcConfig": {
@@ -41,9 +41,79 @@
         "NFT"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1665767433404,
-      "contentHash": "81722bd5f5980edd45a9a72c4119225a",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1667657665605,
+      "contentHash": "4ff3cd2f6272c9a6516e9ee4f2b967d3",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">= 0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
+      "lastModificationDate": 1667657660061,
+      "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
+      "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Counters"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
+      "lastModificationDate": 1667657660913,
+      "contentHash": "79ff1a7eb801a525aa315fb7a679eede",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -84,44 +154,9 @@
         "ERC721"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Counters.sol": {
-      "lastModificationDate": 1665767433213,
-      "contentHash": "a21834c04c11733a9018196d6b1b0e89",
-      "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Counters"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
-      "lastModificationDate": 1665767433408,
-      "contentHash": "1744bec5bc5b6d27a7719cb8d4b5852f",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
+      "lastModificationDate": 1667657661025,
+      "contentHash": "8af32effd0536e2971ff8496812a5016",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -156,10 +191,10 @@
         "ERC721URIStorage"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/hardhat/console.sol": {
-      "lastModificationDate": 1666786341163,
-      "contentHash": "4ff3cd2f6272c9a6516e9ee4f2b967d3",
-      "sourceName": "hardhat/console.sol",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Address.sol": {
+      "lastModificationDate": 1667657659941,
+      "contentHash": "c476b3895a94798b88a4bb97399e6dfe",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
         "version": "0.8.17",
         "settings": {
@@ -185,15 +220,85 @@
       },
       "imports": [],
       "versionPragmas": [
-        ">= 0.4.22 <0.9.0"
+        "^0.8.1"
       ],
       "artifacts": [
-        "console"
+        "Address"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1665767433561,
-      "contentHash": "937105c04c9b4b689f8ee2d6d161994d",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1667657660057,
+      "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
+      "lastModificationDate": 1667657662405,
+      "contentHash": "cf46906c4035f51639a22265066a9e78",
+      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+      "lastModificationDate": 1667657661765,
+      "contentHash": "ec99d946db3685a3630554aa6055bd7f",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -228,9 +333,9 @@
         "IERC721"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1665767433570,
-      "contentHash": "c327b62ee5bcacfdd977bc3888fba3a4",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
+      "lastModificationDate": 1667657661797,
+      "contentHash": "c22d4395e33763de693fd440c6fd10e1",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -263,151 +368,9 @@
         "IERC721Receiver"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1665767433569,
-      "contentHash": "a17d56fe0dfcceb68cd8a527b934b0ae",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../IERC721.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC721Metadata"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1665767433211,
-      "contentHash": "a8d6f1154bf88980c18dd20fb009967d",
-      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Address"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1665767433213,
-      "contentHash": "a06a83834de6f8eb27f6ed608d030ac2",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Context"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1665767433590,
-      "contentHash": "babfde9e032d8044f461325c13ca07d7",
-      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Strings"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1665767433314,
-      "contentHash": "31c485b4e552cc1bdeb99edb8303011e",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1667657660557,
+      "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -442,9 +405,46 @@
         "ERC165"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1665767433547,
-      "contentHash": "caf880149ceb95d7355b976d61c278a8",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+      "lastModificationDate": 1667657661785,
+      "contentHash": "efbc0d15b80a74e34dbe8da0f3e879bb",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC721.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721Metadata"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1667657661593,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -477,8 +477,8 @@
         "IERC165"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/RFT.sol": {
-      "lastModificationDate": 1666605081707,
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/RFT.sol": {
+      "lastModificationDate": 1667595406514,
       "contentHash": "9ea606ce489f319d1dd5a34a873f92dd",
       "sourceName": "contracts/RFT.sol",
       "solcConfig": {
@@ -517,9 +517,9 @@
         "RFT"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1665767433553,
-      "contentHash": "5f4c7678e2e69875dbd2ec01d3d288c1",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1667657661661,
+      "contentHash": "ad7c2d0af148c8f9f097d65deeb4da6b",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -552,9 +552,9 @@
         "IERC20"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1665767433315,
-      "contentHash": "301fed494a57e27be4323bdff2d054bf",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1667657660645,
+      "contentHash": "af7bd64e1cfefbf6cb07f2adc1a25392",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -591,9 +591,9 @@
         "ERC20"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1665767433554,
-      "contentHash": "5e82817b39b46b54032effefa77b2bd9",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "lastModificationDate": 1667657661681,
+      "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -628,9 +628,9 @@
         "IERC20Metadata"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol": {
-      "lastModificationDate": 1665767433214,
-      "contentHash": "e4c40b995c0962a0ff6fa22a53814bdf",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol": {
+      "lastModificationDate": 1667657660201,
+      "contentHash": "3c98f8ccc741d97ece615ce32d638d4c",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -669,44 +669,9 @@
         "ERC20Permit"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
-      "lastModificationDate": 1665767433214,
-      "contentHash": "1e0297b483bdce1722627a525bbdd245",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20Permit"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol": {
-      "lastModificationDate": 1665767433213,
-      "contentHash": "732c838c34a275fa33d9ef7875a45132",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol": {
+      "lastModificationDate": 1667657660165,
+      "contentHash": "161aae4dc1450371d0f324488f66a9cf",
       "sourceName": "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -741,9 +706,9 @@
         "EIP712"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol": {
-      "lastModificationDate": 1665767433214,
-      "contentHash": "42570bd10cc10c86056ad80455103666",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol": {
+      "lastModificationDate": 1667657660309,
+      "contentHash": "e240957102529c3ccf73bcf4527bcddc",
       "sourceName": "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -778,9 +743,171 @@
         "ECDSA"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1665767433589,
-      "contentHash": "402cec08d80c01e96ba8d27963975f8d",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
+      "lastModificationDate": 1667657660277,
+      "contentHash": "fb77f144244b9ab12533aa6ce85ef8c5",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Permit"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/v2/NFTV2.sol": {
+      "lastModificationDate": 1667973237658,
+      "contentHash": "6ebc16243dc758f1af96d31d1814934d",
+      "sourceName": "contracts/v2/NFTV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+        "./interfaces/IERC721Permit.sol",
+        "./interfaces/IERC1271.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NFTV2"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/v2/NFTMarketV2.sol": {
+      "lastModificationDate": 1667973204553,
+      "contentHash": "f440cc5f202130a1dae10a661e374b2f",
+      "sourceName": "contracts/v2/NFTMarketV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
+        "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol",
+        "./NFTV2.sol",
+        "./Aero.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "NFTMarketV2"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/v2/Aero.sol": {
+      "lastModificationDate": 1667902947963,
+      "contentHash": "079c5c06d31edba67536de536a6452c3",
+      "sourceName": "contracts/v2/Aero.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        "@openzeppelin/contracts/security/Pausable.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol",
+        "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "Aero"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+      "lastModificationDate": 1667657662273,
+      "contentHash": "92f9448b23a90ea3bb932ee55cc3ccce",
       "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -813,9 +940,9 @@
         "ReentrancyGuard"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1665767433582,
-      "contentHash": "cbba874af15bc1c65a1c82aebec1a0fe",
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1667657662153,
+      "contentHash": "e436cea06129be2c73cda4b1acc848b5",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -850,8 +977,83 @@
         "Ownable"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/NFTMarket.sol": {
-      "lastModificationDate": 1666605081706,
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/security/Pausable.sol": {
+      "lastModificationDate": 1667657662181,
+      "contentHash": "25c8108f36fdd472bc78d4c4af240c11",
+      "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Pausable"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol": {
+      "lastModificationDate": 1667657660677,
+      "contentHash": "a1c7f80ae26f5b2d7d563475627fbf25",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20.sol",
+        "../../../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20Burnable"
+      ]
+    },
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/NFTMarket.sol": {
+      "lastModificationDate": 1667651037287,
       "contentHash": "e4d1b9f8f721ca62f232403759af47df",
       "sourceName": "contracts/NFTMarket.sol",
       "solcConfig": {
@@ -890,10 +1092,10 @@
         "NFTMarket"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/Aero.sol": {
-      "lastModificationDate": 1666604609489,
-      "contentHash": "c01c653c67fad005a1fca1a3e1e9e772",
-      "sourceName": "contracts/v2/Aero.sol",
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/v2/interfaces/IERC721Permit.sol": {
+      "lastModificationDate": 1667935927252,
+      "contentHash": "ea45dc297516dd2e29f6ea80b5e02585",
+      "sourceName": "contracts/v2/interfaces/IERC721Permit.sol",
       "solcConfig": {
         "version": "0.8.17",
         "settings": {
@@ -918,23 +1120,19 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        "@openzeppelin/contracts/security/Pausable.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"
+        "@openzeppelin/contracts/token/ERC721/IERC721.sol"
       ],
       "versionPragmas": [
         "^0.8.17"
       ],
       "artifacts": [
-        "Aero"
+        "IERC721Permit"
       ]
     },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol": {
-      "lastModificationDate": 1665767433315,
-      "contentHash": "ef8ed68646a2f05d7fd0c52f82976c43",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+    "/home/muneeb/Documents/Blockchain-Dev/contracts/v2/interfaces/IERC1271.sol": {
+      "lastModificationDate": 1667928535071,
+      "contentHash": "f5e22b3f4fda2c8e6292f9561a073088",
+      "sourceName": "contracts/v2/interfaces/IERC1271.sol",
       "solcConfig": {
         "version": "0.8.17",
         "settings": {
@@ -958,132 +1156,12 @@
           }
         }
       },
-      "imports": [
-        "../ERC20.sol",
-        "../../../utils/Context.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
-        "^0.8.0"
+        ">=0.5.0"
       ],
       "artifacts": [
-        "ERC20Burnable"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/node_modules/@openzeppelin/contracts/security/Pausable.sol": {
-      "lastModificationDate": 1665767433583,
-      "contentHash": "328e35c94e8585475f9e5df92fbbb7a2",
-      "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../utils/Context.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Pausable"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFTV2.sol": {
-      "lastModificationDate": 1666790535131,
-      "contentHash": "79c3544d41bab962366a5be883f92830",
-      "sourceName": "contracts/v2/NFTV2.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/utils/Counters.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.17"
-      ],
-      "artifacts": [
-        "NFTV2"
-      ]
-    },
-    "/Users/tahliltahlil/Desktop/aakTele/Blockchain-Dev/contracts/v2/NFTMarketV2.sol": {
-      "lastModificationDate": 1666790580359,
-      "contentHash": "9f8ac263c5e7b6cbab8eb08d856b748b",
-      "sourceName": "contracts/v2/NFTMarketV2.sol",
-      "solcConfig": {
-        "version": "0.8.17",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/utils/Counters.sol",
-        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./NFTV2.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.17"
-      ],
-      "artifacts": [
-        "NFTMarketV2"
+        "IERC1271"
       ]
     }
   }
