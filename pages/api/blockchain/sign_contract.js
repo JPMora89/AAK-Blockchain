@@ -11,7 +11,8 @@ export default function handler(req, res) {
             asset_file,
             r,
             s,
-            v 
+            v,
+            request_approval
         } = req.body;  
         if(
             new_env === null ||
@@ -24,7 +25,8 @@ export default function handler(req, res) {
             asset_file === null ||
             r === null ||
             s === null ||
-            v === null
+            v === null ||
+            request_approval === null
         ){
             res.status(400).json({ msg: 'Bad request' });
         }
