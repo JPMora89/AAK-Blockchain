@@ -67,18 +67,25 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
     }
 
     // hash of user id + nftID + asset name + asset type + asset description => Market Item
-    mapping(bytes => MarketItem) marketItems;
+    mapping(bytes32 => MarketItem) marketItems;
+    event Instance(address  nft, address aero );
+    event CreateAsset(bytes32  assetHash );
+    event CreateAssetPending(bytes32  assetPendingHash );
+    event MintNFT(uint256  tokenId );
+
 
     // list of hashes of user id + nftID + asset name + asset type + asset description
-    bytes[] allHashes;
+    bytes32 [] allHashes;
     address private aeroAdd;
+
     function assignDeployedAddressToInstance(
         address nftContractAddress,
         address aeroContractAddress
-    ) public returns (bool) {
+    ) public  returns (bool) {
         nftContract = NFTV2(nftContractAddress);
         aeroContract = Aero(aeroContractAddress);
         aeroAdd=aeroContractAddress;
+        emit Instance(nftContractAddress,aeroContractAddress);
         return true;
     }
 
@@ -97,7 +104,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         else return "Sold";
     }
 
-    function getMarketItemStatus(bytes memory hash)
+    function getMarketItemStatus(bytes32 hash)
         external
         view
         returns (string memory)
@@ -106,7 +113,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         return status;
     }
 
-    function getMarketItem(bytes memory hash)
+    function getMarketItem(bytes32  hash)
         external
         view
         returns (MarketItem memory)
@@ -114,8 +121,8 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         return marketItems[hash];
     }
 
-    function createAssetPending(MarketItem memory data) public returns (bool) {
-        bytes memory hash = abi.encode(
+    function createAssetPending(MarketItem memory data) public returns (bytes32) {
+        bytes32 hash = keccak256( abi.encode(
             createHash(
                 abi.encodePacked(
                     data.creatorUserID,
@@ -125,15 +132,17 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
                     data.assetDescription
                 )
             )
+            )
         );
         marketItems[hash] = data;
         allHashes.push(hash);
-        return true;
+        emit CreateAssetPending(hash);
+        return hash;
     }
 
-    // sign contract
+    // sign contract need to be check
     function approvePendingAsset(
-        bytes memory hash,
+        bytes32  hash,
         string memory tokenUri,
         address signer,
         address projectOwner,
@@ -147,8 +156,10 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
         marketItems[hash].nftID = tokenId;
         marketItems[hash].status = Status.Created;
-        aeroContract.permit(signer, address(this), value, deadline, v, r, s);
-        aeroContract.transferFrom(signer, projectOwner, amount);
+       
+        // aeroContract.permit(signer, address(this), value, deadline, v, r, s);
+        // aeroContract.increaseAllowance(address(this), value);
+        // aeroContract.transferFrom(signer,address(this), value);
         return true;
     }
 
@@ -158,7 +169,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
     {
         uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
         data.nftID = tokenId;
-        bytes memory hash = abi.encode(
+        bytes32  hash = keccak256(abi.encode(
             createHash(
                 abi.encodePacked(
                     data.creatorUserID,
@@ -168,9 +179,10 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
                     data.assetDescription
                 )
             )
-        );
+        ));
         marketItems[hash] = data;
         allHashes.push(hash);
+        emit CreateAsset(hash);
         return true;
     }
 
@@ -247,15 +259,18 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
             (upperBoundary <= hashesLength) && !(upperBoundary < 0),
             "upper boundary should be less or equal to size and non negative"
         );
-        MarketItem[] memory allMarkets;
-        uint256 count = 0;
+        MarketItem[] memory allMarkets=new MarketItem[](allHashes.length);
+                uint count = 0;
         for (uint256 i = lowerBoundary; i <= upperBoundary; i++) {
-            allMarkets[count++] = marketItems[allHashes[i]];
-        }
+            allMarkets[count]=marketItems[allHashes[i]];
+            count = count + 1;
+                   }
         return allMarkets;
     }
-     function mintNFT(address  nftOwner) external returns(uint256){
-       uint256 tokenId= nftContract.createToken("tokenUri", nftOwner);
+
+     function mintNFT(string memory tokenUri, address  nftOwner) external returns(uint256){
+       uint256 tokenId= nftContract.createToken(tokenUri, nftOwner);
+       emit MintNFT(tokenId);
        return tokenId;
     }
 
