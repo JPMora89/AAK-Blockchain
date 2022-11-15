@@ -167,6 +167,32 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         return true;
     }
 
+    function createAssetForSell(
+        MarketItem memory data,
+        string memory tokenUri,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        uint256 deadline
+    ) external {
+        uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
+        nftContract.permit(address(this), tokenId, deadline, v, r, s);
+        data.nftID = tokenId;
+        bytes memory hash = abi.encode(
+            createHash(
+                abi.encodePacked(
+                    data.creatorUserID,
+                    data.nftID,
+                    data.assetName,
+                    data.assetType,
+                    data.assetDescription
+                )
+            )
+        );
+        marketItems[hash] = data;
+        allHashes.push(hash);
+    }
+
     function createAsset(MarketItem memory data, string memory tokenUri)
         external
         returns (bool)
