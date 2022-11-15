@@ -79,11 +79,10 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
     function assignDeployedAddressToInstance(
         address nftContractAddress,
         address aeroContractAddress
-    ) public returns (bool) {
+    ) public {
         nftContract = NFTV2(nftContractAddress);
         aeroContract = Aero(aeroContractAddress);
         aeroAdd = aeroContractAddress;
-        return true;
     }
 
     function createHash(bytes memory data) internal pure returns (bytes32) {
@@ -118,7 +117,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         return marketItems[hash];
     }
 
-    function createAssetPending(MarketItem memory data) public returns (bool) {
+    function createAssetPending(MarketItem memory data) public {
         bytes memory hash = abi.encode(
             createHash(
                 abi.encodePacked(
@@ -132,7 +131,6 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         );
         marketItems[hash] = data;
         allHashes.push(hash);
-        return true;
     }
 
     // sign contract
@@ -147,13 +145,12 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bytes32 r,
         bytes32 s,
         uint256 amount
-    ) external returns (bool) {
+    ) external {
         uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
         marketItems[hash].nftID = tokenId;
         marketItems[hash].status = Status.Created;
         aeroContract.permit(signer, address(this), value, deadline, v, r, s);
         aeroContract.transferFrom(signer, projectOwner, amount);
-        return true;
     }
 
     function createAssetForSell(
@@ -213,13 +210,12 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bytes32 r,
         bytes32 s,
         uint256 _NFTTokenId
-    ) external returns (bool) {
+    ) external {
         
         aeroContract.permit(owner, spender, value, deadline, v, r, s);
         aeroContract.increaseAllowance(spender, value);
         aeroContract.transferFrom(owner, address(this), value);
         nftContract.transferFrom(spender, owner, _NFTTokenId);
-        return true;
     }
 
     function buyAssetRequest(
@@ -232,7 +228,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bytes32 s,
         address nftOwner,
         uint256 _tokenId
-    ) external returns (bool) {
+    ) external {
         //to is the seller who sells ERC721
         //transfer Aero to contract's address
         BuyRequest memory brequest;
@@ -245,7 +241,6 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         aeroContract.permit(owner, spender, value, deadline, v, r, s);
         aeroContract.increaseAllowance(spender, value);
         aeroContract.transferFrom(owner, address(this), value);
-        return true;
     }
 
     function ERC20_DOMAIN_SEPARATOR() public view returns (bytes32) {
@@ -276,7 +271,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         uint8 vN,
         bytes32 rN,
         bytes32 sN
-    ) external returns (bool) {
+    ) external {
         BuyRequest memory brequest;
         brequest = buyerRequest[nftOwner][_tokenId];
 
@@ -309,7 +304,6 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         nftContract.permit(address(this), _tokenId, deadline, vN, rN, sN);
         //transfer token
         nftContract.transferFrom(nftOwner, brequest.buyerAddress, _tokenId);
-        return true;
     }
 
     function getAllMarketItem(uint256 lowerBoundary, uint256 upperBoundary)
