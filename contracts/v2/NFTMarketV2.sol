@@ -67,6 +67,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bool multiNft;
         uint256 assetPrice;
         Status status;
+        bool requestApproval;
     }
 
     // hash of user id + nftID + asset name + asset type + asset description => Market Item
