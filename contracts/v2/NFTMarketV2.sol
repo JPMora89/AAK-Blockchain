@@ -212,6 +212,24 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         uint8 v,
         bytes32 r,
         bytes32 s,
+        uint256 _NFTTokenId
+    ) external returns (bool) {
+        
+        aeroContract.permit(owner, spender, value, deadline, v, r, s);
+        aeroContract.increaseAllowance(spender, value);
+        aeroContract.transferFrom(owner, address(this), value);
+        nftContract.transferFrom(spender, owner, _NFTTokenId);
+        return true;
+    }
+
+    function buyAssetRequest(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
         address nftOwner,
         uint256 _tokenId
     ) external returns (bool) {
