@@ -10,14 +10,17 @@ import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "./NFTV2.sol";
 import "./Aero.sol";
 
-contract NFTMarketV2 is ReentrancyGuard, Ownable  {
+contract NFTMarketV2 is ReentrancyGuard, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
     NFTV2 private nftContract;
     Aero private aeroContract;
-    bytes32 public _PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
-        
+    bytes32 public _PERMIT_TYPEHASH =
+        keccak256(
+            "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
+        );
+
     uint256 listingPrice = 0.001 ether; // price to list, to be discussed later
     enum AssetType {
         SmartContract,
@@ -33,15 +36,15 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         Sold
     }
 
-
-    struct BuyRequest{
-     uint256 paidAmountAeroToken;
-     address buyerAddress;
-     address nftOwnerAddress;
-     uint256 nftId;
+    struct BuyRequest {
+        uint256 paidAmountAeroToken;
+        address buyerAddress;
+        address nftOwnerAddress;
+        uint256 nftId;
     }
     // nftOwner -> tokenId -> buyrequest
-    mapping(address=> mapping(uint256 => BuyRequest)) buyerRequest;
+    mapping(address => mapping(uint256 => BuyRequest)) buyerRequest;
+
     constructor() {}
 
     struct MarketItem {
@@ -64,6 +67,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         bool multiNft;
         uint256 assetPrice;
         Status status;
+        bool requestApproval;
     }
 
     // hash of user id + nftID + asset name + asset type + asset description => Market Item
@@ -152,7 +156,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         bytes32 r,
         bytes32 s,
         uint256 amount
-    ) external returns (bool) {
+    ) external {
         uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
         marketItems[hash].nftID = tokenId;
         marketItems[hash].status = Status.Created;
@@ -186,7 +190,25 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         return true;
     }
 
-    function buyAsset( address owner,
+    function buyAsset(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        uint256 _NFTTokenId
+    ) external {
+        
+        aeroContract.permit(owner, spender, value, deadline, v, r, s);
+        aeroContract.increaseAllowance(spender, value);
+        aeroContract.transferFrom(owner, address(this), value);
+        nftContract.transferFrom(spender, owner, _NFTTokenId);
+    }
+
+    function buyAssetRequest(
+        address owner,
         address spender,
         uint256 value,
         uint256 deadline,
@@ -195,53 +217,83 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable  {
         bytes32 s,
         address nftOwner,
         uint256 _tokenId
-        ) external returns (bool) {
+    ) external {
         //to is the seller who sells ERC721
         //transfer Aero to contract's address
         BuyRequest memory brequest;
-        brequest.paidAmountAeroToken = value; 
+        brequest.paidAmountAeroToken = value;
         brequest.buyerAddress = owner;
         brequest.nftOwnerAddress = nftOwner;
         brequest.nftId = _tokenId;
-        buyerRequest[nftOwner][_tokenId]=brequest;
+        buyerRequest[nftOwner][_tokenId] = brequest;
 
         aeroContract.permit(owner, spender, value, deadline, v, r, s);
         aeroContract.increaseAllowance(spender, value);
-        aeroContract.transferFrom(owner,address(this), value);
-        return true;
+        aeroContract.transferFrom(owner, address(this), value);
     }
 
-    function ERC20_DOMAIN_SEPARATOR() public view  returns (bytes32) {
-        return keccak256(
-        abi.encode(
+    function ERC20_DOMAIN_SEPARATOR() public view returns (bytes32) {
+        return
             keccak256(
-                "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-            ),
-            keccak256(bytes("Aero")),
-            keccak256(bytes("1")),
-            block.chainid,
-            aeroAdd
-        ));
-            
+                abi.encode(
+                    keccak256(
+                        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+                    ),
+                    keccak256(bytes("Aero")),
+                    keccak256(bytes("1")),
+                    block.chainid,
+                    aeroAdd
+                )
+            );
     }
-    
+
     // will be called by Nft Owner
 
-    function buyAssetApprove(address nftOwner, uint256 _tokenId, uint8 v,bytes32 r,bytes32 s, uint256 deadline,uint256 nonce,uint8 vN, bytes32 rN,bytes32 sN ) external  returns(bool) 
-    {
+    function buyAssetApprove(
+        address nftOwner,
+        uint256 _tokenId,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        uint256 deadline,
+        uint256 nonce,
+        uint8 vN,
+        bytes32 rN,
+        bytes32 sN
+    ) external {
         BuyRequest memory brequest;
-        brequest= buyerRequest[nftOwner][_tokenId];
+        brequest = buyerRequest[nftOwner][_tokenId];
 
-        bytes32 digest= keccak256(abi.encodePacked("\x19\x01",ERC20_DOMAIN_SEPARATOR(),keccak256(abi.encode(_PERMIT_TYPEHASH,brequest.buyerAddress,address(this),brequest.paidAmountAeroToken,nonce,deadline))));
-        require(brequest.buyerAddress == ecrecover(digest, v, r, s),"Invalid Signature!");
-        aeroContract.transferFrom(address(this), nftOwner, brequest.paidAmountAeroToken);
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                ERC20_DOMAIN_SEPARATOR(),
+                keccak256(
+                    abi.encode(
+                        _PERMIT_TYPEHASH,
+                        brequest.buyerAddress,
+                        address(this),
+                        brequest.paidAmountAeroToken,
+                        nonce,
+                        deadline
+                    )
+                )
+            )
+        );
+        require(
+            brequest.buyerAddress == ecrecover(digest, v, r, s),
+            "Invalid Signature!"
+        );
+        aeroContract.transferFrom(
+            address(this),
+            nftOwner,
+            brequest.paidAmountAeroToken
+        );
         //permit the ERC721
-        nftContract.permit(address(this),_tokenId,deadline,vN,rN,sN);
+        nftContract.permit(address(this), _tokenId, deadline, vN, rN, sN);
         //transfer token
         nftContract.transferFrom(nftOwner, brequest.buyerAddress, _tokenId);
-        return true;
     }
-  
 
     function getAllMarketItem(uint256 lowerBoundary, uint256 upperBoundary)
         external
