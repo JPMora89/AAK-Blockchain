@@ -88,16 +88,66 @@ describe('Test suite', function () {
       expect(Object.keys(event).includes('tokenId')).to.eq(true)
     })
 
-    it('Create Pending Asset', async function () {
+    it('Create Pending Asset and approve pending asset', async function () {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
       await nftMarketV2.assignDeployedAddressToInstance(
         nftv2.address,
         aero.address
       )
+      const signer = otherAccount
+      await aero.mint(otherAccount.address, 10000000000000)
+      pendingTestData[5] = owner.address
+      const response = await nftMarketV2.createAssetPending(pendingTestData)
+      const event = (await response.wait()).events[0].args || {}
 
-      const result = await nftMarketV2.createAssetPending(pendingTestData)
-      const event = (await result.wait()).events[0].args || {}
+      const chainId = hre.network.config.chainId
+
+      const domainData = {
+        name: 'Aero',
+        version: '1',
+        chainId: chainId,
+        verifyingContract: aero.address,
+      }
+      const deadline = ethers.constants.MaxUint256
+      const nonce = await aero.nonces(otherAccount.address)
+      const val = 1
+      console.log('ChainId', chainId)
+      // The named list of all type definitions
+      const types = {
+        Permit: [
+          { name: 'owner', type: 'address' },
+          { name: 'spender', type: 'address' },
+          { name: 'value', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      }
+
+      // The data to sign
+      const value = {
+        owner: otherAccount.address,
+        spender: nftMarketV2.address,
+        value: val.toString(),
+        nonce: nonce.toHexString(),
+        deadline,
+      }
+      console.log('Hash----->', event['assetPendingHash'])
+      const result = await signer._signTypedData(domainData, types, value)
+      let sig = ethers.utils.splitSignature(result)
+      const { v, r, s } = sig
+      await nftMarketV2.approvePendingAsset(
+        event['assetPendingHash'],
+        tokenUri,
+        otherAccount.address,
+        nftMarketV2.address,
+        owner.address,
+        val.toString(),
+        deadline,
+        v,
+        r,
+        s
+      )
       expect(Object.keys(event).includes('assetPendingHash')).to.eq(true)
     })
 
