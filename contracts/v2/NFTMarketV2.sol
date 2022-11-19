@@ -355,4 +355,9 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
     function getAllHashesLength() public view returns (uint256) {
         return allHashes.length;
     }
+
+    function setMarketItemToPrivate(bytes32 hash) public 
+    {
+        marketItems[hash].isPrivate=true;
+    }
 }
