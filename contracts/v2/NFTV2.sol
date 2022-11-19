@@ -61,6 +61,9 @@ import "./interfaces/IERC1271.sol";
         _setTokenURI(newItemId, tokenURI);
         return newItemId;
     }
+    function getTokenId() public view onlyMarketplace returns(uint256){
+     return _tokenIds.current();
+    }
     function transfertoken(address nftOwner, address to, uint _tokenId)external {
      _transfer(nftOwner, to, _tokenId);
     }
