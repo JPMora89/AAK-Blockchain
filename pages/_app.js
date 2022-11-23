@@ -7,6 +7,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import Link from "next/link";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlusCircle,
@@ -87,13 +88,7 @@ function Marketplace({ Component, pageProps }) {
                 Aero-Swap
               </a>
             </Link> */}
-            <button
-              className="mr-8 font-bold"
-              style={{ color: "#3079AB" }}
-              onClick={connectWallet}
-            >
-              <FontAwesomeIcon icon={faWallet} /> CONNECT WALLET
-            </button>
+            <ConnectButton label="Connect Wallet" />
           </div>
         </nav>
       </div>
