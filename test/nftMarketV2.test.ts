@@ -459,6 +459,79 @@ describe('Test suite', function () {
       expect(r).to.be.an('String')
       expect(s).to.be.an('String')
     })
+
+    it(' should create asset for sell', async function () {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
+      await nftMarketV2.assignDeployedAddressToInstance(
+        nftv2.address,
+        aero.address
+      )
+
+      await nftMarketV2.mintNFT('tokenuri', otherAccount.address)
+      marketItemTestData[5] = otherAccount.address
+      const chainId = hre.network.config.chainId
+      const deadline = ethers.constants.MaxUint256
+      let _tokenId = await nftMarketV2.getNftId()
+
+      const ERC721_Nonce = await nftv2.nonces(_tokenId)
+
+      const ERC721_TYPE = {
+        Permit: [
+          { name: 'spender', type: 'address' },
+          { name: 'tokenId', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      }
+
+      const ERC721_VALUE = {
+        spender: nftMarketV2.address,
+        tokenId: _tokenId,
+        nonce: ERC721_Nonce.toHexString(),
+        deadline: deadline,
+      }
+
+      const domainDataNFT = {
+        name: 'AAK Metamarket',
+        version: '1',
+        chainId: chainId,
+        verifyingContract: nftMarketV2.address,
+      }
+
+      const resultNFT = await otherAccount._signTypedData(
+        domainDataNFT,
+        ERC721_TYPE,
+        ERC721_VALUE
+      )
+      let sigNft = ethers.utils.splitSignature(resultNFT)
+      const { v: vN, r: rN, s: sN } = sigNft
+
+      const data = await nftMarketV2.createAssetForSell(
+        marketItemTestData,
+        tokenUri,
+        vN,
+        rN,
+        sN,
+        deadline,
+        _tokenId
+      )
+      const eventToken = (await data.wait()).events[2].args.tokenId || {}
+      expect(_tokenId).to.be.equal(eventToken)
+      expect(vN).to.be.an('Number')
+      expect(rN).to.be.an('String')
+      expect(sN).to.be.an('String')
+    })
+    it.only(' should return tokenId count', async function () {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
+      await nftMarketV2.assignDeployedAddressToInstance(
+        nftv2.address,
+        aero.address
+      )
+      let _tokenId = await nftMarketV2.getNftId()
+      expect(_tokenId).to.be.equals(0)
+    })
     it('description', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
