@@ -72,24 +72,24 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
 
     // hash of user id + nftID + asset name + asset type + asset description => Market Item
     mapping(bytes32 => MarketItem) marketItems;
-    event Instance(address  nft, address aero );
-    event CreateAsset(bytes32  assetHash );
-    event CreateAssetPending(bytes32  assetPendingHash );
-    event MintNFT(uint256  tokenId );
-
+    event Instance(address nft, address aero);
+    event CreateAsset(bytes32 assetHash);
+    event CreateAssetPending(bytes32 assetPendingHash);
+    event MintNFT(uint256 tokenId);
+    event AssetForSellCreated(bytes32 hash, uint256 tokenId);
 
     // list of hashes of user id + nftID + asset name + asset type + asset description
-    bytes32 [] allHashes;
+    bytes32[] allHashes;
     address private aeroAdd;
 
     function assignDeployedAddressToInstance(
         address nftContractAddress,
         address aeroContractAddress
-    ) public  returns (bool) {
+    ) public returns (bool) {
         nftContract = NFTV2(nftContractAddress);
         aeroContract = Aero(aeroContractAddress);
-        aeroAdd=aeroContractAddress;
-        emit Instance(nftContractAddress,aeroContractAddress);
+        aeroAdd = aeroContractAddress;
+        emit Instance(nftContractAddress, aeroContractAddress);
         return true;
     }
 
@@ -117,7 +117,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         return status;
     }
 
-    function getMarketItem(bytes32  hash)
+    function getMarketItem(bytes32 hash)
         external
         view
         returns (MarketItem memory)
@@ -125,17 +125,21 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         return marketItems[hash];
     }
 
-    function createAssetPending(MarketItem memory data) public returns (bytes32) {
-        bytes32 hash = keccak256( abi.encode(
-            createHash(
-                abi.encodePacked(
-                    data.creatorUserID,
-                    data.nftID,
-                    data.assetName,
-                    data.assetType,
-                    data.assetDescription
+    function createAssetPending(MarketItem memory data)
+        public
+        returns (bytes32)
+    {
+        bytes32 hash = keccak256(
+            abi.encode(
+                createHash(
+                    abi.encodePacked(
+                        data.creatorUserID,
+                        data.nftID,
+                        data.assetName,
+                        data.assetType,
+                        data.assetDescription
+                    )
                 )
-            )
             )
         );
         marketItems[hash] = data;
@@ -146,25 +150,24 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
 
     // sign contract need to be check
     function approvePendingAsset(
-        bytes32  hash,
+        bytes32 hash,
         string memory tokenUri,
         address signer,
+        address spender,
         address projectOwner,
         uint256 value,
         uint256 deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s,
-        uint256 amount
+        bytes32 s
     ) external {
-        uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
+        uint256 tokenId = nftContract.createToken(tokenUri, signer);
         marketItems[hash].nftID = tokenId;
         marketItems[hash].status = Status.Created;
-       
-        // aeroContract.permit(signer, address(this), value, deadline, v, r, s);
-        // aeroContract.increaseAllowance(address(this), value);
-        // aeroContract.transferFrom(signer,address(this), value);
-        return true;
+
+        aeroContract.permit(signer, spender, value, deadline, v, r, s);
+        aeroContract.increaseAllowance(spender, value);
+        aeroContract.transferFrom(signer, projectOwner, value);
     }
 
     function createAssetForSell(
@@ -173,47 +176,54 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         uint8 v,
         bytes32 r,
         bytes32 s,
-        uint256 deadline
+        uint256 deadline,
+        uint256 tokenId
     ) external {
-        uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
+        nftContract.createToken(tokenUri, data.creatorMetamaskId);
         nftContract.permit(address(this), tokenId, deadline, v, r, s);
         data.nftID = tokenId;
-        bytes memory hash = abi.encode(
-            createHash(
-                abi.encodePacked(
-                    data.creatorUserID,
-                    data.nftID,
-                    data.assetName,
-                    data.assetType,
-                    data.assetDescription
+        bytes32 hash = keccak256(
+            abi.encode(
+                createHash(
+                    abi.encodePacked(
+                        data.creatorUserID,
+                        data.nftID,
+                        data.assetName,
+                        data.assetType,
+                        data.assetDescription
+                    )
                 )
             )
         );
         marketItems[hash] = data;
         allHashes.push(hash);
+        emit AssetForSellCreated(hash, tokenId);
     }
 
     function createAsset(MarketItem memory data, string memory tokenUri)
         external
-        returns (bool)
     {
-        uint256 tokenId = nftContract.createToken(tokenUri, msg.sender);
+        uint256 tokenId = nftContract.createToken(
+            tokenUri,
+            data.creatorMetamaskId
+        );
         data.nftID = tokenId;
-        bytes32  hash = keccak256(abi.encode(
-            createHash(
-                abi.encodePacked(
-                    data.creatorUserID,
-                    data.nftID,
-                    data.assetName,
-                    data.assetType,
-                    data.assetDescription
+        bytes32 hash = keccak256(
+            abi.encode(
+                createHash(
+                    abi.encodePacked(
+                        data.creatorUserID,
+                        data.nftID,
+                        data.assetName,
+                        data.assetType,
+                        data.assetDescription
+                    )
                 )
             )
-        ));
+        );
         marketItems[hash] = data;
         allHashes.push(hash);
         emit CreateAsset(hash);
-        return true;
     }
 
     function buyAsset(
@@ -226,7 +236,6 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         bytes32 s,
         uint256 _NFTTokenId
     ) external {
-        
         aeroContract.permit(owner, spender, value, deadline, v, r, s);
         aeroContract.increaseAllowance(spender, value);
         aeroContract.transferFrom(owner, address(this), value);
@@ -337,25 +346,29 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
             (upperBoundary <= hashesLength) && !(upperBoundary < 0),
             "upper boundary should be less or equal to size and non negative"
         );
-        MarketItem[] memory allMarkets=new MarketItem[](allHashes.length);
-                uint count = 0;
+        MarketItem[] memory allMarkets = new MarketItem[](allHashes.length);
+        uint256 count = 0;
         for (uint256 i = lowerBoundary; i <= upperBoundary; i++) {
-            allMarkets[count]=marketItems[allHashes[i]];
+            allMarkets[count] = marketItems[allHashes[i]];
             count = count + 1;
-                   }
+        }
         return allMarkets;
     }
 
-     function mintNFT(string memory tokenUri, address  nftOwner) external returns(uint256){
-       uint256 tokenId= nftContract.createToken(tokenUri, nftOwner);
-       emit MintNFT(tokenId);
-       return tokenId;
+    function mintNFT(string memory tokenUri, address nftOwner)
+        external
+        returns (uint256)
+    {
+        uint256 tokenId = nftContract.createToken(tokenUri, nftOwner);
+        emit MintNFT(tokenId);
+        return tokenId;
     }
 
     function getAllHashesLength() public view returns (uint256) {
         return allHashes.length;
     }
 
+<<<<<<< HEAD
     function setMarketItemToPrivate(bytes32 hash) public 
     {
         marketItems[hash].isPrivate=true;
@@ -364,5 +377,32 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
     function approveRequest(bytes32 hash) public 
     {
         marketItems[hash].requestApproval=true;
+=======
+    function getNftId() public view returns (uint256) {
+        uint256 id = nftContract.getTokenId();
+        return id;
+    }
+
+    function fetchMyNFTs() public view returns (MarketItem[] memory) {
+        uint256 totalItemCount = allHashes.length;
+        uint256 itemCount = 0;
+        uint256 currentIndex = 0;
+
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (marketItems[allHashes[i]].creatorMetamaskId == msg.sender) {
+                itemCount += 1;
+            }
+        }
+
+        MarketItem[] memory items = new MarketItem[](itemCount);
+        for (uint256 i = 0; i < totalItemCount; i++) {
+            if (marketItems[allHashes[i]].creatorMetamaskId == msg.sender) {
+                MarketItem storage currentItem = marketItems[allHashes[i]];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+>>>>>>> origin/main
     }
 }

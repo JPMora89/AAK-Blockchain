@@ -1,14 +1,33 @@
 import Head from "next/head";
 import "../styles/globals.css";
+import '@rainbow-me/rainbowkit/styles.css';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
 import Link from "next/link";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlusCircle,
   faUserCircle,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
+
+const { chains, provider } = configureChains([chain.goerli], [publicProvider()]);
+
+const { connectors } = getDefaultWallets({
+  appName: 'AAK Telescience',
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+});
+
 
 function Marketplace({ Component, pageProps }) {
   const styles = {
@@ -34,7 +53,9 @@ function Marketplace({ Component, pageProps }) {
 
   return (
     // <div style={{backgroundColor: "#EDF5FF", height: "100vh"}}>
-    <div style={{ height: "100vh" }}>
+    <WagmiConfig client={wagmiClient}>
+    <RainbowKitProvider chains={chains}>
+   <div style={{ height: "100vh" }}>
       <Head>
         <title>AAK Ventures</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -67,19 +88,15 @@ function Marketplace({ Component, pageProps }) {
                 Aero-Swap
               </a>
             </Link> */}
-            <button
-              className="mr-8 font-bold"
-              style={{ color: "#3079AB" }}
-              onClick={connectWallet}
-            >
-              <FontAwesomeIcon icon={faWallet} /> CONNECT WALLET
-            </button>
+            <ConnectButton label="Connect Wallet" />
           </div>
         </nav>
       </div>
 
       <Component {...pageProps} />
     </div>
+    </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 
