@@ -543,6 +543,16 @@ describe('Test suite', function () {
       //getMarket[15] is the "isPrivate" variable of MarketItem struct
       expect(getMarket[15]).to.be.equals(true);
     })
+
+    it('Should approve request', async () => {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
+      const result = await nftMarketV2.createAssetPending(pendingTestData);
+      await nftMarketV2.approveRequest(result.hash);
+      const getMarket = await nftMarketV2.getMarketItem(result.hash);
+      //getMarket[19] is the "approveRequest" variable of MarketItem struct
+      expect(getMarket[19]).to.be.equals(true);
+    })
     
     it('description', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
