@@ -368,30 +368,13 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         return allHashes.length;
     }
 
-    function getNftId() public view returns (uint256) {
-        uint256 id = nftContract.getTokenId();
-        return id;
+    function setMarketItemToPrivate(bytes32 hash) public 
+    {
+        marketItems[hash].isPrivate=true;
     }
-
-    function fetchMyNFTs() public view returns (MarketItem[] memory) {
-        uint256 totalItemCount = allHashes.length;
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (marketItems[allHashes[i]].creatorMetamaskId == msg.sender) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (marketItems[allHashes[i]].creatorMetamaskId == msg.sender) {
-                MarketItem storage currentItem = marketItems[allHashes[i]];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
+    
+    function approveRequest(bytes32 hash) public 
+    {
+        marketItems[hash].requestApproval=true;
     }
 }
