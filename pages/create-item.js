@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import { Web3Storage } from 'web3.storage'
 import { NFTStorage } from 'nft.storage'
 
 
@@ -66,22 +67,71 @@ export default function CreateItem() {
   async function onChange(e) {
     const file = e.target.files[0];
     console.log(file);
-     const metadata = await client.store({
-        name: "Test",
-        description: "Test",
-        image: file
-      });
+    const metadata = await client.store({
+      name: "Test",
+      description: "Test",
+      image: file
+    });
+  }
+  function getFiles() {
+
+    let files = new Array;
+    var inputs = document.querySelectorAll('input[type=file]');
+    inputs.forEach(input => {
+      //deal with each input
+      files.push(input.files[0]);
+      //use file
+    });
+
+    return files;
+  }
+
+  function makeStorageClient() {
+    return new Web3Storage({ token: process.env.NEXT_PUBLIC_WEB3_STORAGE_KEY })
+  }
+
+  async function storeFiles(files) {
+    const client = makeStorageClient()
+    const cid = await client.put(files)
+    console.log('stored files with cid:', cid)
+    return cid
   }
   async function createMarket() {
     setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
     const file = inputRef.current.files[0];
-    console.log("File:");
-    console.log(file);
-    if (!name || !price || !file){
-      console.error("Incomplete inputs"); 
+
+    // const files = new Array(doc, terms, file);
+    if (!name || !price || !file) {
+      console.error("Incomplete inputs");
       return;
-    } 
+    }
+
+    const files = getFiles();
+    console.log(files);
+    const cid = await storeFiles(files);
+    console.log("CID => ", cid);
+
+    const metadata = await client.store({
+      name: name,
+      description: description,
+      price: price,
+      type: type,
+      extraFiles: `https://${cid}.ipfs.w3s.link`,
+      doc: files[0].name,
+      terms: files[1].name,
+      image: file
+    })
+
+    console.log(metadata);
+    const finalCID = metadata.ipnft;
+
+    console.log("Final CID => ", finalCID);
+
+    const url = `https://ipfs.io/ipfs/${finalCID}/metadata.json`;
+    createSale(url);
+    setSubmitLoading(false);
+
     // /* first, upload to IPFS */
     // const data = JSON.stringify({
     //   name,
@@ -92,32 +142,32 @@ export default function CreateItem() {
     //   terms,
     //   origin: pathToAAK,
     // });
-    try {
-      console.log(client);
-      const metadata = await client.store({
-        name: name,
-        description: description,
-        price: price,
-        type: type,
-        doc: doc,
-        terms: terms,
-        image: file
-      });
-      console.log(metadata);
-      const cid = metadata.ipnft;
-      console.log("CID", cid);
-      const url = `https://ipfs.io/ipfs/${cid}/metadata.json`;
-      console.log(url);
-      // var file = new File([data], "metadata.json", {type: "application/json"})
-      // const rootCid = await client.put(file)
-      // const url = `https://${rootCid}.ipfs.w3s.link`;
-      // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-      createSale(url);
-      setSubmitLoading(false);
-      
-    } catch (error) {
-      console.log("Error uploading file: ", error);
-    }
+    // try {
+    //   console.log(client);
+    //   const metadata = await client.store({
+    //     name: name,
+    //     description: description,
+    //     price: price,
+    //     type: type,
+    //     doc: doc,
+    //     terms: terms,
+    //     image: file
+    //   });
+    //   console.log(metadata);
+    //   const cid = metadata.ipnft;
+    //   console.log("CID", cid);
+    //   const url = `https://ipfs.io/ipfs/${cid}/metadata.json`;
+    //   console.log(url);
+    //   // var file = new File([data], "metadata.json", {type: "application/json"})
+    //   // const rootCid = await client.put(file)
+    //   // const url = `https://${rootCid}.ipfs.w3s.link`;
+    //   // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+    //   // createSale(url);
+    //   setSubmitLoading(false);
+
+    // } catch (error) {
+    //   console.log("Error uploading file: ", error);
+    // }
   }
 
   async function createSale(url) {

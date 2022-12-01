@@ -30,13 +30,15 @@ export default function MyAssets() {
       signer
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
-    const data = await marketContract.fetchMyNFTs();
-
+    const data = await marketContract.connect(signer).fetchMyNFTs();
+    console.log("My NFTS Data => ", data);
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
+        console.log("Meta => ", meta);
+
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
@@ -53,6 +55,7 @@ export default function MyAssets() {
         return item;
       })
     );
+
     setNfts(items);
     setLoadingState("loaded");
   }
@@ -84,7 +87,7 @@ export default function MyAssets() {
   return (
     <div className="flex justify-center">
       <div className="p-4">
-      <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
+        <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
           MY ASSETS
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
@@ -115,12 +118,12 @@ export default function MyAssets() {
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
-                <div style={{ overflow: "hidden" }}>
+                {/* <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.doc?.slice(12)}</p>
                 </div>
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.terms?.slice(12)}</p>
-                </div>
+                </div> */}
                 {/* </a> */}
               </div>
 
