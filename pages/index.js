@@ -30,9 +30,9 @@ export default function Home() {
     loadNFTs();
   }, []);
   async function loadNFTs() {
- 
-    const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`; 
-  
+
+    const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`;
+
     const provider = new ethers.providers.StaticJsonRpcProvider(
       infuraId
     );
@@ -47,6 +47,7 @@ export default function Home() {
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
+        console.log(tokenUri);
         const meta = await axios.get(tokenUri);
         console.log("Meta:");
         console.log(meta.data);
@@ -54,6 +55,7 @@ export default function Home() {
         let item = {
           price,
           itemId: i.itemId.toNumber(),
+          tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
           image: meta.data.image,
@@ -62,12 +64,13 @@ export default function Home() {
           type: meta.data.type,
           doc: meta.data.doc,
           terms: meta.data.terms,
+          extraFilesUrl: meta.data.extraFiles,
           origin: meta.data.origin,
         };
         return item;
       })
     );
-    
+
     setNfts(items);
     setLoadingState("loaded");
     console.log("items", items);
@@ -77,7 +80,7 @@ export default function Home() {
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+    const contract = new ethers.Contract(nftaddress, NFT.abi, signer);
 
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
     const transaction = await contract.createMarketSale(
@@ -124,10 +127,10 @@ export default function Home() {
               className="border shadow rounded-xl overflow-scroll bg-black text-white"
               style={{ height: "80vh" }}
             >
-              <img src={"https://ipfs.io/ipfs/"+nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
               <div style={styles.nftContent}>
                 <a
-                  href={`https://www.aaktelescience.com/${nft.origin}`}
+                  // href={`https://www.aaktelescience.com/${nft.origin}`}
                   target="_blank"
                 >
                   <div className="p-4 " style={{ marginTop: "40px" }}>
@@ -149,12 +152,12 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">{nft.doc?.slice(12)}</p>
-                    </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">{nft.terms?.slice(12)}</p>
-                    </div>
+                    <a href={`${nft.extraFilesUrl}/${nft.doc}`} style={{ overflow: "hidden" }} download>
+                      <p className="text-gray-400">{nft.doc}</p>
+                    </a>
+                    <a href={`${nft.extraFilesUrl}/${nft.terms}`} style={{ overflow: "hidden" }} download>
+                      <p className="text-gray-400">{nft.terms}</p>
+                    </a>
                   </div>
                 </a>
                 <div className="p-4 bg-black" style={{ marginTop: "35px" }}>
