@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import fileDownloader from 'js-file-download'
 
 import { nftaddress, nftmarketaddress } from "../config";
 
@@ -29,6 +30,11 @@ export default function Home() {
   useEffect(() => {
     loadNFTs();
   }, []);
+
+  const downloadFile = (fileUrl, fileName) => {
+    fileDownloader(fileUrl, fileName);
+  }
+
   async function loadNFTs() {
 
     const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`;
@@ -152,12 +158,12 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <a href={`${nft.extraFilesUrl}/${nft.doc}`} style={{ overflow: "hidden" }} download>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
                       <p className="text-gray-400">{nft.doc}</p>
-                    </a>
-                    <a href={`${nft.extraFilesUrl}/${nft.terms}`} style={{ overflow: "hidden" }} download>
+                    </div>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
                       <p className="text-gray-400">{nft.terms}</p>
-                    </a>
+                    </div>
                   </div>
                 </a>
                 <div className="p-4 bg-black" style={{ marginTop: "35px" }}>

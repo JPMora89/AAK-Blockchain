@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import fileDownloader from 'js-file-download'
 
 import { nftmarketaddress, nftaddress } from "../config";
 
@@ -15,6 +16,11 @@ export default function MyAssets() {
   useEffect(() => {
     loadNFTs();
   }, []);
+
+  const downloadFile = (fileUrl, fileName) => {
+    fileDownloader(fileUrl, fileName);
+  }
+
   async function loadNFTs() {
     const web3Modal = new Web3Modal({
       network: "mainnet",
@@ -121,12 +127,12 @@ export default function MyAssets() {
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
-                <a href={`${nft.extraFilesUrl}/${nft.doc}`} target={"_blank"} style={{ overflow: "hidden" }} download={nft.doc}>
+                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
                   <p className="text-gray-400">{nft.doc}</p>
-                </a>
-                <a href={`${nft.extraFilesUrl}/${nft.terms}`} target={"_blank"} style={{ overflow: "hidden" }} download={nft.terms}>
+                </div>
+                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
                   <p className="text-gray-400">{nft.terms}</p>
-                </a>
+                </div>
               </div>
 
               <div className="p-4 bg-black">
@@ -138,6 +144,6 @@ export default function MyAssets() {
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
