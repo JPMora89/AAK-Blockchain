@@ -35,12 +35,14 @@ export default function MyAssets() {
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
+        console.log(tokenUri);
         const meta = await axios.get(tokenUri);
+        console.log("Meta:");
+        console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
-        console.log("Meta => ", meta);
-
         let item = {
           price,
+          itemId: i.itemId.toNumber(),
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
@@ -50,6 +52,7 @@ export default function MyAssets() {
           type: meta.data.type,
           doc: meta.data.doc,
           terms: meta.data.terms,
+          extraFilesUrl: meta.data.extraFiles,
           origin: meta.data.origin,
         };
         return item;
@@ -96,7 +99,7 @@ export default function MyAssets() {
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
             >
-              <img src={nft.image} />
+              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
 
               <div className="p-4">
                 {/* <a href={`https://www.aaktelescience.com/profile/${nft.origin}`} target="_blank"> */}
@@ -118,13 +121,12 @@ export default function MyAssets() {
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
-                {/* <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.doc?.slice(12)}</p>
-                </div>
-                <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.terms?.slice(12)}</p>
-                </div> */}
-                {/* </a> */}
+                <a href={`${nft.extraFilesUrl}/${nft.doc}`} target={"_blank"} style={{ overflow: "hidden" }} download={nft.doc}>
+                  <p className="text-gray-400">{nft.doc}</p>
+                </a>
+                <a href={`${nft.extraFilesUrl}/${nft.terms}`} target={"_blank"} style={{ overflow: "hidden" }} download={nft.terms}>
+                  <p className="text-gray-400">{nft.terms}</p>
+                </a>
               </div>
 
               <div className="p-4 bg-black">

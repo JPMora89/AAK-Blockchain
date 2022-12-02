@@ -80,7 +80,7 @@ export default function Home() {
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(nftaddress, NFT.abi, signer);
+    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
 
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
     const transaction = await contract.createMarketSale(
