@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import fileDownloader from 'js-file-download'
 
 import { nftmarketaddress, nftaddress } from "../config";
 
@@ -15,6 +16,11 @@ export default function MyAssets() {
   useEffect(() => {
     loadNFTs();
   }, []);
+
+  const downloadFile = (fileUrl, fileName) => {
+    fileDownloader(fileUrl, fileName);
+  }
+
   async function loadNFTs() {
     const web3Modal = new Web3Modal({
       network: "mainnet",
@@ -35,12 +41,14 @@ export default function MyAssets() {
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
+        console.log(tokenUri);
         const meta = await axios.get(tokenUri);
+        console.log("Meta:");
+        console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
-        console.log("Meta => ", meta);
-
         let item = {
           price,
+          itemId: i.itemId.toNumber(),
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
@@ -50,6 +58,7 @@ export default function MyAssets() {
           type: meta.data.type,
           doc: meta.data.doc,
           terms: meta.data.terms,
+          extraFilesUrl: meta.data.extraFiles,
           origin: meta.data.origin,
         };
         return item;
@@ -96,7 +105,7 @@ export default function MyAssets() {
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
             >
-              <img src={nft.image} />
+              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
 
               <div className="p-4">
                 {/* <a href={`https://www.aaktelescience.com/profile/${nft.origin}`} target="_blank"> */}
@@ -118,13 +127,12 @@ export default function MyAssets() {
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
-                {/* <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.doc?.slice(12)}</p>
+                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
+                  <p className="text-gray-400">{nft.doc}</p>
                 </div>
-                <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.terms?.slice(12)}</p>
-                </div> */}
-                {/* </a> */}
+                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
+                  <p className="text-gray-400">{nft.terms}</p>
+                </div>
               </div>
 
               <div className="p-4 bg-black">
@@ -136,6 +144,6 @@ export default function MyAssets() {
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
