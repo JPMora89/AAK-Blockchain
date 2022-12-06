@@ -7,13 +7,14 @@ const path = require('path')
 
 dotenv.config({ path: path.resolve(__dirname, '.env') })
 
-// const privateKey = process.env.PRIVATE_KEY
-// const infuraId = process.env.INFURA_KEY
+const privateKey = process.env.PRIVATE_KEY
+const infuraId = process.env.INFURA_KEY
+
 // const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
-  // networks: {
+  networks: {
   //   hardhat: {
   //     chainId: 1337,
   //   },
@@ -21,11 +22,11 @@ const config: HardhatUserConfig = {
   //     url: `https://ropsten.infura.io/v3/${infuraId}`,
   //     accounts: [`${privateKey}`],
   //   },
-  //   goerli: {
-  //     url: `https://goerli.infura.io/v3/${infuraId}`,
-  //     accounts: [`${privateKey}`],
-  //   },
-  // },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${infuraId}`,
+      accounts: [`${privateKey}`],
+    },
+  },
   solidity: {
     version: '0.8.17',
     settings: {
@@ -40,6 +41,9 @@ const config: HardhatUserConfig = {
   //     goerli: ETHERSCAN_API_KEY as string,
   //   },
   // },
+  etherscan: {
+    apiKey: "FUPPD5PFIQ9TQQS7IX562K1BECX3D56X8B"
+  },
 }
 
 export default config
