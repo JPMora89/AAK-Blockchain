@@ -1,5 +1,4 @@
 import { nftmarketInstance } from '../../contractInstance/contractInstance'
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const {
@@ -22,6 +21,7 @@ export default async function handler(req, res) {
       asset_price,
       status,
       request_approval,
+      tokenUri,
     } = req.body
     let user_url = ''
 
@@ -44,8 +44,9 @@ export default async function handler(req, res) {
     ) {
       res.status(400).json({ msg: 'Bad request' })
     }
+    let nftId = 0
     let data = [
-      '0',
+      nftId,
       new_env,
       creator_user_id,
       creator_username,
@@ -66,21 +67,18 @@ export default async function handler(req, res) {
       status,
       request_approval,
     ]
-
-    if (new_env) {
-      user_url = `https://web.aak-telescience.com/dashboard/${creator_username}`
-    } else {
-      user_url = `https://aaktelescience.com/profile/${creator_username}`
-    }
-    const response = await await nftmarketInstance.functions.createAsset(
+    //  if (new_env) {
+    //    user_url = `https://web.aak-telescience.com/dashboard/${creator_username}`
+    //  } else {
+    //    user_url = `https://aaktelescience.com/profile/${creator_username}`
+    //  }
+    const response = await nftmarketInstance.functions.createAsset(
       data,
-      'tokenUri',
-      {
-        gasLimit: 15000000,
-      }
+      tokenUri,
+      { gasLimit: 5000000 }
     )
-    const event = (await response.wait()).events[1].args || {}
-    res.status(200).json({ msg: 'Success', assetHash: event['assetHash'] })
+    let eventName = await response.wait()
+    res.status(200).json({ msg: 'Success', event: eventName.events[1].event })
   } else {
     res.status(400).json({ msg: 'Bad request' })
   }
