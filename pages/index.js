@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
+import fileDownloader from 'js-file-download'
+import { signERC2612Permit } from 'eth-permit'
+import { nftaddress, nftmarketaddress, aeroAddress } from "../config";
 
-import { nftaddress, nftmarketaddress } from "../config";
-
+import Aero from "../artifacts/contracts/v2/Aero.sol/Aero.json";
 import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
+import { faAmericanSignLanguageInterpreting } from "@fortawesome/free-solid-svg-icons";
 
 let rpcEndpoint = null;
 
@@ -29,6 +32,11 @@ export default function Home() {
   useEffect(() => {
     loadNFTs();
   }, []);
+
+  const downloadFile = (fileUrl, fileName) => {
+    fileDownloader(fileUrl, fileName);
+  }
+
   async function loadNFTs() {
 
     const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`;
@@ -75,20 +83,93 @@ export default function Home() {
     setLoadingState("loaded");
     console.log("items", items);
   }
+
+  // const getPermitSignature = async (signer, token, spender, value, deadline, signerAddr, tokenAddr) => {
+  //   const [nonce, name, version, chainId] = await Promise.all([
+  //     token.nonces(signerAddr),
+  //     token.name(),
+  //     "1",
+  //     5,
+  //   ])
+
+  //   return ethers.utils.splitSignature(
+  //     await signer._signTypedData(
+  //       {
+  //         name,
+  //         version,
+  //         chainId,
+  //         verifyingContract: tokenAddr,
+  //       },
+  //       {
+  //         Permit: [
+  //           {
+  //             name: "owner",
+  //             type: "address",
+  //           },
+  //           {
+  //             name: "spender",
+  //             type: "address",
+  //           },
+  //           {
+  //             name: "value",
+  //             type: "uint256",
+  //           },
+  //           {
+  //             name: "nonce",
+  //             type: "uint256",
+  //           },
+  //           {
+  //             name: "deadline",
+  //             type: "uint256",
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         owner: signerAddr,
+  //         spender,
+  //         value,
+  //         nonce,
+  //         deadline,
+  //       }
+  //     )
+  //   )
+  // }
+
   async function buyNft(nft) {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(nftaddress, NFT.abi, signer);
 
+    const signerAddress = await signer.getAddress();
+    const aeroContract = new ethers.Contract(aeroAddress, Aero.abi, signer);
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-    const transaction = await contract.createMarketSale(
+    // const deadline = ethers.constants.MaxUint256
+
+    // const { v, r, s } = await getPermitSignature(
+    //   signer,
+    //   aeroContract,
+    //   nft.seller,
+    //   price,
+    //   deadline,
+    //   signerAddress,
+    //   aeroAddress
+    // )
+
+    // await aeroContract.permit(signerAddress, nft.seller, price, deadline, v, r, s);
+
+    const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+    console.log("Signer Address => ", signerAddress);
+    const allowance = await aeroContract.allowance(signerAddress, nftmarketaddress);
+    if (ethers.utils.formatEther(allowance.toString()) < ethers.utils.formatEther(price.toString())) {
+      const tx = await aeroContract.approve(nftmarketaddress, price);
+      await tx.wait();
+    }
+
+    console.log(nft.itemId);
+    const transaction = await marketContract.createMarketSale(
       nftaddress,
-      nft.itemId,
-      {
-        value: price,
-      }
+      nft.itemId
     );
     await transaction.wait();
     loadNFTs();
@@ -152,12 +233,12 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <a href={`${nft.extraFilesUrl}/${nft.doc}`} style={{ overflow: "hidden" }} download>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
                       <p className="text-gray-400">{nft.doc}</p>
-                    </a>
-                    <a href={`${nft.extraFilesUrl}/${nft.terms}`} style={{ overflow: "hidden" }} download>
+                    </div>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
                       <p className="text-gray-400">{nft.terms}</p>
-                    </a>
+                    </div>
                   </div>
                 </a>
                 <div className="p-4 bg-black" style={{ marginTop: "35px" }}>
