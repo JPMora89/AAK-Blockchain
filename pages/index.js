@@ -33,8 +33,11 @@ export default function Home() {
     loadNFTs();
   }, []);
 
-  const downloadFile = (fileUrl, fileName) => {
-    fileDownloader(fileUrl, fileName);
+  const downloadFile = (fileUrl, fileName, privateAsset) => {
+    if (!privateAsset)
+      fileDownloader(fileUrl, fileName);
+    else
+      alert("This is private asset so only owner could download file!");
   }
 
   async function loadNFTs() {
@@ -66,6 +69,7 @@ export default function Home() {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
+          private: i.isPrivateAsset,
           image: meta.data.image,
           name: meta.data.name,
           description: meta.data.description,
@@ -215,28 +219,35 @@ export default function Home() {
                   target="_blank"
                 >
                   <div className="p-4 " style={{ marginTop: "40px" }}>
-                    <p
-                      style={{
-                        height: "40px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "250px",
-                        whiteSpace: "nowrap",
-                      }}
-                      className="text-2xl font-semibold"
-                    >
-                      {nft.name}
-                    </p>
+                    <div className="flex items-center text-center">
+                      <p
+                        style={{
+                          height: "40px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "250px",
+                          whiteSpace: "nowrap",
+                        }}
+                        className="text-2xl font-semibold"
+                      >
+                        {nft.name}
+                      </p>
+                      {nft.private ?
+                        <div className="ml-2">
+                          {`(private)`}
+                        </div> : ''}
+
+                    </div>
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.description}</p>
                     </div>
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
                       <p className="text-gray-400">{nft.doc}</p>
                     </div>
-                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
+                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms, nft.private)}>
                       <p className="text-gray-400">{nft.terms}</p>
                     </div>
                   </div>

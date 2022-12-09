@@ -59,6 +59,7 @@ export default function CreateItem() {
     type: "",
     doc: "",
     terms: "",
+    privateAsset: false,
     origin: pathToAAK,
   });
 
@@ -72,6 +73,10 @@ export default function CreateItem() {
       description: "Test",
       image: file
     });
+  }
+
+  const onChangePrivateAsset = () => {
+    updateFormInput({ ...formInput, privateAsset: !formInput.privateAsset })
   }
   function getFiles() {
 
@@ -129,7 +134,7 @@ export default function CreateItem() {
     console.log("Final CID => ", finalCID);
 
     const url = `https://ipfs.io/ipfs/${finalCID}/metadata.json`;
-    createSale(url);
+    await createSale(url);
     setSubmitLoading(false);
 
     // /* first, upload to IPFS */
@@ -191,7 +196,7 @@ export default function CreateItem() {
     let listingPrice = await contract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    transaction = await contract.createMarketItem(nftaddress, tokenId, price, {
+    transaction = await contract.createMarketItem(nftaddress, tokenId, price, formInput.privateAsset, {
       value: listingPrice,
     });
     await transaction.wait();
@@ -313,9 +318,20 @@ export default function CreateItem() {
                   style={{ width: "20vh" }}
                 />
               )}
+              <div>
+                <input
+                  type="checkbox"
+                  name="PrivateAsset"
+                  className="my-6"
+                  id="private_sale"
+                  checked={formInput.privateAsset}
+                  onChange={onChangePrivateAsset}
+                />
+                <span className="ml-5">Private Asset</span>
+              </div>
               <button
                 onClick={createMarket}
-                className="font-bold mt-4  text-white rounded p-4 shadow-lg"
+                className="font-bold text-white rounded p-4 shadow-lg"
                 style={{ backgroundColor: "#3079AB" }}
               >
                 Create Asset
