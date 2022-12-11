@@ -28,6 +28,7 @@ contract NFTMarket is ReentrancyGuard {
         address seller;
         address owner;
         uint256 price;
+        bool isPrivateAsset;
         bool sold;
     }
 
@@ -41,6 +42,7 @@ contract NFTMarket is ReentrancyGuard {
         address seller,
         address owner,
         uint256 price,
+        bool isPrivateAsset,
         bool sold
     );
 
@@ -55,7 +57,8 @@ contract NFTMarket is ReentrancyGuard {
     function createMarketItem(
         address nftContract,
         uint256 tokenId,
-        uint256 price
+        uint256 price,
+        bool isPrivateAsset
     ) public payable nonReentrant {
         require(price > 0, "Price must be at least 1 wei");
         require(
@@ -73,6 +76,7 @@ contract NFTMarket is ReentrancyGuard {
             msg.sender,
             address(0), // nobody owns the item yet, bacause it's for sale
             price,
+            isPrivateAsset,
             false
         );
 
@@ -85,6 +89,7 @@ contract NFTMarket is ReentrancyGuard {
             msg.sender,
             address(0),
             price,
+            isPrivateAsset,
             false
         );
     }
