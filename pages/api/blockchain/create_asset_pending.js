@@ -1,4 +1,7 @@
-import { nftmarketInstance } from '../../contractInstance/contractInstance'
+import {
+  nftmarketInstance,
+  provider,
+} from '../../contractInstance/contractInstance'
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const {
@@ -66,7 +69,16 @@ export default async function handler(req, res) {
     ]
     let response = await nftmarketInstance.functions.createAssetPending(data)
     let event = await response.wait()
-    res.status(200).json({ msg: 'Success', event: event.events[0].event })
+    const timestamp = (await provider.getBlock(event.blockNumber)).timestamp
+    res.status(200).json({
+      success: true,
+      event: event.events[0].event,
+      created_at: timestamp,
+      asset_url: asset_file,
+      image_url: asset_image,
+      asset_id: null,
+      request_approval: request_approval,
+    })
   } else {
     res.status(400).json({ msg: 'Bad request' })
   }

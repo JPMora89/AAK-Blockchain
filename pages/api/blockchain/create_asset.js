@@ -1,4 +1,7 @@
-import { nftmarketInstance } from '../../contractInstance/contractInstance'
+import {
+  nftmarketInstance,
+  provider,
+} from '../../contractInstance/contractInstance'
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const {
@@ -77,9 +80,20 @@ export default async function handler(req, res) {
       tokenUri,
       { gasLimit: 5000000 }
     )
+
     let eventName = await response.wait()
-    res.status(200).json({ msg: 'Success', event: eventName.events[1].event })
+    const tokenid = eventName.events[1].args.assetId.toNumber()
+    const timestamp = (await provider.getBlock(eventName.blockNumber)).timestamp
+    res.status(200).json({
+      success: true,
+      event: eventName.events[1].event,
+      created_at: timestamp,
+      asset_url: asset_file,
+      image_url: asset_image,
+      asset_id: tokenid,
+      request_approval: request_approval,
+    })
   } else {
-    res.status(400).json({ msg: 'Bad request' })
+    res.status(400).json({ success: false, msg: 'Bad request' })
   }
 }

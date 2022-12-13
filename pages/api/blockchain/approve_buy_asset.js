@@ -110,7 +110,7 @@ export default async function handler(req, res) {
     )
     let sigNft = ethers.utils.splitSignature(resultNFT)
     const { v: vN, r: rN, s: sN } = sigNft
-    await nftmarketInstance.buyAssetApprove(
+    const data = await nftmarketInstance.buyAssetApprove(
       project_owner_metamask_id,
       asset_id,
       v,
@@ -122,7 +122,14 @@ export default async function handler(req, res) {
       rN,
       sN
     )
-    res.status(200).json({ success: true })
+    const timestamp = (await provider.getBlock(data.blockNumber)).timestamp
+
+    res.status(200).json({
+      success: true,
+      bought_at: timestamp,
+      asset_url: asset_file,
+      image_url: asset_image,
+    })
   } else {
     res.status(400).json({ msg: 'Bad request' })
   }

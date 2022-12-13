@@ -73,7 +73,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
     // hash of user id + nftID + asset name + asset type + asset description => Market Item
     mapping(bytes32 => MarketItem) marketItems;
     event Instance(address nft, address aero);
-    event CreateAsset(bytes32 assetHash);
+    event CreateAsset(bytes32 assetHash, uint256 assetId);
     event CreateAssetPending(bytes32 assetPendingHash);
     event MintNFT(uint256 tokenId);
     event AssetForSellCreated(bytes32 hash, uint256 tokenId);
@@ -223,7 +223,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         );
         marketItems[hash] = data;
         allHashes.push(hash);
-        emit CreateAsset(hash);
+        emit CreateAsset(hash,tokenId);
     }
 
     function buyAsset(
@@ -241,7 +241,7 @@ contract NFTMarketV2 is ReentrancyGuard, Ownable {
         aeroContract.transferFrom(owner, address(this), value);
         nftContract.transferFrom(spender, owner, _NFTTokenId);
     }
-
+// buyer will pay erc20 for the nft
     function buyAssetRequest(
         address owner,
         address spender,

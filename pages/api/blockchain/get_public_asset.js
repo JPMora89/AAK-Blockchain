@@ -4,15 +4,15 @@ export default async function handler(req, res) {
     let lowerBoundary = 0
     let allhashesLength =
       (await nftmarketInstance.getAllHashesLength()).toNumber() - 1
+    let { asset_id } = req.query
     let data = await nftmarketInstance.getAllMarketItem(
       lowerBoundary,
       allhashesLength
     )
-
     let tempData = data
       .filter((d) => {
-        // isHidden, isPrivate, status
-        if (!d[14] && !d[15] && d[18] == 1) {
+        //assetId, notPrivate
+        if (d[0].toNumber() == asset_id && !d[15]) {
           return d
         }
       })

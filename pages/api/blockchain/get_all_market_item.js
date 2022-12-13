@@ -6,7 +6,7 @@ export default async function handler(req, res) {
       lowerBoundary,
       upperBoundary
     )
-    res.status(200).json({ msg: 'Success', data })
+    res.status(200).json({ success: true, data })
   } else {
     res.status(400).json({ msg: 'Bad request' })
   }

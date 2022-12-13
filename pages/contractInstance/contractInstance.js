@@ -6,9 +6,9 @@ import { nftmarketaddress, nftaddress, aeroaddress } from '../../configV2'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 
-const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
+export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
 
-const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
+export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
 const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
 const getTheMarketAbi = () => {
   try {
