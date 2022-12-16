@@ -5,10 +5,8 @@ import approveBuyAssetHelper from '../../scripts/approveBuyAsset'
 import {
   nftmarketInstance,
   aeroInstance,
-  nftv2Instance,
   provider,
 } from '../../contractInstance/contractInstance'
-import { nftmarketaddress, nftaddress, aeroaddress } from '../../../configV2'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 
