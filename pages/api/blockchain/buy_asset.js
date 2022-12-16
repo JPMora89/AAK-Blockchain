@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     }
     const deadline = ethers.constants.MaxUint256
     const { v, r, s } = await buyAssetHelper(buyer_metamask_id, amount)
-    const data = await nftmarketInstance.buyAsset(
+    const data = await nftmarketInstance.buyAssetRequest(
       buyer_metamask_id,
       nftmarketaddress,
       amount,
@@ -43,6 +43,7 @@ export default async function handler(req, res) {
       v,
       r,
       s,
+      project_owner_metamask_id,
       asset_id,
       { gasLimit: 5000000 }
     )
