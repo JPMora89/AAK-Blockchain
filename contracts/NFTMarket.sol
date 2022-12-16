@@ -6,19 +6,20 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
+import "./v2/Aero.sol";
 
 contract NFTMarket is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
 
-    IERC20 private aeroToken; // Aero Token For currency on Marketplace
+    Aero private aeroToken; // Aero Token For currency on Marketplace
     address payable owner;
     uint256 listingPrice = 0.001 ether; // price to list, to be discussed later
 
-    constructor(IERC20 _aeroToken) {
+    constructor(address aeroTokenAddress) {
         owner = payable(msg.sender); // this is the address that deploys the contract => AAK
-        aeroToken = _aeroToken;
+        aeroToken = Aero(aeroTokenAddress);
     }
 
     struct MarketItem {
@@ -96,10 +97,14 @@ contract NFTMarket is ReentrancyGuard {
 
     /* Creates the sale of a marketplace item */
     /* Transfers ownership of the item, as well as funds between parties */
-    function createMarketSale(address nftContract, uint256 itemId)
-        public
-        nonReentrant
-    {
+    function createMarketSale(
+        address nftContract,
+        uint256 itemId,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public nonReentrant {
         uint256 price = idToMarketItem[itemId].price;
         uint256 tokenId = idToMarketItem[itemId].tokenId;
         require(
@@ -107,6 +112,8 @@ contract NFTMarket is ReentrancyGuard {
             "Please submit the asking price in order to complete the purchase"
         );
 
+        aeroToken.permit(msg.sender, address(this), price, deadline, v, r, s);
+        aeroToken.increaseAllowance(idToMarketItem[itemId].seller, price);
         aeroToken.transferFrom(
             msg.sender,
             idToMarketItem[itemId].seller,

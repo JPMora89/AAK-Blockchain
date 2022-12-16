@@ -88,56 +88,56 @@ export default function Home() {
     console.log("items", items);
   }
 
-  // const getPermitSignature = async (signer, token, spender, value, deadline, signerAddr, tokenAddr) => {
-  //   const [nonce, name, version, chainId] = await Promise.all([
-  //     token.nonces(signerAddr),
-  //     token.name(),
-  //     "1",
-  //     5,
-  //   ])
+  const getPermitSignature = async (signer, token, spender, value, deadline, signerAddr, tokenAddr) => {
+    const [nonce, name, version, chainId] = await Promise.all([
+      token.nonces(signerAddr),
+      token.name(),
+      "1",
+      5,
+    ])
 
-  //   return ethers.utils.splitSignature(
-  //     await signer._signTypedData(
-  //       {
-  //         name,
-  //         version,
-  //         chainId,
-  //         verifyingContract: tokenAddr,
-  //       },
-  //       {
-  //         Permit: [
-  //           {
-  //             name: "owner",
-  //             type: "address",
-  //           },
-  //           {
-  //             name: "spender",
-  //             type: "address",
-  //           },
-  //           {
-  //             name: "value",
-  //             type: "uint256",
-  //           },
-  //           {
-  //             name: "nonce",
-  //             type: "uint256",
-  //           },
-  //           {
-  //             name: "deadline",
-  //             type: "uint256",
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         owner: signerAddr,
-  //         spender,
-  //         value,
-  //         nonce,
-  //         deadline,
-  //       }
-  //     )
-  //   )
-  // }
+    return ethers.utils.splitSignature(
+      await signer._signTypedData(
+        {
+          name,
+          version,
+          chainId,
+          verifyingContract: tokenAddr,
+        },
+        {
+          Permit: [
+            {
+              name: "owner",
+              type: "address",
+            },
+            {
+              name: "spender",
+              type: "address",
+            },
+            {
+              name: "value",
+              type: "uint256",
+            },
+            {
+              name: "nonce",
+              type: "uint256",
+            },
+            {
+              name: "deadline",
+              type: "uint256",
+            },
+          ],
+        },
+        {
+          owner: signerAddr,
+          spender,
+          value,
+          nonce,
+          deadline,
+        }
+      )
+    )
+  }
 
   async function buyNft(nft) {
     const web3Modal = new Web3Modal();
@@ -148,32 +148,38 @@ export default function Home() {
     const signerAddress = await signer.getAddress();
     const aeroContract = new ethers.Contract(aeroAddress, Aero.abi, signer);
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-    // const deadline = ethers.constants.MaxUint256
-
-    // const { v, r, s } = await getPermitSignature(
-    //   signer,
-    //   aeroContract,
-    //   nft.seller,
-    //   price,
-    //   deadline,
-    //   signerAddress,
-    //   aeroAddress
-    // )
-
-    // await aeroContract.permit(signerAddress, nft.seller, price, deadline, v, r, s);
+    const deadline = ethers.constants.MaxUint256
 
     const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
-    console.log("Signer Address => ", signerAddress);
-    const allowance = await aeroContract.allowance(signerAddress, nftmarketaddress);
-    if (ethers.utils.formatEther(allowance.toString()) < ethers.utils.formatEther(price.toString())) {
-      const tx = await aeroContract.approve(nftmarketaddress, price);
-      await tx.wait();
-    }
+
+    const { v, r, s } = await getPermitSignature(
+      signer,
+      aeroContract,
+      nftmarketaddress,
+      price,
+      deadline,
+      signerAddress,
+      aeroAddress
+    )
+
+    // const tx = await aeroContract.permit(signerAddress, nft.seller, price, deadline, v, r, s);
+    // await tx.wait();
+
+    // console.log("Signer Address => ", signerAddress);
+    // const allowance = await aeroContract.allowance(signerAddress, nftmarketaddress);
+    // if (ethers.utils.formatEther(allowance.toString()) < ethers.utils.formatEther(price.toString())) {
+    //   const tx = await aeroContract.approve(nftmarketaddress, price);
+    //   await tx.wait();
+    // }
 
     console.log(nft.itemId);
     const transaction = await marketContract.createMarketSale(
       nftaddress,
-      nft.itemId
+      nft.itemId,
+      deadline,
+      v,
+      r,
+      s
     );
     await transaction.wait();
     loadNFTs();
