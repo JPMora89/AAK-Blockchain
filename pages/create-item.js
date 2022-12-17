@@ -182,21 +182,21 @@ export default function CreateItem() {
     const signer = provider.getSigner();
 
     /* next, create the item */
-    let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
-    let transaction = await contract.createToken(url);
-    let tx = await transaction.wait();
-    let event = tx.events[0];
-    let value = event.args[2];
-    let tokenId = value.toNumber();
+    // let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
+    // let transaction = await contract.createToken(url);
+    // let tx = await transaction.wait();
+    // let event = tx.events[0];
+    // let value = event.args[2];
+    // let tokenId = value.toNumber();
 
     const price = ethers.utils.parseUnits(formInput.price, "ether");
 
     /* then list the item for sale on the marketplace */
-    contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
     let listingPrice = await contract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    transaction = await contract.createMarketItem(nftaddress, tokenId, price, formInput.privateAsset, {
+    const transaction = await contract.createMarketItem(nftaddress, url, price, formInput.privateAsset, {
       value: listingPrice,
     });
     await transaction.wait();
