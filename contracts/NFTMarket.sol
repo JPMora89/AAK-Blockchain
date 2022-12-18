@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "hardhat/console.sol";
 import "./v2/Aero.sol";
+import "./NFT.sol";
 
 contract NFTMarket is ReentrancyGuard {
     using Counters for Counters.Counter;
@@ -57,7 +58,7 @@ contract NFTMarket is ReentrancyGuard {
     /* Maybe instead of the item itself user1 could just send a link */
     function createMarketItem(
         address nftContract,
-        uint256 tokenId,
+        string memory tokenURI,
         uint256 price,
         bool isPrivateAsset
     ) public payable nonReentrant {
@@ -67,13 +68,15 @@ contract NFTMarket is ReentrancyGuard {
             "Transaction fee must be equal to listing price"
         );
 
+        uint256 _tokenId = INFT(nftContract).createToken(msg.sender, tokenURI);
+
         _itemIds.increment();
         uint256 itemId = _itemIds.current();
 
         idToMarketItem[itemId] = MarketItem(
             itemId,
             nftContract,
-            tokenId,
+            _tokenId,
             msg.sender,
             address(0), // nobody owns the item yet, bacause it's for sale
             price,
@@ -81,12 +84,12 @@ contract NFTMarket is ReentrancyGuard {
             false
         );
 
-        IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+        IERC721(nftContract).transferFrom(msg.sender, address(this), _tokenId);
 
         emit MarketItemCreated(
             itemId,
             nftContract,
-            tokenId,
+            _tokenId,
             msg.sender,
             address(0),
             price,
