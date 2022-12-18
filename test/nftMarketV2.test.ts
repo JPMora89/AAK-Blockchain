@@ -179,7 +179,7 @@ describe('Test suite', function () {
       )
       expect(getMarketItemStatus).to.eq('Pending')
     })
-    
+
     it('Should mint aero token', async function () {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
@@ -322,6 +322,7 @@ describe('Test suite', function () {
       expect(r).to.be.an('String')
       expect(s).to.be.an('String')
     })
+
     it(' should transfer token after permit', async function () {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
@@ -420,7 +421,7 @@ describe('Test suite', function () {
       let sigNft = ethers.utils.splitSignature(resultNFT)
       const { v: vN, r: rN, s: sN } = sigNft
 
-      const data = await nftMarketV2.buyAsset(
+      const data = await nftMarketV2.buyAssetRequest(
         owner.address,
         nftMarketV2.address,
         val,
@@ -537,26 +538,21 @@ describe('Test suite', function () {
     it('Should set market item to Private', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
-      const result = await nftMarketV2.createAssetPending(pendingTestData);
-      await nftMarketV2.setMarketItemToPrivate(result.hash);
-      const getMarket = await nftMarketV2.getMarketItem(result.hash);
+      const result = await nftMarketV2.createAssetPending(pendingTestData)
+      await nftMarketV2.setMarketItemToPrivate(result.hash)
+      const getMarket = await nftMarketV2.getMarketItem(result.hash)
       //getMarket[15] is the "isPrivate" variable of MarketItem struct
-      expect(getMarket[15]).to.be.equals(true);
+      expect(getMarket[15]).to.be.equals(true)
     })
 
     it('Should approve request', async () => {
       const { aero, nftv2, nftMarketV2, owner, otherAccount } =
         await loadFixture(deployOneYearLockFixture)
-      const result = await nftMarketV2.createAssetPending(pendingTestData);
-      await nftMarketV2.approveRequest(result.hash);
-      const getMarket = await nftMarketV2.getMarketItem(result.hash);
+      const result = await nftMarketV2.createAssetPending(pendingTestData)
+      await nftMarketV2.approveRequest(result.hash)
+      const getMarket = await nftMarketV2.getMarketItem(result.hash)
       //getMarket[19] is the "approveRequest" variable of MarketItem struct
-      expect(getMarket[19]).to.be.equals(true);
-    })
-    
-    it('description', async () => {
-      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
-        await loadFixture(deployOneYearLockFixture)
+      expect(getMarket[19]).to.be.equals(true)
     })
 
     it('description', async () => {
@@ -569,7 +565,9 @@ describe('Test suite', function () {
         await loadFixture(deployOneYearLockFixture)
     })
 
-    
-
+    it('description', async () => {
+      const { aero, nftv2, nftMarketV2, owner, otherAccount } =
+        await loadFixture(deployOneYearLockFixture)
+    })
   })
 })
