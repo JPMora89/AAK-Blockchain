@@ -82,17 +82,19 @@ export default async function handler(req, res) {
       { gasLimit: 5000000 }
     )
 
-    let eventName = await response.wait()
+    let txReceipt = await response.wait()
+    const timestamp = (new Date()).getTime()
     let abi = [ "event CreateAsset(bytes32 assetHash, uint256 assetId)" ];
     let iface = new ethers.utils.Interface(abi);
     
-    const timestamp = (await provider.getBlock(eventName.blockNumber)).timestamp
+    // const timestamp = (await provider.getBlock(txReceipt.blockNumber)).timestamp
     res.status(200).json({
       success: true,
+      tx_hash: txReceipt.transactionHash,
       created_at: timestamp,
       asset_url: asset_file,
       image_url: asset_image,
-      asset_id: iface.decodeEventLog("CreateAsset", eventName.events[1].data, eventName.events[1].topics)[0].assetHash,
+      asset_id: iface.decodeEventLog("CreateAsset", txReceipt.events[1].data, txReceipt.events[1].topics)[0].assetHash,
       request_approval: request_approval,
     })
   } else {
