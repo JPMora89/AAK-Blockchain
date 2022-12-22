@@ -69,9 +69,11 @@ export default async function handler(req, res) {
     ]
     let response = await nftmarketInstance.functions.createAssetPending(data)
     let event = await response.wait()
-    const timestamp = (await provider.getBlock(event.blockNumber)).timestamp
+    // const timestamp = (await provider.getBlock(data.blockNumber)).timestamp
+    const timestamp = (new Date()).getTime()
     res.status(200).json({
       success: true,
+      tx_hash: data.transactionHash,
       event: event.events[0].event,
       created_at: timestamp,
       asset_url: asset_file,

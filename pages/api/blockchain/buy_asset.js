@@ -47,10 +47,11 @@ export default async function handler(req, res) {
       asset_id,
       { gasLimit: 5000000 }
     )
-    const timestamp = (await provider.getBlock(data.blockNumber)).timestamp
-
+    // const timestamp = (await provider.getBlock(data.blockNumber)).timestamp
+    const timestamp = (new Date()).getTime()
     res.status(200).json({
       success: true,
+      tx_hash: data.transactionHash,
       bought_at: timestamp,
       asset_url: asset_file,
       image_url: asset_image,
