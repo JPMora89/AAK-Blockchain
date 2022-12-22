@@ -2,6 +2,7 @@ import {
   nftmarketInstance,
   provider,
 } from '../../contractInstance/contractInstance'
+import { ethers } from "ethers";
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const {
@@ -82,15 +83,16 @@ export default async function handler(req, res) {
     )
 
     let eventName = await response.wait()
-    const tokenid = eventName.events[1].args.assetId.toNumber()
+    let abi = [ "event CreateAsset(bytes32 assetHash, uint256 assetId)" ];
+    let iface = new ethers.utils.Interface(abi);
+    
     const timestamp = (await provider.getBlock(eventName.blockNumber)).timestamp
     res.status(200).json({
       success: true,
-      event: eventName.events[1].event,
       created_at: timestamp,
       asset_url: asset_file,
       image_url: asset_image,
-      asset_id: tokenid,
+      asset_id: iface.decodeEventLog("CreateAsset", eventName.events[1].data, eventName.events[1].topics)[0].assetHash,
       request_approval: request_approval,
     })
   } else {

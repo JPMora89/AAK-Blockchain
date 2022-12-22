@@ -1,17 +1,20 @@
 import fs from 'fs'
 import path from 'path'
 import { ethers } from 'ethers'
-import dotenv from 'dotenv'
+// import dotenv from 'dotenv'
 import { nftmarketaddress, nftaddress, aeroaddress } from '../../configV2'
+require("dotenv").config({ path: path.resolve(__dirname, '.env.local') })
+// dotenv.config()
 
-dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 
 export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
 
 export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
 const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
+
 const getTheMarketAbi = () => {
   try {
+    console.log("Trying...");
     const dir = path.resolve(
       './',
       './artifacts/contracts/v2/NFTMarketV2.sol/NFTMarketV2.json'
@@ -52,6 +55,7 @@ const nftv2ContractAbi = () => {
     console.log(`e`, e)
   }
 }
+
 export const nftmarketInstance = new ethers.Contract(
   nftmarketaddress,
   getTheMarketAbi(),
