@@ -5,7 +5,7 @@ import approvePendingAssetHelper from '../../scripts/approvePendingAsset'
 import {
   nftmarketInstance,
   provider,
-} from '../../contractInstance/contractInstance'
+} from '../../../helpers/contractInstance/contractInstance'
 import { nftmarketaddress } from '../../../configV2'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })

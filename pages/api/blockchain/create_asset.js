@@ -1,7 +1,7 @@
 import {
   nftmarketInstance,
   provider,
-} from '../../contractInstance/contractInstance'
+} from '../../../helpers/contractInstance/contractInstance'
 import { ethers } from "ethers";
 export default async function handler(req, res) {
   if (req.method === 'POST') {

@@ -1,4 +1,4 @@
-import { nftmarketInstance } from '../../contractInstance/contractInstance'
+import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstance'
 import { nftaddress, aeroaddress } from '../../../configV2'
 export default async function handler(req, res) {
   if (req.method === 'GET') {
