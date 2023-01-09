@@ -1,7 +1,7 @@
 import path from 'path'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
-import approvePendingAssetHelper from '../../scripts/approvePendingAsset'
+import approvePendingAssetHelper from '../../../helpers/scripts/approvePendingAsset'
 import {
   nftmarketInstance,
   provider,

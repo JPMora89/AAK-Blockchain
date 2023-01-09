@@ -1,7 +1,7 @@
 import path from 'path'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
-import approveBuyAssetHelper from '../../scripts/approveBuyAsset'
+import approveBuyAssetHelper from '../../../helpers/scripts/approveBuyAsset'
 import {
   nftmarketInstance,
   aeroInstance,
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       { gasLimit: 5000000 }
     )
     // const timestamp = (await provider.getBlock(data.blockNumber)).timestamp
-    const timestamp = (new Date()).getTime()
+    const timestamp = new Date().getTime()
     res.status(200).json({
       success: true,
       tx_hash: data.transactionHash,
