@@ -34,8 +34,14 @@ export default function Home() {
   }, []);
 
   const downloadFile = (fileUrl, fileName, privateAsset) => {
-    if (!privateAsset)
-      fileDownloader(fileUrl, fileName);
+    console.log("File Url => ", fileUrl);
+    if (!privateAsset) {
+      axios.get(fileUrl, {
+        responseType: 'blob',
+      }).then(res => {
+        fileDownloader(res.data, fileName);
+      });
+    }
     else
       alert("This is private asset so only owner could download file!");
   }
