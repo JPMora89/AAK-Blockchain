@@ -4,6 +4,7 @@ import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import fileDownloader from 'js-file-download'
+import Image from 'next/image'
 import { signERC2612Permit } from 'eth-permit'
 import { nftaddress, nftmarketaddress, aeroAddress } from "../config";
 
@@ -256,11 +257,23 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
-                      <p className="text-gray-400">{nft.doc}</p>
+                    <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
+                      <p className="text-gray-400 mr-2">Document</p>
+                      <Image
+                        src={"/download.svg"}
+                        alt="Picture of the author"
+                        width={20}
+                        height={20}
+                      />
                     </div>
-                    <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms, nft.private)}>
-                      <p className="text-gray-400">{nft.terms}</p>
+                    <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms, nft.private)}>
+                      <p className="text-gray-400 mr-2">Terms and Conditions</p>
+                      <Image
+                        src={"/download.svg"}
+                        alt="Picture of the author"
+                        width={20}
+                        height={20}
+                      />
                     </div>
                   </div>
                 </a>

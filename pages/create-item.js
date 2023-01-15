@@ -102,15 +102,15 @@ export default function CreateItem() {
     return cid
   }
   async function createMarket() {
+    // const files = new Array(doc, terms, file);
+    if (!name || !price || !file) {
+      alert("Incomplete inputs!")
+      return;
+    }
+
     setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
     const file = inputRef.current.files[0];
-
-    // const files = new Array(doc, terms, file);
-    if (!name || !price || !file) {
-      console.error("Incomplete inputs");
-      return;
-    }
 
     const files = getFiles();
     console.log(files);
