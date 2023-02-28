@@ -103,10 +103,6 @@ export default function CreateItem() {
   }
   async function createMarket() {
     // const files = new Array(doc, terms, file);
-    if (!name || !price || !file) {
-      alert("Incomplete inputs!")
-      return;
-    }
 
     setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
@@ -117,6 +113,11 @@ export default function CreateItem() {
     const cid = await storeFiles(files);
     console.log("CID => ", cid);
 
+    if (!name || !price || !file) {
+      alert("Incomplete inputs!")
+      return;
+    }
+    
     const metadata = await client.store({
       name: name,
       description: description,
