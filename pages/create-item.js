@@ -102,21 +102,22 @@ export default function CreateItem() {
     return cid
   }
   async function createMarket() {
+    // const files = new Array(doc, terms, file);
+
     setSubmitLoading(true);
     const { name, description, price, type, doc, terms } = formInput;
     const file = inputRef.current.files[0];
-
-    // const files = new Array(doc, terms, file);
-    if (!name || !price || !file) {
-      console.error("Incomplete inputs");
-      return;
-    }
 
     const files = getFiles();
     console.log(files);
     const cid = await storeFiles(files);
     console.log("CID => ", cid);
 
+    if (!name || !price || !file) {
+      alert("Incomplete inputs!")
+      return;
+    }
+    
     const metadata = await client.store({
       name: name,
       description: description,
@@ -192,11 +193,19 @@ export default function CreateItem() {
     const price = ethers.utils.parseUnits(formInput.price, "ether");
 
     /* then list the item for sale on the marketplace */
-    const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
-    let listingPrice = await contract.getListingPrice();
+    const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+    const nftContract = new ethers.Contract(nftaddress, NFT.abi, signer);
+    const addr = await signer.getAddress();
+    const isApprovedForAll = await nftContract.isApprovedForAll(addr, nftmarketaddress);
+    console.log("isApprovedForAll => ", isApprovedForAll);
+    if (!isApprovedForAll) {
+      const tx = await nftContract.setApprovalForAll(nftmarketaddress, true);
+      await tx.wait();
+    }
+    let listingPrice = await marketContract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    const transaction = await contract.createMarketItem(nftaddress, url, price, formInput.privateAsset, {
+    const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset, {
       value: listingPrice,
     });
     await transaction.wait();
