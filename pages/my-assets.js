@@ -4,6 +4,7 @@ import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import fileDownloader from 'js-file-download'
+import Image from 'next/image'
 
 import { nftmarketaddress, nftaddress } from "../config";
 
@@ -18,7 +19,12 @@ export default function MyAssets() {
   }, []);
 
   const downloadFile = (fileUrl, fileName) => {
-    fileDownloader(fileUrl, fileName);
+    console.log("File Url => ", fileUrl);
+    axios.get(fileUrl, {
+      responseType: 'blob',
+    }).then(res => {
+      fileDownloader(res.data, fileName);
+    });
   }
 
   async function loadNFTs() {
@@ -127,11 +133,23 @@ export default function MyAssets() {
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
-                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
-                  <p className="text-gray-400">{nft.doc}</p>
+                <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
+                  <p className="text-gray-400 mr-2">{nft.doc}</p>
+                  <Image
+                    src={"/download.svg"}
+                    alt="Picture of the author"
+                    width={20}
+                    height={20}
+                  />
                 </div>
-                <div className="cursor-pointer" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
-                  <p className="text-gray-400">{nft.terms}</p>
+                <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
+                  <p className="text-gray-400 mr-2">{nft.terms}</p>
+                  <Image
+                    src={"/download.svg"}
+                    alt="Picture of the author"
+                    width={20}
+                    height={20}
+                  />
                 </div>
               </div>
 
