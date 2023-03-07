@@ -207,22 +207,31 @@ export default function Home() {
     );
   }
 
-  if (loadingState === "not-loaded") return setprogressBar();
+  if (loadingState === "not-loaded") {
+    return setprogressBar();
+  }
 
-  if (loadingState === "loaded" && !nfts.length)
+  if (loadingState === "loaded" && !nfts.length) {
     return (
       <h1 className="px-20 py-10 text-3xl" style={{ color: "#3079AB" }}>
         No items in marketplace
       </h1>
     );
+  }
+
   return (
     <div className="flex justify-center">
       <div className="p-4" style={{ maxWidth: "1600px" }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-          {nfts.map((nft, i) => (
+          {nfts.filter((nft) => {
+            console.log(nft);
+            if (nft.private == false) {
+              return nft;
+            }
+          }).map((nft, i) => (
             <div
               key={i}
-              className="border shadow rounded-xl overflow-scroll bg-black text-white"
+              className="border shadow rounded-xl bg-black text-white"
               style={{ height: "80vh" }}
             >
               <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />

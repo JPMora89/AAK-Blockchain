@@ -85,7 +85,7 @@ export default function CreatorDashboard() {
       </h1>
     );
   return (
-    <div>
+    <div className="flex justify-center">
       <div className="p-4">
         <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
           ASSETS CREATED
@@ -96,7 +96,7 @@ export default function CreatorDashboard() {
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
             >
-              <img src={nft.image} />
+              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
               <div className="p-4">
                 <p
                   style={{
