@@ -8,3 +8,9 @@
 body {
     font-family: 'Poppins', sans-serif;
 } */
+
+.menu-item {
+    color: #3079AB;
+    margin: auto;
+    padding: 12px;
+}

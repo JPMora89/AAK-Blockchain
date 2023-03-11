@@ -10,6 +10,7 @@ import Web3Modal from "web3modal";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faLandmark,
   faPlusCircle,
   faUserCircle,
   faWallet,
@@ -48,54 +49,55 @@ function Marketplace({ Component, pageProps }) {
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     provider.getSigner();
-    
+
   }
 
   return (
-    // <div style={{backgroundColor: "#EDF5FF", height: "100vh"}}>
     <WagmiConfig client={wagmiClient}>
-    <RainbowKitProvider chains={chains}>
-   <div style={{ height: "100vh" }}>
-      <Head>
-        <title>AAK Ventures</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      <div style={styles.parent}>
-        <div>
-          <Link href="/">
-            <img src="AAKLogo.svg" style={{ cursor: "pointer" }} />
-          </Link>
-        </div>
-        <nav>
-          <div className="flex">
-            {/* <Link href="/create-item">
-              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
-                <FontAwesomeIcon icon={faPlusCircle} /> CREATE
-              </a>
-            </Link> */}
-            <Link href="/my-assets">
-              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
-                <FontAwesomeIcon icon={faUserCircle} /> MY ASSETS
-              </a>
-            </Link>
-            {/* <Link href="/items-created">
-              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
-                Assets Created
-              </a>
-            </Link> */}
-            {/* <Link href="/aak-swap">
-              <a className="mr-8 font-bold" style={{ color: "#3079AB" }}>
-                Aero-Swap
-              </a>
-            </Link> */}
-            <ConnectButton label="Connect Wallet" />
+      <RainbowKitProvider chains={chains}>
+        <div style={{ height: "100vh" }}>
+          <Head>
+            <title>AAK Ventures</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+          </Head>
+          <div style={styles.parent}>
+            <div>
+              <Link href="/">
+                <img src="AAKLogo.svg" style={{ cursor: "pointer" }} />
+              </Link>
+            </div>
+            <nav>
+              <div className="flex">
+                <Link href="/create-item">
+                  <a className="mr-8 font-bold menu-item">
+                    <FontAwesomeIcon icon={faPlusCircle} /> CREATE
+                  </a>
+                </Link>
+                <Link href="/my-assets">
+                  <a className="mr-8 font-bold menu-item">
+                    <FontAwesomeIcon icon={faUserCircle} /> MY ASSETS
+                  </a>
+                </Link>
+                <Link href="/items-created">
+                  <a className="mr-8 font-bold menu-item">
+                    <FontAwesomeIcon icon={faWallet} /> ASSETS CREATED
+                  </a>
+                </Link>
+                <Link href="/aak-swap">
+                  <a className="mr-8 font-bold menu-item">
+                    <FontAwesomeIcon icon={faLandmark} /> AERO SWAP
+                  </a>
+                </Link>
+                <div className="menu-item">
+                  <ConnectButton label="Connect Wallet" />
+                </div>
+              </div>
+            </nav>
           </div>
-        </nav>
-      </div>
 
-      <Component {...pageProps} />
-    </div>
-    </RainbowKitProvider>
+          <Component {...pageProps} />
+        </div>
+      </RainbowKitProvider>
     </WagmiConfig>
   );
 }
