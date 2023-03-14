@@ -12,5 +12,6 @@ typechain-types
 #next
 .next
 build
+_static
 
 .env.local
