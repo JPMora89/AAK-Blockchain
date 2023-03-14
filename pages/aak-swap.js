@@ -31,14 +31,14 @@ export default function AeroSwap() {
     handleTotalAmount();
   },[tokenAmount])
 
+  //getting information from contract
   const getInitialInfo=async()=>{
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
     const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
-    console.log("contract" , contractAddress)
-   
+    
     aeroSwapContract.tokenPrice()
        .then(price => {
         setTokenPrice(ethers.utils.formatEther(price))
@@ -49,7 +49,8 @@ export default function AeroSwap() {
     .then(feePercent =>{ 
       setFeePercent(feePercent.toString())})
   }
-  console.log("token price", feePercent)
+  
+  //handle token buying 
   const handleBuyToken = async()=> {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -98,12 +99,24 @@ export default function AeroSwap() {
     
   };
 
-  const handleTotalAmount=(e)=>{
+  //runs when the token Amount changes
+  const handleTotalAmount=async(e)=>{
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const gasPrice = await provider.getGasPrice();
+    const gas = ethers.utils.formatEther( gasPrice.toNumber())
+    console.log(typeof(gas))
     const totalfee = (tokenAmount * feePercent)/100;
       const tokenAmountinNum = Number(tokenAmount)
       const tokenPriceinNum = Number(tokenPrice)
-      const totalAmount = (tokenAmountinNum + totalfee)*tokenPriceinNum
-      setTotalAmount(totalAmount)
+      const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)+Number(gas)).toFixed(6)
+      if(tokenAmount == ''||tokenAmount == undefined){
+        setTotalAmount(0.00000)
+      }else{
+        setTotalAmount(totalAmount)
+      }
+     
   }
 
   return (
@@ -121,7 +134,7 @@ export default function AeroSwap() {
           <p className="rounded mt-4 font-bold">Tokens Sold: {tokensSold}</p>
           <p className="rounded mt-4 font-bold">Fee Percent: {feePercent}%</p>
           <input value={tokenAmount} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setTokenAmount(e.target.value)} />
-          <p>Your total value: {totalAmount} + gas Price</p>
+          <p>Your total value: {totalAmount}</p>
           <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB",marginTop: "2%"}} onClick={handleBuyToken}>Buy Tokens</button>
           <div className="w-1/2 flex flex-col pb-12" style={{marginTop: "2%"}}>
             {successMessage && (
