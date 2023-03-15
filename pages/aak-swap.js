@@ -69,25 +69,20 @@ export default function AeroSwap() {
       const tokenAmountinNum = Number(tokenAmount)
       const tokenPriceinNum = Number(tokenPrice)
       const totalAmount = (tokenAmountinNum + totalfee)*tokenPriceinNum
-      
       const ttlAmt =ethers.utils.parseEther(String(totalAmount))
       console.log("totalAmoun",totalAmount)
       const tokAmt = ethers.utils.parseEther(String(tokenAmount))
       console.log("tokAmt",tokAmt)
       try{
         const gasPrice = await provider.getGasPrice();
-        console.log("gas Price", gasPrice)
-        console.log();
-        //const gasLimit = await aeroSwapcontract.estimateGas.buyTokens(tokenAmount, { value: amountInBigNUm });
-       // console.log("gasLimit",gasLimit)
+         
+       const tx = await aeroSwapcontract.buyTokens(tokAmt,{
+        value: ttlAmt ,
+        gasPrice: gasPrice,
+        gasLimit: 5000000
+      });
         
-        const tx = await aeroSwapcontract.buyTokens(tokAmt,{
-          value: ttlAmt ,
-          gasPrice: gasPrice,
-          gasLimit: 5000000
-        });
-        
-        // await tx.wait();
+        await tx.wait();
         setSuccessMessage('Transaction successful!');
       }
       catch(error){
@@ -101,12 +96,13 @@ export default function AeroSwap() {
 
   //runs when the token Amount changes
   const handleTotalAmount=async(e)=>{
+
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
+
     const gasPrice = await provider.getGasPrice();
     const gas = ethers.utils.formatEther( gasPrice.toNumber())
-    console.log(typeof(gas))
     const totalfee = (tokenAmount * feePercent)/100;
       const tokenAmountinNum = Number(tokenAmount)
       const tokenPriceinNum = Number(tokenPrice)
