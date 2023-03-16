@@ -4,12 +4,17 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Web3Storage } from 'web3.storage'
-import { NFTStorage } from 'nft.storage'
+import { Web3Storage } from 'web3.storage';
+import { NFTStorage } from 'nft.storage';
 
+import { decryptString, encryptString } from '../helpers/EncryptionDecryption/cryptoEncryptionDecryption.js';
+
+
+//const fs = require('fs');
 
 // Construct with token and endpoint
 const client = new NFTStorage({ token: `${process.env.NEXT_PUBLIC_NFT_STORAGE_KEY}` });
+
 
 import { nftaddress, nftmarketaddress } from "../config";
 
@@ -23,6 +28,7 @@ export default function CreateItem() {
   // 👇️ create a ref for the file input
   const inputRef = useRef(null);
 
+
   const styles = {
     customFileUpload: {
       display: "inline-block",
@@ -34,13 +40,55 @@ export default function CreateItem() {
     },
   };
 
-  useEffect(() => {
+   useEffect(() => {
     let originPath = router.asPath;
-    console.log("ogiginPath", originPath);
+    console.log("originPath", originPath);
+
 
     // if (originPath.includes("=")) {
     //   originPath = originPath.split("=")[2];
     // }
+// here make the encryption for the url coming to marketplace
+
+if(originPath.includes("?")){
+  console.log("found params");
+    const profileName=originPath.split("=")[1].split("&")[0]
+    const profileUsername=originPath.split("=")[2].split("&")[0]
+    const projectName=originPath.split("=")[3].split("&")[0]
+    const projectUrl=originPath.split("=")[4].split("&")[0]
+
+    //now decrypt
+    
+    let profileNameEncrypt=null;
+    try {
+      async function fetchData() {
+        profileNameEncrypt = await encryptString(profileName);      
+        const profileUsernameEncrypt=  await encryptString(profileUsername);
+        const projectNameEncrypt=await  encryptString(projectName);
+        const projectUrlEncrypt=await  encryptString(projectUrl);
+
+        console.log("encryptedString:::::&&&", profileNameEncrypt);
+
+        const profileNameDecrypt = await decryptString(profileNameEncrypt);
+        const profileUsernameDecrypt=  await decryptString(profileUsernameEncrypt);
+        const projectNameDecrypt=await  decryptString(projectNameEncrypt);
+        const projectUrlDecrypt=await  decryptString(projectUrlEncrypt);
+
+        console.log("profileNameDEcrypt:::::&&&", profileNameDecrypt);
+        console.log("profileUsernameDecrypt:::::&&&", profileUsernameDecrypt);
+        console.log("projectNameDecrypt:::::&&&", projectNameDecrypt);
+        console.log("projectUrlDecrypt:::::&&&", projectUrlDecrypt);
+     
+     }
+     fetchData()
+    .catch(console.error);
+     
+    } catch (err) {
+      console.log('could not return');
+    }
+    
+}
+
 
     if (originPath.includes("=") & !originPath.includes("&")) {
       originPath = `profile/${originPath.split("=")[1]}`;
@@ -49,6 +97,8 @@ export default function CreateItem() {
     }
 
     setPathToAAK(originPath);
+    
+
   }, []);
 
   const [fileUrl, setFileUrl] = useState(null);

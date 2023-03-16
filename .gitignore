@@ -14,3 +14,5 @@ typechain-types
 build
 
 .env.local
+public.pem
+privateKey.pem
