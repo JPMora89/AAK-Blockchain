@@ -266,7 +266,7 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
+                    {/* <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
                       <p className="text-gray-400 mr-2">Document</p>
                       <Image
                         src={"/download.svg"}
@@ -283,7 +283,7 @@ export default function Home() {
                         width={20}
                         height={20}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </a>
                 <div className="p-4 bg-black" style={{ marginTop: "35px" }}>

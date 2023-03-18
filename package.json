@@ -51,7 +51,9 @@
         "nft.storage": "^7.0.0",
         "react": "17.0.2",
         "react-dom": "17.0.2",
+        "react-modal": "^3.16.1",
         "react-spinners": "^0.11.0",
+        "react-tag-input": "^6.8.1",
         "wagmi": "^0.8.6",
         "web3.storage": "^4.4.0",
         "web3modal": "^1.9.3"

@@ -31,6 +31,7 @@ export default function CreateItem() {
       backgroundColor: "#3079AB",
       // maxWidth: "84px",
       color: "#fff",
+      maxWidth: "160px", textAlign: "center", margin: "12px"
     },
   };
 
@@ -117,7 +118,7 @@ export default function CreateItem() {
       alert("Incomplete inputs!")
       return;
     }
-    
+
     const metadata = await client.store({
       name: name,
       description: description,
@@ -241,13 +242,19 @@ export default function CreateItem() {
               >
                 Create a New Asset
               </h1>
+              <label>
+                Asset Name
+              </label>
               <input
-                placeholder="Asset Name"
                 className="mt-4 border rounded p-4"
                 onChange={(e) =>
                   updateFormInput({ ...formInput, name: e.target.value })
                 }
               />
+
+              <label>
+                Asset Type
+              </label>
               <select
                 name="type"
                 id="type"
@@ -263,17 +270,9 @@ export default function CreateItem() {
                 <option value="License Agreement">Licence Agreement</option>
               </select>
 
+              <label>Asset Description</label>
               <input
-                type="file"
-                name="Contract"
-                className="my-4"
-                onChange={(e) =>
-                  updateFormInput({ ...formInput, doc: e.target.value })
-                }
-              />
-
-              <input
-                placeholder="Asset Terms and Conditions"
+                placeholder="Asset Description"
                 className="mt-2 border rounded p-4"
                 onChange={(e) =>
                   updateFormInput({ ...formInput, description: e.target.value })
@@ -287,16 +286,9 @@ export default function CreateItem() {
                   updateFormInput({ ...formInput, origin: pathToAAK })
                 }
               /> */}
-
-              <input
-                type="file"
-                name="Terms"
-                className="my-6"
-                onChange={(e) =>
-                  updateFormInput({ ...formInput, terms: e.target.value })
-                }
-              />
-
+              <label>
+                Asset Price in Aero
+              </label>
               <input
                 placeholder="Asset Price in Aero"
                 className="mt-2 border rounded p-4"
@@ -304,21 +296,55 @@ export default function CreateItem() {
                   updateFormInput({ ...formInput, price: e.target.value })
                 }
               />
-              <label
-                style={{ ...styles.customFileUpload, maxWidth: "140px" }}
-                className="rounded mt-4 font-bold"
-              >
-                <input
-                  type="file"
-                  name="Asset"
-                  className="my-6"
-                  id="image"
-                  ref={inputRef}
-                  onChange={onChange}
-                  style={{ display: "none" }}
-                />
-                Choose Image
-              </label>
+
+              <div className="row">
+                <label
+                  style={{ ...styles.customFileUpload }}
+                  className="rounded mt-4 font-bold"
+                >
+                  <input
+                    type="file"
+                    name="Contract"
+                    className="my-4"
+                    onChange={(e) =>
+                      updateFormInput({ ...formInput, doc: e.target.value })
+                    }
+                    style={{ display: "none" }}
+                  />
+                  Choose Contract
+                </label>
+
+                <label
+                  style={{ ...styles.customFileUpload }}
+                  className="rounded mt-4 font-bold"
+                >
+                  <input
+                    type="file"
+                    name="Terms"
+                    className="my-6"
+                    onChange={(e) =>
+                      updateFormInput({ ...formInput, terms: e.target.value })
+                    }
+                    style={{ display: "none" }}
+                  />
+                  Choose Terms
+                </label>
+                <label
+                  style={{ ...styles.customFileUpload }}
+                  className="rounded mt-4 font-bold"
+                >
+                  <input
+                    type="file"
+                    name="Asset"
+                    className="my-6"
+                    id="image"
+                    ref={inputRef}
+                    onChange={onChange}
+                    style={{ display: "none" }}
+                  />
+                  Choose Image
+                </label>
+              </div>
               {fileUrl && (
                 <img
                   className="rounded mt-4"

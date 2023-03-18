@@ -66,6 +66,7 @@ export default function MyAssets() {
           terms: meta.data.terms,
           extraFilesUrl: meta.data.extraFiles,
           origin: meta.data.origin,
+          private: i.isPrivateAsset,
         };
         return item;
       })
@@ -127,6 +128,10 @@ export default function MyAssets() {
                 >
                   {nft.name}
                 </p>
+                {nft.private ?
+                  <div className="ml-2">
+                    {`(private)`}
+                  </div> : ''}
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.description}</p>
                 </div>
