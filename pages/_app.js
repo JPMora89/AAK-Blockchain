@@ -63,7 +63,7 @@ function Marketplace({ Component, pageProps }) {
           <div style={styles.parent}>
             <div>
               <Link href="/">
-                <img src="AAKLogo.svg" style={{ cursor: "pointer" }} />
+                <img src="/AAKLogo.svg" style={{ cursor: "pointer" }} />
               </Link>
             </div>
             <nav>
