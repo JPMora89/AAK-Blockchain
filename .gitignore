@@ -1,5 +1,6 @@
 .secret
 .env
+artifacts
 node_modules
 coverage.json
 typechain
