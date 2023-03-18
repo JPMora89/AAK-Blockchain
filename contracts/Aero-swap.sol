@@ -22,8 +22,9 @@ contract AeroSwap {
     }
 
     function buyTokens(uint256 _numberOfTokens) public payable {
+        uint256 pricePerToken = tokenPrice/(10**18);
         uint256 totalFee = (_numberOfTokens * feePercent)/100;
-        uint256 totalAmount = (_numberOfTokens-totalFee)* tokenPrice;
+        uint256 totalAmount = (_numberOfTokens-totalFee)* pricePerToken;
 
         require(msg.value >= totalAmount, "Invalid amount of ether sent");
         require(token.balanceOf(address(this)) >= _numberOfTokens, "Insufficient tokens in contract");
@@ -37,6 +38,5 @@ contract AeroSwap {
         require(msg.sender == admin, "Only admin can end sale");
         require(token.transfer(admin, token.balanceOf(address(this))), "Token transfer failed");
         payable(admin).transfer(address(this).balance);
-        selfdestruct(payable(admin));
     }
 }

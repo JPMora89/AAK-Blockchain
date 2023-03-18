@@ -11,7 +11,7 @@ const web3 = new Web3(Web3.givenProvider);
 export default function AeroSwap() {
   const [tokenPrice, setTokenPrice] = useState(null);
   const [tokensSold, setTokensSold] = useState(null);
-  const [tokenAmount, setTokenAmount] = useState('');
+  const [numberOfTokens, setNumberOfTokens] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successColor, setSuccessColor] = useState('green');
@@ -20,8 +20,7 @@ export default function AeroSwap() {
   const [totalAmount, setTotalAmount]=useState();
   const contractAddress = aeroSwapAddress;
   const [feePercent, setFeePercent] = useState();
-  
-
+  const [tokenRecived, setTokenReceived] = useState()
    
   useEffect(() => {
     getInitialInfo();
@@ -29,7 +28,7 @@ export default function AeroSwap() {
 
   useEffect(()=>{
     handleTotalAmount();
-  },[tokenAmount])
+  },[numberOfTokens])
 
   //getting information from contract
   const getInitialInfo=async()=>{
@@ -41,13 +40,17 @@ export default function AeroSwap() {
     
     aeroSwapContract.tokenPrice()
        .then(price => {
-        setTokenPrice(ethers.utils.formatEther(price))
+        const val= ethers.utils.formatEther(price)
+        setTokenPrice(Number(val))
       });
+      
     aeroSwapContract.tokensSold()
-       .then(sold => setTokensSold(parseInt(sold, 16)));
+       .then(sold => {
+        setTokensSold(ethers.utils.formatEther(sold))});
     aeroSwapContract.feePercent()
     .then(feePercent =>{ 
-      setFeePercent(feePercent.toString())})
+      setFeePercent(Number(feePercent.toString()))})
+      
   }
   
   //handle token buying 
@@ -62,28 +65,29 @@ export default function AeroSwap() {
 
     const tokenAddress = aeroAddress;
     const token = new ethers.Contract(tokenAddress, TokenAbi.abi, signer);
-    if(tokenAmount == '' || tokenAmount == undefined){
+    if(numberOfTokens == '' || numberOfTokens == undefined){
       setErrorMessage('Please enter the number of Aero Tokens.');
     }else{
-      const totalfee = (tokenAmount * feePercent)/100;
-      const tokenAmountinNum = Number(tokenAmount)
-      const tokenPriceinNum = Number(tokenPrice)
-      const totalAmount = (tokenAmountinNum + totalfee)*tokenPriceinNum
-      const ttlAmt =ethers.utils.parseEther(String(totalAmount))
-      console.log("totalAmoun",totalAmount)
-      const tokAmt = ethers.utils.parseEther(String(tokenAmount))
-      console.log("tokAmt",tokAmt)
+      const numberOfTokensinNum = Number(numberOfTokens)
+      const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
+      console.log(numberOftokensinWei.toString())
+       const totalfee = (numberOfTokensinNum * feePercent)/100;
+       //const totalAmount = numberOfTokens*tokenPrice*(1+ (feePercent /100))
+      const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
+      const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
+      console.log(totalAmountinWei.toString())
+
       try{
         const gasPrice = await provider.getGasPrice();
          
-       const tx = await aeroSwapcontract.buyTokens(tokAmt,{
-        value: ttlAmt ,
-        gasPrice: gasPrice,
+       const tx = await aeroSwapcontract.buyTokens(numberOftokensinWei,{
+        value: totalAmountinWei ,
         gasLimit: 5000000
       });
         
-        await tx.wait();
+        await tx.wait(); 
         setSuccessMessage('Transaction successful!');
+        //window.location.reload(false);
       }
       catch(error){
            console.log(error);
@@ -102,22 +106,36 @@ export default function AeroSwap() {
     const provider = new ethers.providers.Web3Provider(connection);
 
     const gasPrice = await provider.getGasPrice();
-    const gas = ethers.utils.formatEther( gasPrice.toNumber())
-    const totalfee = (tokenAmount * feePercent)/100;
-      const tokenAmountinNum = Number(tokenAmount)
+    const gas = ethers.utils.formatEther( gasPrice)
+    const totalfee = (numberOfTokens * feePercent)/100;
+    const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + (gas * 5000000);
+    
+    //Gas Price * Gas Limit + (Number of Tokens * Token Price)
+      const tokenAmountinNum = Number(numberOfTokens)
       const tokenPriceinNum = Number(tokenPrice)
-      const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)+Number(gas)).toFixed(6)
-      if(tokenAmount == ''||tokenAmount == undefined){
+      const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
+    //number of tokens
+      const tokensReceive = numberOfTokens - totalfee;
+      setTokenReceived(tokensReceive)
+      if(numberOfTokens == ''||numberOfTokens == undefined){
+        setTokenReceived(0)
+      }else{
+        setTokenReceived(tokensReceive)
+      }
+
+      const totalAmount = (((tokenAmountinNum - totalfee)*tokenPriceinNum)).toFixed(6)
+      //console.log("gasLimit",(ethers.utils.formatEther(gasPrice)))
+      if(numberOfTokens == ''||numberOfTokens == undefined){
         setTotalAmount(0.00000)
       }else{
-        setTotalAmount(totalAmount)
+        setTotalAmount(ttlcost.toFixed(6))
       }
      
   }
 
   return (
     <div>
-      <div className="flex justify-center">
+      <div className="flex justify-center" style={{marginBottom:'-6%'}}>
         <div className="w-1/2 flex flex-col pb-12">
           <h1
             className="py-10 text-3xl flex "
@@ -125,12 +143,14 @@ export default function AeroSwap() {
           >
             Buy Aero Tokens
           </h1>
-          <p className="rounded mt-4 font-bold">1ETH = 100 AER</p>
-          <p className="rounded mt-4 font-bold">Token Price: ${tokenPrice}</p>
-          <p className="rounded mt-4 font-bold">Tokens Sold: {tokensSold}</p>
-          <p className="rounded mt-4 font-bold">Fee Percent: {feePercent}%</p>
-          <input value={tokenAmount} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setTokenAmount(e.target.value)} />
-          <p>Your total value: {totalAmount}</p>
+          <div className="flex justify-center">
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 100 AER</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens you receive: {tokenRecived} AER</p>
+          </div>
+          <input value={numberOfTokens} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setNumberOfTokens(e.target.value)} />
+          <p>Your total value: {totalAmount} approx(*May vary based on the network traffic)</p>
           <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB",marginTop: "2%"}} onClick={handleBuyToken}>Buy Tokens</button>
           <div className="w-1/2 flex flex-col pb-12" style={{marginTop: "2%"}}>
             {successMessage && (
@@ -140,7 +160,21 @@ export default function AeroSwap() {
               <p style={{ color: errorColor }}>{errorMessage}</p>
             )}
         </div>
+
         </div>
+      </div>
+      <div className="mt-2 border rounded p-4" style={{border:'solid black 3px',margin:'1% 25%', width:'50%',padding:'3%',}}>
+          <h2><b>Know the process:</b></h2><br/>
+          <p>
+            * Please ensure your wallet is connected before making a purchase.<br/>
+            * Token value and our 3% fee are clearly stated on the page.<br/>
+            * How Fee works :<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We charge a 3% fee on token purchases, which means if you buy 1<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;token, 3% of it will be taken as a fee, resulting in you receiving only 0.97 tokens. Please <br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;review the 'tokens you receive' field before completing your purchase.<br/>
+            * Please ensure you have enough ETH in your wallet to complete the transaction; otherwise, it may fail.<br/>
+            * Note that the transaction price may vary based on the gas price and network traffic.<br/>
+          </p>
       </div>
     </div>
   );
