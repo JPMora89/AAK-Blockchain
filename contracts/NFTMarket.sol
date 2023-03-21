@@ -32,6 +32,16 @@ contract NFTMarket is ReentrancyGuard {
         uint256 price;
         bool isPrivateAsset;
         bool sold;
+        UrlParameters urlParameters;
+    }
+
+    struct UrlParameters {
+        string profileName;
+        string profileUserName;
+        string projectName;
+        string projectSlug;
+        string environment; // 1- react django,0- elgg
+        string userType; //researcher-0, invester-1, institution stuff -2, institution-3, service provider-4,, events-5, projects-6,team-7
     }
 
     /* this mapping will allow us to get values associated with an item ID */
@@ -45,7 +55,8 @@ contract NFTMarket is ReentrancyGuard {
         address owner,
         uint256 price,
         bool isPrivateAsset,
-        bool sold
+        bool sold,
+        UrlParameters urlParameters
     );
 
     /* Returns the listing price of the contract */
@@ -60,7 +71,8 @@ contract NFTMarket is ReentrancyGuard {
         address nftContract,
         string memory tokenURI,
         uint256 price,
-        bool isPrivateAsset
+        bool isPrivateAsset,
+        UrlParameters memory urlParameters
     ) public payable nonReentrant {
         require(price > 0, "Price must be at least 1 wei");
         require(
@@ -81,7 +93,8 @@ contract NFTMarket is ReentrancyGuard {
             address(0), // nobody owns the item yet, bacause it's for sale
             price,
             isPrivateAsset,
-            false
+            false,
+            urlParameters
         );
 
         IERC721(nftContract).transferFrom(msg.sender, address(this), _tokenId);
@@ -94,7 +107,8 @@ contract NFTMarket is ReentrancyGuard {
             address(0),
             price,
             isPrivateAsset,
-            false
+            false,
+            urlParameters
         );
     }
 

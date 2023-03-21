@@ -10,8 +10,6 @@ import { NFTStorage } from 'nft.storage';
 import { decryptString, encryptString } from '../helpers/EncryptionDecryption/cryptoEncryptionDecryption.js';
 
 
-//const fs = require('fs');
-
 // Construct with token and endpoint
 const client = new NFTStorage({ token: `${process.env.NEXT_PUBLIC_NFT_STORAGE_KEY}` });
 
@@ -21,13 +19,33 @@ import { nftaddress, nftmarketaddress } from "../config";
 import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 
+
+var profileNameDecrypt = null;
+var profileUsernameDecrypt = null;
+var projectNameDecrypt = null;
+var projectUrlDecrypt = null;
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
+
 export default function CreateItem() {
   const [submitloading, setSubmitLoading] = useState(false);
   const router = useRouter();
   const [pathToAAK, setPathToAAK] = useState("");
   // 👇️ create a ref for the file input
   const inputRef = useRef(null);
-
 
   const styles = {
     customFileUpload: {
@@ -40,64 +58,143 @@ export default function CreateItem() {
     },
   };
 
-   useEffect(() => {
+  useEffect(() => {
     let originPath = router.asPath;
     console.log("originPath", originPath);
-
+    //const  query  = useRouter();
 
     // if (originPath.includes("=")) {
     //   originPath = originPath.split("=")[2];
     // }
-// here make the encryption for the url coming to marketplace
+    // here make the encryption for the url coming to marketplace
 
-if(originPath.includes("?")){
-  console.log("found params");
-    const profileName=originPath.split("=")[1].split("&")[0]
-    const profileUsername=originPath.split("=")[2].split("&")[0]
-    const projectName=originPath.split("=")[3].split("&")[0]
-    const projectUrl=originPath.split("=")[4].split("&")[0]
+    let paramString = originPath.split('?')[1];
+    let queryString = new URLSearchParams(paramString);
 
-    //now decrypt
-    
-    let profileNameEncrypt=null;
-    try {
-      async function fetchData() {
-        profileNameEncrypt = await encryptString(profileName);      
-        const profileUsernameEncrypt=  await encryptString(profileUsername);
-        const projectNameEncrypt=await  encryptString(projectName);
-        const projectUrlEncrypt=await  encryptString(projectUrl);
+    var environment;
+    var environmentValue;
+    var profileName;
+    var profileUsername;
+    var profileUserType;
+    var profileUserTypeValue;
+    var projectName;
+    var projectUrl;
+    for (let pair of queryString.entries()) {
+      console.log("Key is: " + pair[0]);
+      console.log("Value is: " + pair[1]);
+      if (originPath.includes("?") && originPath.includes("new_env")) {
+        switch (pair[0]) {
+          case "new_env": environment = pair[1];
+            if (environment == "0") {
+              environmentValue = elggAccountUrl;
+            }
+            else if (environment == "1") {
+              environmentValue = djangoAccountUrl;
+            }
 
-        console.log("encryptedString:::::&&&", profileNameEncrypt);
+            break;
+          case "profile_name": profileName = pair[1];
+            try {
+              async function fetchData() {
+                const profileNameEncrypt = await encryptString(profileName);
+                console.log("encryptedString:::::&&&", profileNameEncrypt);
+                profileNameDecrypt = await decryptString(profileNameEncrypt);
+                console.log("profileNameDEcrypt:::::&&&", profileNameDecrypt);
 
-        const profileNameDecrypt = await decryptString(profileNameEncrypt);
-        const profileUsernameDecrypt=  await decryptString(profileUsernameEncrypt);
-        const projectNameDecrypt=await  decryptString(projectNameEncrypt);
-        const projectUrlDecrypt=await  decryptString(projectUrlEncrypt);
+              }
+              fetchData()
+                .catch(console.error);
+            } catch (err) {
+              console.log('could not return');
+            }
+            break;
+          case "profile_username": profileUsername = pair[1];
+            try {
+              async function fetchData() {
+                const profileUsernameEncrypt = await encryptString(profileUsername);
+                console.log("encryptedString:::::&&&", profileUsernameEncrypt);
+                profileUsernameDecrypt = await decryptString(profileUsernameEncrypt);
+                console.log("profileUsernameDEcrypt:::::&&&", profileUsernameDecrypt);
 
-        console.log("profileNameDEcrypt:::::&&&", profileNameDecrypt);
-        console.log("profileUsernameDecrypt:::::&&&", profileUsernameDecrypt);
-        console.log("projectNameDecrypt:::::&&&", projectNameDecrypt);
-        console.log("projectUrlDecrypt:::::&&&", projectUrlDecrypt);
-     
-     }
-     fetchData()
-    .catch(console.error);
-     
-    } catch (err) {
-      console.log('could not return');
+              }
+              fetchData()
+                .catch(console.error);
+            } catch (err) {
+              console.log('could not return');
+            }
+            break;
+          case "profile_user_type": profileUserType = pair[1];
+            switch (profileUserType) {
+              case "0": profileUserTypeValue = user;
+                break;
+              case "1": profileUserTypeValue = researchUser;
+                break;
+              case "2": profileUserTypeValue = investorUser;
+                break;
+              case "3": profileUserTypeValue = institutionStaffUser;
+                break;
+              case "4": profileUserTypeValue = serviceProviderUser;
+                break;
+              case "5": profileUserTypeValue = institution;
+                break;
+              case "6": profileUserTypeValue = researchInstitution;
+                break;
+              case "7": profileUserTypeValue = privateInstitution;
+                break;
+              case "8": profileUserTypeValue = publicInstitution;
+                break;
+              case "9": profileUserTypeValue = otherInstitution;
+                break;
+              case "10": profileUserTypeValue = team;
+                break;
+
+            }
+            break;
+          case "project_name": projectName = pair[1];
+            try {
+              async function fetchData() {
+                const projectNameEncrypt = await encryptString(projectName);
+                console.log("encryptedString:::::&&&", projectNameEncrypt);
+                projectNameDecrypt = await decryptString(projectNameEncrypt);
+                console.log("projectNameDEcrypt:::::&&&", projectNameDecrypt);
+
+              }
+              fetchData()
+                .catch(console.error);
+            } catch (err) {
+              console.log('could not return');
+            }
+            break;
+          case "project_url": projectUrl = pair[1];
+            try {
+              async function fetchData() {
+                const projectUrlEncrypt = await encryptString(projectUrl);
+                console.log("encryptedString:::::&&&", projectUrlEncrypt);
+                projectUrlDecrypt = await decryptString(projectUrlEncrypt);
+                console.log("projectUrlDEcrypt:::::&&&", projectUrlDecrypt);
+              }
+              fetchData()
+                .catch(console.error);
+            } catch (err) {
+              console.log('could not return');
+            }
+
+            break;
+        }
+
+
+      }
     }
-    
-}
 
 
-    if (originPath.includes("=") & !originPath.includes("&")) {
+   /* if (originPath.includes("=") & !originPath.includes("&")) {
       originPath = `profile/${originPath.split("=")[1]}`;
     } else if (originPath.includes("=") && originPath.includes("&")) {
       originPath = `create_projects/profile/${originPath.split("=")[2]}`;
     }
 
-    setPathToAAK(originPath);
-    
+    //setPathToAAK(originPath);
+    */
 
   }, []);
 
@@ -167,7 +264,7 @@ if(originPath.includes("?")){
       alert("Incomplete inputs!")
       return;
     }
-    
+
     const metadata = await client.store({
       name: name,
       description: description,
@@ -255,7 +352,18 @@ if(originPath.includes("?")){
     let listingPrice = await marketContract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset, {
+    let urlParameters = {
+      profileName: profileNameDecrypt,
+      profileUserName: profileUsernameDecrypt,
+      projectName: projectNameDecrypt,
+      projectSlug: projectUrlDecrypt,
+      environment: environmentValue,
+      userType: profileUserTypeValue,
+    };
+    //profileNameDecrypt,profileUsernameDecrypt,projectNameDecrypt,projectUrlDecrypt, 1, 0
+    console.log(urlParameters.profileName)
+    const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset,
+      urlParameters, {
       value: listingPrice,
     });
     await transaction.wait();
