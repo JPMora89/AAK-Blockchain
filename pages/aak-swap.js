@@ -21,6 +21,11 @@ export default function AeroSwap() {
   const contractAddress = aeroSwapAddress;
   const [feePercent, setFeePercent] = useState();
   const [tokenRecived, setTokenReceived] = useState()
+  const [numberOfTokensToSell,setNumberOfTokensToSell]=useState()
+  const [successMessageSell, setSuccessMessageSell] = useState(null);
+  const [errorMessageSell, setErrorMessageSell] = useState(null);
+  const [successColorSell, setSuccessColorSell] = useState('green');
+  const [errorColorSell, setErrorColorSell] = useState('red');
    
   useEffect(() => {
     getInitialInfo();
@@ -41,6 +46,7 @@ export default function AeroSwap() {
     aeroSwapContract.tokenPrice()
        .then(price => {
         const val= ethers.utils.formatEther(price)
+        console.log(price)
         setTokenPrice(Number(val))
       });
       
@@ -52,7 +58,7 @@ export default function AeroSwap() {
       setFeePercent(Number(feePercent.toString()))})
       
   }
-  
+  console.log("tokenPrice",tokenPrice)
   //handle token buying 
   const handleBuyToken = async()=> {
     const web3Modal = new Web3Modal();
@@ -98,6 +104,26 @@ export default function AeroSwap() {
     
   };
 
+
+  //Sell tokens and get eth in return
+
+  const handleSellToken=async()=>{
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    await window.ethereum.enable();
+
+    const aeroSwapcontract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
+    const tokenAddress = aeroAddress;
+    if(numberOfTokensToSell == ''|| numberOfTokensToSell == undefined){
+      setErrorMessageSell('Please enter the number of Aero Tokens.');
+    }else{
+      console.log("Yes")
+    }
+
+  }
+  console.log("numberOf token to sell",numberOfTokensToSell)
   //runs when the token Amount changes
   const handleTotalAmount=async(e)=>{
 
@@ -136,7 +162,7 @@ export default function AeroSwap() {
   return (
     <div>
       <div className="flex justify-center" style={{marginBottom:'-6%'}}>
-        <div className="w-1/2 flex flex-col pb-12">
+        <div className="w-1/2 flex flex-col pb-12" style={{width: '30%'}}>
           <h1
             className="py-10 text-3xl flex "
             style={{ color: "#3079AB", alignSelf: "flex-start" }}
@@ -144,7 +170,7 @@ export default function AeroSwap() {
             Buy Aero Tokens
           </h1>
           <div className="flex justify-center">
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 100 AER</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens you receive: {tokenRecived} AER</p>
@@ -162,8 +188,36 @@ export default function AeroSwap() {
         </div>
 
         </div>
+
+        <div className="w-1/2 flex flex-col pb-12" style={{width: '30%',marginLeft:'2%'}}>
+          <h1
+            className="py-10 text-3xl flex "
+            style={{ color: "#3079AB", alignSelf: "flex-start" }}
+          >
+           Sell Aero Tokens
+          </h1>
+          <div className="flex justify-center">
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>ETH you receive: {numberOfTokensToSell * tokenPrice} AER</p>
+          </div>
+          <input value={numberOfTokensToSell} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setNumberOfTokensToSell(e.target.value)} />
+          <p>Your total value: {totalAmount} approx(*May vary based on the network traffic)</p>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB",marginTop: "2%"}} onClick={handleSellToken}>Sell Tokens</button>
+          <div className="w-1/2 flex flex-col pb-12" style={{marginTop: "2%"}}>
+            {successMessageSell && (
+              <p style={{ color: successColorSell }}>{successMessageSell}</p>
+            )}
+            {errorMessageSell && (
+              <p style={{ color: errorColorSell }}>{errorMessageSell}</p>
+            )}
+            </div>
+        </div>
+
+      
       </div>
-      <div className="mt-2 border rounded p-4" style={{border:'solid black 3px',margin:'1% 25%', width:'50%',padding:'3%',}}>
+      <div className="mt-2 border rounded p-4" style={{border:'solid black 3px',margin:'1% 15%', width:'70%',padding:'3%',}}>
           <h2><b>Know the process:</b></h2><br/>
           <p>
             * Please ensure your wallet is connected before making a purchase.<br/>

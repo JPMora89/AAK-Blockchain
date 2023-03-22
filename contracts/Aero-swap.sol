@@ -20,7 +20,8 @@ contract AeroSwap {
         feePercent = _feePercent;
         feeAddress = _feeAddress;
     }
-
+    
+//To let users buy Aero Tokens for ETH
     function buyTokens(uint256 _numberOfTokens) public payable {
         uint256 pricePerToken = tokenPrice/(10**18);
         uint256 totalFee = (_numberOfTokens * feePercent)/100;
@@ -34,9 +35,27 @@ contract AeroSwap {
         emit Sell(msg.sender, _numberOfTokens-totalFee);
     }
 
+//To let users sell their Aero Tokens for ETH
+   function sellTokens(uint256 _numberOfTokens) public payable{
+        uint256 pricePerToken = tokenPrice/(10**18);
+        uint256 totalFee = (_numberOfTokens * feePercent)/100;
+        uint256 totalAmount = (_numberOfTokens - totalFee) * pricePerToken;
+        
+        require(token.balanceOf(msg.sender) >= _numberOfTokens, "Insufficient tokens balance");
+        require(address(this).balance >= totalAmount, "Contract has insufficient ether balance");
+        require(token.transferFrom(msg.sender, address(this), _numberOfTokens), "Token transfer failed");
+        require(token.transfer(feeAddress, totalFee), "Token transfer failed");
+        payable(msg.sender).transfer(totalAmount);
+
+        tokensSold += _numberOfTokens - totalFee;
+        emit Sell(msg.sender, _numberOfTokens - totalFee);
+    }
+
+//Can be accessed only by the admin. Used to end the sale .
     function endSale() public {
         require(msg.sender == admin, "Only admin can end sale");
         require(token.transfer(admin, token.balanceOf(address(this))), "Token transfer failed");
         payable(admin).transfer(address(this).balance);
     }
+
 }

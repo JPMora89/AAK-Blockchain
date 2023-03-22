@@ -3,7 +3,7 @@ import { aeroAddress , privateKey} from "../config";
 
 async function main() {
   
-  const tokenPrice = ethers.utils.parseEther("0.0168");
+  const tokenPrice = ethers.utils.parseEther("1.68");
   const feeAmount = 3;
   
   const add = new ethers.Wallet(privateKey)
