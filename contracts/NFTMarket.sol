@@ -30,6 +30,7 @@ contract NFTMarket is ReentrancyGuard {
         address seller;
         address owner;
         address[] sharedAddrs;
+        uint8[] sharedItemPermissions;
         uint256 price;
         bool isPrivateAsset;
         bool sold;
@@ -81,6 +82,7 @@ contract NFTMarket is ReentrancyGuard {
             msg.sender,
             address(0), // nobody owns the item yet, bacause it's for sale
             new address[](0),
+            new uint8[](0),
             price,
             isPrivateAsset,
             false
@@ -216,11 +218,16 @@ contract NFTMarket is ReentrancyGuard {
     }
 
     /* set shared addresses to MarketItem */
-    function setSharedAddress(uint256 id, address[] memory addrs) public {
+    function setSharedAddress(
+        uint256 id,
+        address[] memory addrs,
+        uint8[] memory permissions
+    ) public {
         require(
             idToMarketItem[id].isPrivateAsset,
             "Market item is not private"
         );
         idToMarketItem[id].sharedAddrs = addrs;
+        idToMarketItem[id].sharedItemPermissions = permissions;
     }
 }
