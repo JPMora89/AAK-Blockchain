@@ -230,4 +230,22 @@ contract NFTMarket is ReentrancyGuard {
         idToMarketItem[id].sharedAddrs = addrs;
         idToMarketItem[id].sharedItemPermissions = permissions;
     }
+
+    /* set permission of a address to MarketItem */
+    function setPermissionSharedAddress(
+        uint256 id,
+        address addr,
+        uint8 permission
+    ) public {
+        require(
+            idToMarketItem[id].isPrivateAsset,
+            "Market item is not private"
+        );
+
+        for (uint256 i = 0; i < idToMarketItem[id].sharedAddrs.length; i++) {
+            if (idToMarketItem[id].sharedAddrs[i] == addr) {
+                idToMarketItem[id].sharedItemPermissions[i] = permission;
+            }
+        }
+    }
 }

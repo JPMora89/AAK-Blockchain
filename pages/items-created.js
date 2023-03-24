@@ -112,13 +112,20 @@ export default function CreatorDashboard() {
       signer
     );
 
-    const sharedAddrs = [];
-    for (var i = 0; i < tags.length; i++) {
-      sharedAddrs.push(tags[i]);
-    }
-    console.log(sharedAddrs);
-    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs);
+    const sharedAddrs = [], permissions = [];
+    console.log(tags);
 
+    for (var i = 0; i < tags.length; i++) {
+      sharedAddrs.push(tags[i].address);
+      permissions.push(tags[i].permission);
+    }
+
+
+    console.log(sharedAddrs);
+    console.log(permissions);
+
+    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
+    await transaction.wait();
     alert("Sharing succes to " + sharedAddrs);
   }
 
