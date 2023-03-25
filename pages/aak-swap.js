@@ -26,6 +26,8 @@ export default function AeroSwap() {
   const [errorMessageSell, setErrorMessageSell] = useState(null);
   const [successColorSell, setSuccessColorSell] = useState('green');
   const [errorColorSell, setErrorColorSell] = useState('red');
+  const [totalEthreceived, setTotalEthReceived] = useState();
+  const[sellGasPrice,setSellGasPrice] = useState();
    
   useEffect(() => {
     getInitialInfo();
@@ -34,6 +36,10 @@ export default function AeroSwap() {
   useEffect(()=>{
     handleTotalAmount();
   },[numberOfTokens])
+
+  useEffect(()=>{
+    handleTotalEth();
+  },[numberOfTokensToSell])
 
   //getting information from contract
   const getInitialInfo=async()=>{
@@ -46,7 +52,6 @@ export default function AeroSwap() {
     aeroSwapContract.tokenPrice()
        .then(price => {
         const val= ethers.utils.formatEther(price)
-        console.log(price)
         setTokenPrice(Number(val))
       });
       
@@ -58,8 +63,8 @@ export default function AeroSwap() {
       setFeePercent(Number(feePercent.toString()))})
       
   }
-  console.log("tokenPrice",tokenPrice)
-  //handle token buying 
+  
+  //Function lets user buy AER token 
   const handleBuyToken = async()=> {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -76,13 +81,10 @@ export default function AeroSwap() {
     }else{
       const numberOfTokensinNum = Number(numberOfTokens)
       const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
-      console.log(numberOftokensinWei.toString())
        const totalfee = (numberOfTokensinNum * feePercent)/100;
-       //const totalAmount = numberOfTokens*tokenPrice*(1+ (feePercent /100))
       const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
       const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
-      console.log(totalAmountinWei.toString())
-
+    
       try{
         const gasPrice = await provider.getGasPrice();
          
@@ -115,15 +117,54 @@ export default function AeroSwap() {
     await window.ethereum.enable();
 
     const aeroSwapcontract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
-    const tokenAddress = aeroAddress;
+    
     if(numberOfTokensToSell == ''|| numberOfTokensToSell == undefined){
       setErrorMessageSell('Please enter the number of Aero Tokens.');
     }else{
-      console.log("Yes")
+      
+          await approve() 
+      
+           const numberOfTokensinNum = Number(numberOfTokensToSell)
+           const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokensToSell))
+           const totalfee = (numberOfTokensinNum * feePercent)/100;
+           const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
+           const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
+          try{
+            const tx = await aeroSwapcontract.sellTokens(numberOftokensinWei,{
+              gasLimit: 5000000
+            });
+            await tx.wait(); 
+            setSuccessMessageSell('Transaction successful!');
+          }
+        catch(error){
+          console.log(error)
+          setErrorMessageSell('Transaction failed. Please try again.');
+        }
+      
     }
 
   }
-  console.log("numberOf token to sell",numberOfTokensToSell)
+  
+  //Approve token
+  async function approve() {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+    const tokenAddress = aeroAddress;
+    const tokenContract = new ethers.Contract(tokenAddress, TokenAbi.abi, signer);
+    try {
+      const approveTx = await tokenContract.approve(
+        aeroSwapAddress,
+        ethers.constants.MaxUint256
+      );
+      await approveTx.wait();
+      return true
+    } catch (error) {
+      console.log(error);
+      return false
+    } 
+  }
   //runs when the token Amount changes
   const handleTotalAmount=async(e)=>{
 
@@ -136,11 +177,9 @@ export default function AeroSwap() {
     const totalfee = (numberOfTokens * feePercent)/100;
     const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + (gas * 5000000);
     
-    //Gas Price * Gas Limit + (Number of Tokens * Token Price)
       const tokenAmountinNum = Number(numberOfTokens)
       const tokenPriceinNum = Number(tokenPrice)
       const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
-    //number of tokens
       const tokensReceive = numberOfTokens - totalfee;
       setTokenReceived(tokensReceive)
       if(numberOfTokens == ''||numberOfTokens == undefined){
@@ -150,8 +189,7 @@ export default function AeroSwap() {
       }
 
       const totalAmount = (((tokenAmountinNum - totalfee)*tokenPriceinNum)).toFixed(6)
-      //console.log("gasLimit",(ethers.utils.formatEther(gasPrice)))
-      if(numberOfTokens == ''||numberOfTokens == undefined){
+      if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
         setTotalAmount(0.00000)
       }else{
         setTotalAmount(ttlcost.toFixed(6))
@@ -159,8 +197,29 @@ export default function AeroSwap() {
      
   }
 
+//Handle to tal ETH amount the user receives onSelling
+const handleTotalEth=async()=>{
+  const web3Modal = new Web3Modal();
+  const connection = await web3Modal.connect();
+  const provider = new ethers.providers.Web3Provider(connection);
+
+  const gasPrice = await provider.getGasPrice();
+  const gas = Number(ethers.utils.formatEther( gasPrice))
+  const totalfee = (numberOfTokensToSell * feePercent)/100;
+  const total = (numberOfTokensToSell - totalfee)* tokenPrice;
+  if(numberOfTokensToSell==''||numberOfTokensToSell==undefined||numberOfTokensToSell==0){
+    setTotalEthReceived(0)
+  }else{
+    setTotalEthReceived(total.toFixed(4))
+  }
+}
   return (
     <div>
+      <div className="flex justify-center" style={{border:'solid black 2px', width:'50%',margin:'2% 25%',borderRadius:'3em'}}>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 100 AER</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
+        </div>
       <div className="flex justify-center" style={{marginBottom:'-6%'}}>
         <div className="w-1/2 flex flex-col pb-12" style={{width: '30%'}}>
           <h1
@@ -170,9 +229,9 @@ export default function AeroSwap() {
             Buy Aero Tokens
           </h1>
           <div className="flex justify-center">
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
+            {/* <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p> */}
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens you receive: {tokenRecived} AER</p>
           </div>
           <input value={numberOfTokens} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setNumberOfTokens(e.target.value)} />
@@ -197,13 +256,13 @@ export default function AeroSwap() {
            Sell Aero Tokens
           </h1>
           <div className="flex justify-center">
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
+            {/* <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>ETH you receive: {numberOfTokensToSell * tokenPrice} AER</p>
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p> */}
+            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>ETH you receive: {totalEthreceived} ETH</p>
           </div>
           <input value={numberOfTokensToSell} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e)=>setNumberOfTokensToSell(e.target.value)} />
-          <p>Your total value: {totalAmount} approx(*May vary based on the network traffic)</p>
+          <p>You will be paying the gas price and fee based on the network traffic.</p>
           <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB",marginTop: "2%"}} onClick={handleSellToken}>Sell Tokens</button>
           <div className="w-1/2 flex flex-col pb-12" style={{marginTop: "2%"}}>
             {successMessageSell && (
@@ -214,8 +273,6 @@ export default function AeroSwap() {
             )}
             </div>
         </div>
-
-      
       </div>
       <div className="mt-2 border rounded p-4" style={{border:'solid black 3px',margin:'1% 15%', width:'70%',padding:'3%',}}>
           <h2><b>Know the process:</b></h2><br/>
@@ -228,8 +285,13 @@ export default function AeroSwap() {
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;review the 'tokens you receive' field before completing your purchase.<br/>
             * Please ensure you have enough ETH in your wallet to complete the transaction; otherwise, it may fail.<br/>
             * Note that the transaction price may vary based on the gas price and network traffic.<br/>
+            * Add Aero Token to your wallet using the token address: 0xA7C6009E88F6054c0FDBec12e80cB2Fdb0a8d0d3.<br/>
+            * While selling tokens 3% of the eth will be deducted as fee, which means for 1 AER token it is 1.68 ETH<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;after deduction of 3% you will receive 1.6296 ETH. Please review the 'Eth you receive' field.
           </p>
+
       </div>
+
     </div>
   );
 }

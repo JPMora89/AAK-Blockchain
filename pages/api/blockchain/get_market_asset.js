@@ -1,6 +1,7 @@
 import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstance'
 export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const { asset_id } = req.query
     let lowerBoundary = 0
     let allhashesLength =
       (await nftmarketInstance.getAllHashesLength()).toNumber() - 1
@@ -11,8 +12,8 @@ export default async function handler(req, res) {
 
     let tempData = data
       .filter((d) => {
-        // isHidden, isPrivate, status
-        if (!d[14] && !d[15] && d[18] == 1) {
+        // check asset id
+        if (asset_id == d[0]) {
           return d
         }
       })

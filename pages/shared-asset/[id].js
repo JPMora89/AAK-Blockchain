@@ -5,13 +5,15 @@ import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import fileDownloader from 'js-file-download'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { nftmarketaddress, nftaddress } from "../../config";
 
-import { nftmarketaddress, nftaddress } from "../config";
+import Market from "../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
+import NFT from "../../artifacts/contracts/NFT.sol/NFT.json";
 
-import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
-import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
-
-export default function MyAssets() {
+export default function SharedAsset() {
+  const router = useRouter();
+  const id = router.query.id;
   const [nfts, setNfts] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function MyAssets() {
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
+    const address = await signer.getAddress();
 
     const marketContract = new ethers.Contract(
       nftmarketaddress,
@@ -42,37 +45,41 @@ export default function MyAssets() {
       signer
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
-    const data = await marketContract.connect(signer).fetchMyNFTs();
-    console.log("My NFTS Data => ", data);
-    const items = await Promise.all(
-      data.map(async (i) => {
-        const tokenUri = await tokenContract.tokenURI(i.tokenId);
-        console.log(tokenUri);
-        const meta = await axios.get(tokenUri);
-        console.log("Meta:");
-        console.log(meta.data);
-        let price = ethers.utils.formatUnits(i.price.toString(), "ether");
-        let item = {
-          price,
-          itemId: i.itemId.toNumber(),
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-          type: meta.data.type,
-          doc: meta.data.doc,
-          terms: meta.data.terms,
-          extraFilesUrl: meta.data.extraFiles,
-          origin: meta.data.origin,
-          private: i.isPrivateAsset,
-        };
-        return item;
-      })
-    );
 
-    setNfts(items);
+    console.log(window.location);
+    let params = window.location.pathname.split('/');
+    const data = await marketContract.connect(signer).fetchMarketItemById(ethers.BigNumber.from(params[params.length - 1]));
+    console.log("Shared address => ", data.sharedAddrs);
+    if (data.sharedAddrs.includes(address) == false) {
+      setNfts([]);
+      setLoadingState("loaded");
+      return;
+    }
+    
+    const tokenUri = await tokenContract.tokenURI(data.tokenId);
+    console.log(tokenUri);
+    const meta = await axios.get(tokenUri);
+    console.log("Meta:");
+    console.log(meta.data);
+    let price = ethers.utils.formatUnits(data.price.toString(), "ether");
+    let item = {
+      price,
+      itemId: data.itemId.toNumber(),
+      tokenId: data.tokenId.toNumber(),
+      seller: data.seller,
+      owner: data.owner,
+      image: meta.data.image,
+      name: meta.data.name,
+      description: meta.data.description,
+      type: meta.data.type,
+      doc: meta.data.doc,
+      terms: meta.data.terms,
+      extraFilesUrl: meta.data.extraFiles,
+      origin: meta.data.origin,
+      private: data.isPrivateAsset,
+    };
+
+    setNfts([item]);
     setLoadingState("loaded");
   }
 
@@ -96,7 +103,7 @@ export default function MyAssets() {
   if (loadingState === "loaded" && !nfts.length)
     return (
       <h1 className="py-10 px-20 text-3xl" style={{ color: "#3079AB" }}>
-        No assets owned
+        This Asset was not shared for you
       </h1>
     );
 
@@ -104,7 +111,7 @@ export default function MyAssets() {
     <div className="flex justify-center">
       <div className="p-4">
         <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
-          MY ASSETS
+          SHARED ASSET
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {nfts.map((nft, i) => (

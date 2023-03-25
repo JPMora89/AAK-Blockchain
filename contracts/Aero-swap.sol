@@ -37,9 +37,9 @@ contract AeroSwap {
 
 //To let users sell their Aero Tokens for ETH
    function sellTokens(uint256 _numberOfTokens) public payable{
-        uint256 pricePerToken = tokenPrice/(10**18);
+        uint256 pricePerToken = (tokenPrice*10000/(10**18));
         uint256 totalFee = (_numberOfTokens * feePercent)/100;
-        uint256 totalAmount = (_numberOfTokens - totalFee) * pricePerToken;
+        uint256 totalAmount = ((_numberOfTokens - totalFee) * pricePerToken)/10000;
         
         require(token.balanceOf(msg.sender) >= _numberOfTokens, "Insufficient tokens balance");
         require(address(this).balance >= totalAmount, "Contract has insufficient ether balance");
