@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -10,14 +10,27 @@ import Image from 'next/image'
 import fileDownloader from 'js-file-download'
 import Modal from 'react-modal'
 import { WithContext as ReactTags } from 'react-tag-input';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+
+const options = ['View', 'Buy', 'Remove'];
 
 export default function CreatorDashboard() {
   const [nfts, setNfts] = useState([]);
   const [sold, setSold] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
-  const [isOpen, setIsOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [tags, setTags] = useState([]);
   const [privateNft, setPrivateNft] = useState();
+  const [currentSharedAddr, setCurrentSharedAddr] = useState();
+  const itemsRef = useRef([]);
 
   useEffect(() => {
     loadNFTs();
@@ -81,7 +94,7 @@ export default function CreatorDashboard() {
   function openSharingModal(nft) {
     setPrivateNft(nft);
     setTags([]);
-    setIsOpen(true);
+    setIsModalOpen(true);
   }
 
   async function shareAssetTo() {
@@ -99,13 +112,20 @@ export default function CreatorDashboard() {
       signer
     );
 
-    const sharedAddrs = [];
-    for (var i = 0; i < tags.length; i ++) {
-      sharedAddrs.push(tags[i].id);
+    const sharedAddrs = [], permissions = [];
+    console.log(tags);
+
+    for (var i = 0; i < tags.length; i++) {
+      sharedAddrs.push(tags[i].address);
+      permissions.push(tags[i].permission);
     }
+
+
     console.log(sharedAddrs);
-    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs);
-    
+    console.log(permissions);
+
+    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
+    await transaction.wait();
     alert("Sharing succes to " + sharedAddrs);
   }
 
@@ -131,34 +151,88 @@ export default function CreatorDashboard() {
     );
   }
 
-  const KeyCodes = {
-    comma: 188,
-    enter: 13
-  };
+  function addSharedAddress() {
+    var removedTags = tags.filter(function (e) {
+      return e.permission === 2
+    });
 
-  const delimiters = [KeyCodes.comma, KeyCodes.enter];
+    removedTags.forEach(function (element) {
+      console.log(element)
+      var index = tags.indexOf(element)
+      console.log(index)
+      tags.splice(index, 1)
+    });
 
-  const handleDelete = i => {
-    setTags(tags.filter((tag, index) => index !== i));
-  };
+    console.log(tags);
 
-  const handleAddition = tag => {
-    tag.text = tag.text.slice(0, 8) + "...";
-    setTags([...tags, tag]);
-  };
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i].address == currentSharedAddr && tags[i].permission != 2) {
+        return;
+      }
+    }
 
-  const handleDrag = (tag, currPos, newPos) => {
-    const newTags = tags.slice();
+    itemsRef.current = itemsRef.current.slice(0, tags.length + 1);
 
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
+    setTags([...tags, { "address": currentSharedAddr, "permission": 0, "open": false }]);
+  }
 
-    // re-render
+  function setTagOpenStatus(tag, status) {
+    let newTags = [...tags];
+    for (let i = 0; i < newTags.length; i++) {
+      if (newTags[i].address == tag) {
+        newTags[i].open = status;
+      }
+    }
+
     setTags(newTags);
+  }
+
+  function getTagOpenStatus(tag) {
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i].address == tag) {
+        return tags[i].open;
+      }
+    }
+  }
+
+
+  const handleClick = (selectedIndex) => {
+    console.info(`You clicked ${options[selectedIndex]}`);
   };
 
-  const handleTagClick = index => {
-    console.log('The tag at index ' + index + ' was clicked');
+  const handleMenuItemClick = (event, index, tag) => {
+    // if (options[index] == "Remove") {
+    //   setTagOpenStatus(tag, false);
+    //   for (let i = 0; i < tags.length; i++) {
+    //     if (tags[i].address == tag) {
+    //       console.log('handleMenuItemClick', tag);
+    //       setTags(tags.splice(i, 1));
+    //       console.log('handleMenuItemClick', tags);
+    //       return;
+    //     }
+    //   }
+    // }
+
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i].address == tag) {
+        tags[i].permission = index;
+      }
+    }
+    setTagOpenStatus(tag, false);
+  };
+
+  const handleToggle = (tag) => {
+    let isOpen = getTagOpenStatus(tag);
+    console.log(tag, !isOpen);
+    setTagOpenStatus(tag, !isOpen);
+  };
+
+  const handleClose = (event, tag) => {
+    // if (tag.anchorRef.current && tag.anchorRef.current.contains(event.target)) {
+    //   return;
+    // }
+
+    setTagOpenStatus(tag.address, false);
   };
 
   if (loadingState === "not-loaded") return setprogressBar();
@@ -171,44 +245,100 @@ export default function CreatorDashboard() {
     );
   return (
     <div className="flex justify-center">
-      <Modal className={"share-main-modal"} overlayClassName={"share-modal-overlay"} isOpen={isOpen}>
-        <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
-          Share Private Asset
-        </h2>
-        <ReactTags
-          tags={tags}
-          delimiters={delimiters}
-          handleDelete={handleDelete}
-          handleAddition={handleAddition}
-          handleDrag={handleDrag}
-          handleTagClick={handleTagClick}
-          inputFieldPosition="bottom"
-          placeholder="Please add the new public address"
-          autocomplete
-        />
-        <div className="row" style={{ textAlign: "right" }}>
-          <button
-            onClick={(e) => copyLinkToClipboard()}
-            className="font-bold text-white rounded p-2 shadow-lg"
-            style={{ backgroundColor: "#3079AB", marginTop: "12px" }}
-          >
-            Copy Link
-          </button>
-          <button
-            onClick={(e) => shareAssetTo()}
-            className="font-bold text-white rounded p-2 shadow-lg"
-            style={{ backgroundColor: "#3079AB", marginTop: "12px", marginLeft: "12px" }}
-          >
-            Share Asset
-          </button>
-        </div>
+      <Modal className={"share-main-modal"} overlayClassName={"share-modal-overlay"} isOpen={isModalOpen}>
+        <div style={{ width: "550px" }}>
+          <h2 className="text-2xl py-2" style={{ color: "#3079AB" }}>
+            Share Private Asset
+          </h2>
+          <div className="row">
+            <input className="w-3/4 mt-8 border rounded p-2 mr-2" onChange={(e) => setCurrentSharedAddr(e.target.value)}></input>
+            <button className="w-1/5 font-bold text-white rounded p-2 shadow-lg" style={{ backgroundColor: "#3079AB" }} onClick={(e) => addSharedAddress()}>Add</button>
+          </div>
+          <div className="border rounded mt-2" style={{ maxHeight: "400px", overflowY: "auto" }}>
+            {tags.filter((d) => { if (d.permission != 2) { return d } }).map((tag, index) => (
+              <div key={index} className="row m-2 shared-address-list">
+                <div style={{ display: "inline-flex" }}>
+                  <div className="shared-address-item">
+                    <p>{tag.address}</p>
+                  </div>
 
-        <div className="cursor-pointer close-modal-button" onClick={() => setIsOpen(false)}>
-          <Image
-            src={"/close-button.svg"}
-            width={24}
-            height={24}
-          />
+                  <ButtonGroup variant="contained" ref={el => itemsRef.current[index] = el} aria-label="split button">
+                    <Button style={{width: "100px"}}>{options[tag.permission]}</Button>
+                    <Button
+                      size="small"
+                      aria-controls={tag.open ? 'split-button-menu-' + index : undefined}
+                      aria-expanded={tag.open ? 'true' : undefined}
+                      aria-label="select merge strategy"
+                      aria-haspopup="menu"
+                      onClick={(e) => handleToggle(tag.address)}
+                    >
+                      <ArrowDropDownIcon />
+                    </Button>
+                  </ButtonGroup>
+                  <Popper
+                    sx={{
+                      zIndex: 1,
+                    }}
+                    open={tag.open}
+                    anchorEl={itemsRef.current[index]}
+                    role={undefined}
+                    transition
+                    disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === 'bottom' ? 'center top' : 'center bottom',
+                        }}
+                      >
+                        <Paper>
+                          <ClickAwayListener onClickAway={(e) => handleClose(e, tag.address)}>
+                            <MenuList id={"split-button-menu" + index} autoFocusItem>
+                              {options.map((option, index) => (
+                                <MenuItem
+                                  key={option}
+                                  selected={index === tag.permission}
+                                  onClick={(event) => handleMenuItemClick(event, index, tag.address)}
+                                >
+                                  {option}
+                                </MenuItem>
+                              ))}
+                            </MenuList>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="row" style={{ textAlign: "right" }}>
+            <button
+              onClick={(e) => copyLinkToClipboard()}
+              className="font-bold text-white rounded p-2 shadow-lg"
+              style={{ backgroundColor: "#3079AB", marginTop: "12px" }}
+            >
+              Copy Link
+            </button>
+            <button
+              onClick={(e) => shareAssetTo()}
+              className="font-bold text-white rounded p-2 shadow-lg"
+              style={{ backgroundColor: "#3079AB", marginTop: "12px", marginLeft: "12px" }}
+            >
+              Share Asset
+            </button>
+          </div>
+
+          <div className="cursor-pointer close-modal-button" onClick={() => setIsModalOpen(false)}>
+            <Image
+              src={"/close-button.svg"}
+              width={24}
+              height={24}
+            />
+          </div>
         </div>
       </Modal>
       <div className="p-4">

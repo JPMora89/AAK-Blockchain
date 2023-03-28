@@ -1,6 +1,5 @@
 .secret
 .env
-artifacts
 node_modules
 coverage.json
 typechain
@@ -13,6 +12,8 @@ typechain-types
 #next
 .next
 build
+artifacts
+cache
 _static
 
 .env.local

@@ -6,8 +6,10 @@ import ClipLoader from "react-spinners/ClipLoader";
 import fileDownloader from 'js-file-download'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { nftmarketaddress, nftaddress } from "../../config";
+import { nftmarketaddress, nftaddress, aeroAddress } from "../../config";
 
+
+import Aero from "../../artifacts/contracts/v2/Aero.sol/Aero.json";
 import Market from "../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 import NFT from "../../artifacts/contracts/NFT.sol/NFT.json";
 
@@ -46,10 +48,9 @@ export default function SharedAsset() {
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
 
-    console.log(window.location);
     let params = window.location.pathname.split('/');
     const data = await marketContract.connect(signer).fetchMarketItemById(ethers.BigNumber.from(params[params.length - 1]));
-    console.log("Shared address => ", data.sharedAddrs);
+    
     if (data.sharedAddrs.includes(address) == false) {
       setNfts([]);
       setLoadingState("loaded");
@@ -57,10 +58,7 @@ export default function SharedAsset() {
     }
     
     const tokenUri = await tokenContract.tokenURI(data.tokenId);
-    console.log(tokenUri);
     const meta = await axios.get(tokenUri);
-    console.log("Meta:");
-    console.log(meta.data);
     let price = ethers.utils.formatUnits(data.price.toString(), "ether");
     let item = {
       price,
@@ -77,7 +75,10 @@ export default function SharedAsset() {
       extraFilesUrl: meta.data.extraFiles,
       origin: meta.data.origin,
       private: data.isPrivateAsset,
+      permission: data.sharedItemPermissions[data.sharedAddrs.indexOf(address)]
     };
+
+    console.log(item);
 
     setNfts([item]);
     setLoadingState("loaded");
@@ -96,6 +97,103 @@ export default function SharedAsset() {
         </p>
       </div>
     );
+  }
+
+  const getPermitSignature = async (signer, token, spender, value, deadline, signerAddr, tokenAddr) => {
+    const [nonce, name, version, chainId] = await Promise.all([
+      token.nonces(signerAddr),
+      token.name(),
+      "1",
+      5,
+    ])
+
+    return ethers.utils.splitSignature(
+      await signer._signTypedData(
+        {
+          name,
+          version,
+          chainId,
+          verifyingContract: tokenAddr,
+        },
+        {
+          Permit: [
+            {
+              name: "owner",
+              type: "address",
+            },
+            {
+              name: "spender",
+              type: "address",
+            },
+            {
+              name: "value",
+              type: "uint256",
+            },
+            {
+              name: "nonce",
+              type: "uint256",
+            },
+            {
+              name: "deadline",
+              type: "uint256",
+            },
+          ],
+        },
+        {
+          owner: signerAddr,
+          spender,
+          value,
+          nonce,
+          deadline,
+        }
+      )
+    )
+  }
+
+  async function buyNft(nft) {
+    const web3Modal = new Web3Modal();
+    const connection = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(connection);
+    const signer = provider.getSigner();
+
+    const signerAddress = await signer.getAddress();
+    const aeroContract = new ethers.Contract(aeroAddress, Aero.abi, signer);
+    const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+    const deadline = ethers.constants.MaxUint256
+
+    const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, signer);
+
+    const { v, r, s } = await getPermitSignature(
+      signer,
+      aeroContract,
+      nftmarketaddress,
+      price,
+      deadline,
+      signerAddress,
+      aeroAddress
+    )
+
+    // const tx = await aeroContract.permit(signerAddress, nft.seller, price, deadline, v, r, s);
+    // await tx.wait();
+
+    // console.log("Signer Address => ", signerAddress);
+    // const allowance = await aeroContract.allowance(signerAddress, nftmarketaddress);
+    // if (ethers.utils.formatEther(allowance.toString()) < ethers.utils.formatEther(price.toString())) {
+    //   const tx = await aeroContract.approve(nftmarketaddress, price);
+    //   await tx.wait();
+    // }
+
+    console.log(nft.itemId);
+    const transaction = await marketContract.createMarketSale(
+      nftaddress,
+      nft.itemId,
+      deadline,
+      v,
+      r,
+      s
+    );
+    await transaction.wait();
+    loadNFTs();
   }
 
   if (loadingState === "not-loaded") return setprogressBar();
@@ -169,6 +267,13 @@ export default function SharedAsset() {
                 <p className="text-2xl mb-4 font-bold text-white">
                   {nft.price} Aero
                 </p>
+                {nft.permission == 1 ? <button
+                    className="w-full text-white font-bold py-2 px-12 rounded"
+                    style={{ backgroundColor: "#3079AB" }}
+                    onClick={() => buyNft(nft)}
+                  >
+                    Buy
+                  </button> : ''}
               </div>
             </div>
           ))}
