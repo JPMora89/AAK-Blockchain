@@ -12,7 +12,8 @@ typechain-types
 #next
 .next
 build
-artifacts/
-cache/
+artifacts
+cache
+_static
 
 .env.local
