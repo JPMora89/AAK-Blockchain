@@ -6,6 +6,7 @@ import Web3Modal from "web3modal";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Web3Storage } from 'web3.storage'
 import { NFTStorage } from 'nft.storage'
+import { Image } from "next/image"
 
 
 // Construct with token and endpoint
@@ -219,11 +220,10 @@ export default function CreateItem() {
     return (
       <div
         className="sweet-loading"
-        align="center"
-        style={{ marginTop: "200px" }}
+        style={{ marginTop: "200px", align: "center" }}
       >
         <ClipLoader submitloading={submitloading} size={35} />
-        <p align="center" className="font-bold" style={{ color: "#3079AB" }}>
+        <p className="font-bold" style={{ color: "#3079AB", align: "center" }}>
           Transaction in progress, please wait...
         </p>
       </div>
@@ -348,7 +348,7 @@ export default function CreateItem() {
                 </label>
               </div>
               {fileUrl && (
-                <img
+                <Image
                   className="rounded mt-4"
                   width="350"
                   src={fileUrl}
