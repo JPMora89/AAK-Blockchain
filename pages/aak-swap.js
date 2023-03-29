@@ -81,7 +81,7 @@ export default function AeroSwap() {
     }else{
       const numberOfTokensinNum = Number(numberOfTokens)
       const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
-       const totalfee = (numberOfTokensinNum * feePercent)/100;
+      const totalfee = (numberOfTokensinNum * feePercent)/100;
       const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
       const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
     
