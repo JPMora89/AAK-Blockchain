@@ -140,11 +140,10 @@ export default function CreatorDashboard() {
     return (
       <div
         className="sweet-loading"
-        align="center"
-        style={{ marginTop: "200px" }}
+        style={{ marginTop: "200px", align: "center" }}
       >
         <ClipLoader size={35} />
-        <p align="center" className="font-bold" style={{ color: "#3079AB" }}>
+        <p className="font-bold" style={{ color: "#3079AB", align: "center" }}>
           Loading up your assets, please wait...
         </p>
       </div>
@@ -352,7 +351,7 @@ export default function CreatorDashboard() {
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
             >
 
-              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
               {
                 nft.private ? <div className="cursor-pointer share-icon-button" onClick={(e) => openSharingModal(nft)}>
                   <Image
