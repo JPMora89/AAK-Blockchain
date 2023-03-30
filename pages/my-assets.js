@@ -80,10 +80,10 @@ export default function MyAssets() {
     return (
       <div
         className="sweet-loading"
-        style={{ marginTop: "200px", align: "center" }}
+        style={{ marginTop: "200px", textAlign: "center" }}
       >
         <ClipLoader size={35} />
-        <p className="font-bold" style={{ color: "#3079AB", align: "center" }}>
+        <p className="font-bold" style={{ color: "#3079AB", textAlign: "center" }}>
           Loading up your assets, please wait...
         </p>
       </div>
