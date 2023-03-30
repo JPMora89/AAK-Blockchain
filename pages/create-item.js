@@ -220,10 +220,10 @@ export default function CreateItem() {
     return (
       <div
         className="sweet-loading"
-        style={{ marginTop: "200px", align: "center" }}
+        style={{ marginTop: "200px", textAlign: "center" }}
       >
         <ClipLoader submitloading={submitloading} size={35} />
-        <p className="font-bold" style={{ color: "#3079AB", align: "center" }}>
+        <p className="font-bold" style={{ color: "#3079AB", textAlign: "center" }}>
           Transaction in progress, please wait...
         </p>
       </div>
