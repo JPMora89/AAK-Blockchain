@@ -24,8 +24,8 @@ var profileNameDecrypt = null;
 var profileUsernameDecrypt = null;
 var projectNameDecrypt = null;
 var projectUrlDecrypt = null;
-var profileUserType = null;
-var profileUserTypeValue=null;
+var profileUserType = "";
+var profileUserTypeValue=" ";
 var environment;
 var environmentValue;
 

@@ -108,43 +108,43 @@ export default function Home() {
         let item;
 
         if (i.hasOwnProperty('urlParameters')) {
-          if (i.urlParameters.environment == 0) {
+
+          if (i.urlParameters.environment.includes('web.')) {
+            routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
+            routeUserUrl = djangoAccountUrl;
+          } else {
             routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
             routeUserUrl = elggAccountUrl;
           }
-          else if (i.urlParameters.environment == 1) {
-            routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
-            routeUserUrl = djangoAccountUrl;
+
+          if (i.urlParameters.userType.length > 1) {
+            switch (i.urlParameters.userType) {
+              case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
+                break;
+              case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
+                break;
+              case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
+                break;
+              case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
+                break;
+              case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
+                break;
+              case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
+                break;
+              case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+                break;
+              case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+                break;
+              case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+                break;
+              case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+                break;
+              case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+                break;
+
+            }
           }
-
-
-          switch (i.urlParameters.userType) {
-            case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
-              break;
-            case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
-              break;
-            case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
-              break;
-            case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
-              break;
-            case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
-              break;
-            case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
-              break;
-            case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-              break;
-            case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-              break;
-            case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-              break;
-            case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-              break;
-            case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
-              break;
-
-          }
-
-           item = {
+          item = {
             price,
             itemId: i.itemId.toNumber(),
             tokenId: i.tokenId.toNumber(),
@@ -171,7 +171,7 @@ export default function Home() {
           return item;
         }
         else {
-           item = {
+          item = {
             price,
             itemId: i.itemId.toNumber(),
             tokenId: i.tokenId.toNumber(),
@@ -343,14 +343,16 @@ export default function Home() {
               className="border shadow rounded-xl bg-black text-white"
               style={{ height: "90vh" }}
             >
-              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
-              <div style={styles.nftContent}>
+              <div style={{ width: '100%', height: '100%', top: '-175px', position: 'relative', display: 'block' }}>
+                <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} alt="sample" layout='fill' objectFit='contain' />
+              </div>
+              <div>
                 <a
                   // href={`https://www.aaktelescience.com/${nft.origin}`}
                   target="_blank"
                 >
-                  <div className="p-4 ">
-                    <div className="flex items-center text-center">
+                  <div className="p-4 " style={{margin: '-355px 0px'}}>
+                    <div className="items-center text-center">
                       <p
                         style={{
                           height: "40px",
@@ -411,7 +413,7 @@ export default function Home() {
                     </div> */}
                   </div>
                 </a>
-                <div className="p-4 bg-black">
+                <div className="p-4 bg-black" style={{margin:'350px 0px'}}>
                   <p className="text-2xl mb-4 font-bold text-white">
                     {nft.price} Aero
                   </p>
