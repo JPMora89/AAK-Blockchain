@@ -52,11 +52,11 @@ export default function Home() {
   useEffect(() => {
     loadNFTs();
     //getting session storage values
-   // if (window.sessionStorage.getItem('routeUserUrl') != null) {
-   //   setRouteUserUrl(window.sessionStorage.getItem('routeUserUrl'));
-   // }
+    // if (window.sessionStorage.getItem('routeUserUrl') != null) {
+    //   setRouteUserUrl(window.sessionStorage.getItem('routeUserUrl'));
+    // }
 
-   // if (window.sessionStorage.getItem('routeProjectUrl') != null) {
+    // if (window.sessionStorage.getItem('routeProjectUrl') != null) {
     //  setRouteProjectUrl(window.sessionStorage.getItem('routeProjectUrl'));
     //}
 
@@ -105,66 +105,99 @@ export default function Home() {
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
 
         //for url
-        if (i.urlParameters.environment == 0) {
-          routeProjectUrl = elggAccountUrl+'/create_projects/profile/' + i.urlParameters.projectSlug;
-          routeUserUrl = elggAccountUrl;
-        }
-        else if (i.urlParameters.environment == 1) {
-          routeProjectUrl = djangoAccountUrl+'/aak_projects/' + i.urlParameters.projectSlug;
-          routeUserUrl = djangoAccountUrl;
-        }
-      
+        let item;
 
-        switch (i.urlParameters.userType) {
-          case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
-          break;
-        case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
-          break;
-        case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
-          break;
-        case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
-          break;
-        case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
-          break;
-        case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
-          break;
-        case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-          break;
-        case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-          break;
-        case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-          break;
-        case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
-          break;
-        case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
-          break;
+        if (i.hasOwnProperty('urlParameters')) {
+          if (i.urlParameters.environment == 0) {
+            routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
+            routeUserUrl = elggAccountUrl;
+          }
+          else if (i.urlParameters.environment == 1) {
+            routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
+            routeUserUrl = djangoAccountUrl;
+          }
 
+
+          switch (i.urlParameters.userType) {
+            case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
+              break;
+            case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
+              break;
+            case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
+              break;
+            case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
+              break;
+            case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
+              break;
+            case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
+              break;
+            case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+              break;
+
+          }
+
+           item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            private: i.isPrivateAsset,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            profileName: i.urlParameters.profileName,
+            profileUserName: i.urlParameters.profileUserName,
+            projectName: i.urlParameters.projectName,
+            projectSlug: i.urlParameters.projectSlug,
+            environment: i.urlParameters.environment,
+            userType: i.urlParameters.userType,
+            routeProjectUrl: routeProjectUrl,
+            routeUserUrl: routeUserUrl
+          };
+          return item;
         }
-        let item = {
-          price,
-          itemId: i.itemId.toNumber(),
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          private: i.isPrivateAsset,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-          type: meta.data.type,
-          doc: meta.data.doc,
-          terms: meta.data.terms,
-          extraFilesUrl: meta.data.extraFiles,
-          origin: meta.data.origin,
-          profileName: i.urlParameters.profileName,
-          profileUserName: i.urlParameters.profileUserName,
-          projectName: i.urlParameters.projectName,
-          projectSlug: i.urlParameters.projectSlug,
-          environment: i.urlParameters.environment,
-          userType: i.urlParameters.userType,
-          routeProjectUrl:routeProjectUrl,
-          routeUserUrl:routeUserUrl
-        };
-        return item;
+        else {
+           item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            private: i.isPrivateAsset,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            profileName: "",
+            profileUserName: "",
+            projectName: "",
+            projectSlug: "",
+            environment: "",
+            userType: "",
+            routeProjectUrl: "",
+            routeUserUrl: ""
+          };
+          return item;
+        }
+
       })
     );
 
