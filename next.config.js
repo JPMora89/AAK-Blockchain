@@ -13,6 +13,9 @@ module.exports = (phase, { defaultConfig }) => {
       }
       return config
     },
+    images: {
+        unoptimized: true
+    },
     reactStrictMode: true
   }
 }

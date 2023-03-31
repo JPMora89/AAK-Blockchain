@@ -15,6 +15,7 @@ import {
   faUserCircle,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
+import Image from 'next/image'
 
 const { chains, provider } = configureChains([chain.goerli], [publicProvider()]);
 
@@ -63,7 +64,12 @@ function Marketplace({ Component, pageProps }) {
           <div style={styles.parent}>
             <div>
               <Link href="/">
-                <img src="AAKLogo.svg" style={{ cursor: "pointer" }} />
+                <Image
+                  src={"/AAKLogo.svg"}
+                  style={{ cursor: "pointer" }}
+                  width={"100%"}
+                  height={"100%"}
+                />
               </Link>
             </div>
             <nav>

@@ -29,6 +29,8 @@ contract NFTMarket is ReentrancyGuard {
         uint256 tokenId;
         address seller;
         address owner;
+        address[] sharedAddrs;
+        uint8[] sharedItemPermissions;
         uint256 price;
         bool isPrivateAsset;
         bool sold;
@@ -53,6 +55,8 @@ contract NFTMarket is ReentrancyGuard {
         uint256 indexed tokenId,
         address seller,
         address owner,
+        address[] sharedAddrs,
+        uint8[] sharedItemPermissions,
         uint256 price,
         bool isPrivateAsset,
         bool sold,
@@ -91,6 +95,8 @@ contract NFTMarket is ReentrancyGuard {
             _tokenId,
             msg.sender,
             address(0), // nobody owns the item yet, bacause it's for sale
+            new address[](0),
+            new uint8[](0),
             price,
             isPrivateAsset,
             false,
@@ -105,6 +111,8 @@ contract NFTMarket is ReentrancyGuard {
             _tokenId,
             msg.sender,
             address(0),
+            new address[](0),
+            new uint8[](0),
             price,
             isPrivateAsset,
             false,
@@ -166,6 +174,17 @@ contract NFTMarket is ReentrancyGuard {
         return items;
     }
 
+    /* Returns market item by Token Id */
+    /* We might not need it, it depends what kind of features we want */
+    /* But it could be useful in the future */
+    function fetchMarketItemById(
+        uint256 id
+    ) public view returns (MarketItem memory) {
+        require(id <= _itemIds.current(), "Invalid Item Id");
+        MarketItem memory item = idToMarketItem[id];
+        return item;
+    }
+
     /* Returns only items that a user has purchased */
     /* This will be useful to show the items (contracts history) of one account */
     function fetchMyNFTs() public view returns (MarketItem[] memory) {
@@ -214,5 +233,37 @@ contract NFTMarket is ReentrancyGuard {
             }
         }
         return items;
+    }
+
+    /* set shared addresses to MarketItem */
+    function setSharedAddress(
+        uint256 id,
+        address[] memory addrs,
+        uint8[] memory permissions
+    ) public {
+        require(
+            idToMarketItem[id].isPrivateAsset,
+            "Market item is not private"
+        );
+        idToMarketItem[id].sharedAddrs = addrs;
+        idToMarketItem[id].sharedItemPermissions = permissions;
+    }
+
+    /* set permission of a address to MarketItem */
+    function setPermissionSharedAddress(
+        uint256 id,
+        address addr,
+        uint8 permission
+    ) public {
+        require(
+            idToMarketItem[id].isPrivateAsset,
+            "Market item is not private"
+        );
+
+        for (uint256 i = 0; i < idToMarketItem[id].sharedAddrs.length; i++) {
+            if (idToMarketItem[id].sharedAddrs[i] == addr) {
+                idToMarketItem[id].sharedItemPermissions[i] = permission;
+            }
+        }
     }
 }

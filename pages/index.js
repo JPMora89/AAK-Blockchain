@@ -307,11 +307,10 @@ export default function Home() {
     return (
       <div
         className="sweet-loading"
-        align="center"
-        style={{ marginTop: "200px" }}
+        style={{ marginTop: "200px", textAlign: "center" }}
       >
         <ClipLoader size={35} />
-        <p align="center" className="font-bold" style={{ color: "#3079AB" }}>
+        <p className="font-bold" style={{ color: "#3079AB", textAlign: "center" }}>
           Loading up the market place, please wait...
         </p>
       </div>
@@ -335,7 +334,6 @@ export default function Home() {
       <div className="p-4" style={{ maxWidth: "1600px" }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {nfts.filter((nft) => {
-            console.log(nft);
             if (nft.private == false) {
               return nft;
             }
@@ -345,7 +343,7 @@ export default function Home() {
               className="border shadow rounded-xl bg-black text-white"
               style={{ height: "90vh" }}
             >
-              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
               <div style={styles.nftContent}>
                 <a
                   // href={`https://www.aaktelescience.com/${nft.origin}`}
@@ -393,7 +391,7 @@ export default function Home() {
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
                     </div>
-                    <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
+                    {/* <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc, nft.private)}>
                       <p className="text-gray-400 mr-2">Document</p>
                       <Image
                         src={"/download.svg"}
@@ -410,7 +408,7 @@ export default function Home() {
                         width={20}
                         height={20}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </a>
                 <div className="p-4 bg-black">
