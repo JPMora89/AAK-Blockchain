@@ -12,7 +12,12 @@ typechain-types
 #next
 .next
 build
-artifacts
+artifacts/@*
+artifacts/build-info
+artifacts/hardhat
+artifacts/*/*/*.dbg.json
+artifacts/*/*/*/*.dbg.json
+artifacts/*/*/*/*/*.dbg.json
 cache
 _static
 
