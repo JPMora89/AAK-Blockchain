@@ -7,15 +7,43 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { Web3Storage } from 'web3.storage'
 import { NFTStorage } from 'nft.storage'
 import { Image } from "next/image"
+import { decryptString, encryptString } from '../helpers/EncryptionDecryption/cryptoEncryptionDecryption.js';
 
 
 // Construct with token and endpoint
 const client = new NFTStorage({ token: `${process.env.NEXT_PUBLIC_NFT_STORAGE_KEY}` });
 
+
 import { nftaddress, nftmarketaddress } from "../config";
 
 import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
+
+
+var profileNameDecrypt = null;
+var profileUsernameDecrypt = null;
+var projectNameDecrypt = null;
+var projectUrlDecrypt = null;
+var profileUserType = "";
+var profileUserTypeValue=" ";
+var environment;
+var environmentValue;
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
+const seperator = process.env.NEXT_PUBLIC_ENCODING_SEPERATOR;
 
 export default function CreateItem() {
   const [submitloading, setSubmitLoading] = useState(false);
@@ -38,19 +66,107 @@ export default function CreateItem() {
 
   useEffect(() => {
     let originPath = router.asPath;
-    console.log("ogiginPath", originPath);
+    console.log("originPath", originPath);
 
-    // if (originPath.includes("=")) {
-    //   originPath = originPath.split("=")[2];
-    // }
+    let paramString = originPath.split('?')[1];
 
-    if (originPath.includes("=") & !originPath.includes("&")) {
-      originPath = `profile/${originPath.split("=")[1]}`;
-    } else if (originPath.includes("=") && originPath.includes("&")) {
-      originPath = `create_projects/profile/${originPath.split("=")[2]}`;
-    }
+    const paramArray = paramString.split(seperator);
+    let queryString = "";
+    let queryArray;
 
-    setPathToAAK(originPath);
+
+    paramArray.forEach(function (value, index) {
+      try {
+        async function fetchData() {
+          const valueDecrypt = await decryptString(value);
+          queryString += valueDecrypt;
+          if (index == paramArray.length - 1) {
+            queryArray = queryString.split("&").reduce(function (obj, str, index) {
+              let strParts = str.split("=");
+              if (strParts[0] && strParts[1]) { //<-- Make sure the key & value are not undefined
+                obj[strParts[0].replace(/\s+/g, '')] = strParts[1].trim(); //<-- Get rid of extra spaces at beginning of value strings
+              }
+              return obj;
+            }, {});
+            console.log(queryArray);
+
+            for (let key in queryArray) {
+              if (queryArray.hasOwnProperty(key)) {
+                console.log("Key is: " + key+" Value is: " + queryArray[key]);
+                if (originPath.includes("?")) {
+                  switch (key) {
+                    case "new_env": environment = queryArray[key];
+                      if (environment == "0") {
+                        environmentValue = elggAccountUrl;
+                      }
+                      else if (environment == "1") {
+                        environmentValue = djangoAccountUrl;
+                      }
+
+                      break;
+                    case "profile_name": profileNameDecrypt = queryArray[key];
+                      break;
+
+                    case "profile_username": profileUsernameDecrypt = queryArray[key];
+                      break;
+
+                    case "profile_user_type": profileUserType = queryArray[key];
+                      switch (profileUserType) {
+                        case "0": profileUserTypeValue = user;
+                          break;
+                        case "1": profileUserTypeValue = researchUser;
+                          break;
+                        case "2": profileUserTypeValue = investorUser;
+                          break;
+                        case "3": profileUserTypeValue = institutionStaffUser;
+                          break;
+                        case "4": profileUserTypeValue = serviceProviderUser;
+                          break;
+                        case "5": profileUserTypeValue = institution;
+                          break;
+                        case "6": profileUserTypeValue = researchInstitution;
+                          break;
+                        case "7": profileUserTypeValue = privateInstitution;
+                          break;
+                        case "8": profileUserTypeValue = publicInstitution;
+                          break;
+                        case "9": profileUserTypeValue = otherInstitution;
+                          break;
+                        case "10": profileUserTypeValue = team;
+                          break;
+
+                      }
+                      break;
+                    case "project_name": projectNameDecrypt = queryArray[key];
+                      break;
+
+                    case "project_url": projectUrlDecrypt = queryArray[key];
+                      break;
+                  }
+                }
+              }
+            }
+          }
+        }
+        fetchData().then()
+          .catch(console.error);
+
+
+      } catch (err) {
+        console.log('could not return');
+      }
+
+    })
+
+    /* if (originPath.includes("=") & !originPath.includes("&")) {
+       originPath = `profile/${originPath.split("=")[1]}`;
+     } else if (originPath.includes("=") && originPath.includes("&")) {
+       originPath = `create_projects/profile/${originPath.split("=")[2]}`;
+     }
+ 
+     //setPathToAAK(originPath);
+     */
+
   }, []);
 
   const [fileUrl, setFileUrl] = useState(null);
@@ -140,42 +256,6 @@ export default function CreateItem() {
     await createSale(url);
     setSubmitLoading(false);
 
-    // /* first, upload to IPFS */
-    // const data = JSON.stringify({
-    //   name,
-    //   description,
-    //   image: fileUrl,
-    //   type,
-    //   doc,
-    //   terms,
-    //   origin: pathToAAK,
-    // });
-    // try {
-    //   console.log(client);
-    //   const metadata = await client.store({
-    //     name: name,
-    //     description: description,
-    //     price: price,
-    //     type: type,
-    //     doc: doc,
-    //     terms: terms,
-    //     image: file
-    //   });
-    //   console.log(metadata);
-    //   const cid = metadata.ipnft;
-    //   console.log("CID", cid);
-    //   const url = `https://ipfs.io/ipfs/${cid}/metadata.json`;
-    //   console.log(url);
-    //   // var file = new File([data], "metadata.json", {type: "application/json"})
-    //   // const rootCid = await client.put(file)
-    //   // const url = `https://${rootCid}.ipfs.w3s.link`;
-    //   // /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-    //   // createSale(url);
-    //   setSubmitLoading(false);
-
-    // } catch (error) {
-    //   console.log("Error uploading file: ", error);
-    // }
   }
 
   async function createSale(url) {
@@ -185,14 +265,6 @@ export default function CreateItem() {
     const provider = new ethers.providers.Web3Provider(connection);
     console.log("provider", provider)
     const signer = provider.getSigner();
-
-    /* next, create the item */
-    // let contract = new ethers.Contract(nftaddress, NFT.abi, signer);
-    // let transaction = await contract.createToken(url);
-    // let tx = await transaction.wait();
-    // let event = tx.events[0];
-    // let value = event.args[2];
-    // let tokenId = value.toNumber();
 
     const price = ethers.utils.parseUnits(formInput.price, "ether");
 
@@ -209,7 +281,18 @@ export default function CreateItem() {
     let listingPrice = await marketContract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset, {
+
+    let urlParameters = {
+      profileName: profileNameDecrypt,
+      profileUserName: profileUsernameDecrypt,
+      projectName: projectNameDecrypt,
+      projectSlug: projectUrlDecrypt,
+      environment: environmentValue,
+      userType: profileUserTypeValue,
+    };
+   
+    const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset,
+      urlParameters, {
       value: listingPrice,
     });
     await transaction.wait();

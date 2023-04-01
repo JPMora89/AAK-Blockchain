@@ -22,3 +22,5 @@ cache
 _static
 
 .env.local
+public.pem
+privateKey.pem
