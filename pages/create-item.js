@@ -25,7 +25,7 @@ var profileUsernameDecrypt = null;
 var projectNameDecrypt = null;
 var projectUrlDecrypt = null;
 var profileUserType = "";
-var profileUserTypeValue=" ";
+var profileUserTypeValue = " ";
 var environment;
 var environmentValue;
 
@@ -67,97 +67,99 @@ export default function CreateItem() {
   useEffect(() => {
     let originPath = router.asPath;
     console.log("originPath", originPath);
+    if (originPath.includes("?")) {
+      let paramString = originPath.split('?')[1];
 
-    let paramString = originPath.split('?')[1];
-
-    const paramArray = paramString.split(seperator);
-    let queryString = "";
-    let queryArray;
+      const paramArray = paramString.split(seperator);
+      let queryString = "";
+      let queryArray;
 
 
-    paramArray.forEach(function (value, index) {
-      try {
-        async function fetchData() {
-          const valueDecrypt = await decryptString(value);
-          queryString += valueDecrypt;
-          if (index == paramArray.length - 1) {
-            queryArray = queryString.split("&").reduce(function (obj, str, index) {
-              let strParts = str.split("=");
-              if (strParts[0] && strParts[1]) { //<-- Make sure the key & value are not undefined
-                obj[strParts[0].replace(/\s+/g, '')] = strParts[1].trim(); //<-- Get rid of extra spaces at beginning of value strings
-              }
-              return obj;
-            }, {});
-            console.log(queryArray);
+      paramArray.forEach(function (value, index) {
+        try {
+          async function fetchData() {
+            const decodeUri=decodeURIComponent(value);
+            console.log('decode URI value',decodeUri);
+            const valueDecrypt = await decryptString(decodeUri);
+            queryString += valueDecrypt;
+            if (index == paramArray.length - 1) {
+              queryArray = queryString.split("&").reduce(function (obj, str, index) {
+                let strParts = str.split("=");
+                if (strParts[0] && strParts[1]) { //<-- Make sure the key & value are not undefined
+                  obj[strParts[0].replace(/\s+/g, '')] = strParts[1].trim(); //<-- Get rid of extra spaces at beginning of value strings
+                }
+                return obj;
+              }, {});
+              console.log(queryArray);
 
-            for (let key in queryArray) {
-              if (queryArray.hasOwnProperty(key)) {
-                console.log("Key is: " + key+" Value is: " + queryArray[key]);
-                if (originPath.includes("?")) {
-                  switch (key) {
-                    case "new_env": environment = queryArray[key];
-                      if (environment == "0") {
-                        environmentValue = elggAccountUrl;
-                      }
-                      else if (environment == "1") {
-                        environmentValue = djangoAccountUrl;
-                      }
+              for (let key in queryArray) {
+                if (queryArray.hasOwnProperty(key)) {
+                  console.log("Key is: " + key + " Value is: " + queryArray[key]);
+                  if (originPath.includes("?")) {
+                    switch (key) {
+                      case "new_env": environment = queryArray[key];
+                        if (environment == "0") {
+                          environmentValue = elggAccountUrl;
+                        }
+                        else if (environment == "1") {
+                          environmentValue = djangoAccountUrl;
+                        }
 
-                      break;
-                    case "profile_name": profileNameDecrypt = queryArray[key];
-                      break;
+                        break;
+                      case "profile_name": profileNameDecrypt = queryArray[key];
+                        break;
 
-                    case "profile_username": profileUsernameDecrypt = queryArray[key];
-                      break;
+                      case "profile_username": profileUsernameDecrypt = queryArray[key];
+                        break;
 
-                    case "profile_user_type": profileUserType = queryArray[key];
-                      switch (profileUserType) {
-                        case "0": profileUserTypeValue = user;
-                          break;
-                        case "1": profileUserTypeValue = researchUser;
-                          break;
-                        case "2": profileUserTypeValue = investorUser;
-                          break;
-                        case "3": profileUserTypeValue = institutionStaffUser;
-                          break;
-                        case "4": profileUserTypeValue = serviceProviderUser;
-                          break;
-                        case "5": profileUserTypeValue = institution;
-                          break;
-                        case "6": profileUserTypeValue = researchInstitution;
-                          break;
-                        case "7": profileUserTypeValue = privateInstitution;
-                          break;
-                        case "8": profileUserTypeValue = publicInstitution;
-                          break;
-                        case "9": profileUserTypeValue = otherInstitution;
-                          break;
-                        case "10": profileUserTypeValue = team;
-                          break;
+                      case "profile_user_type": profileUserType = queryArray[key];
+                        switch (profileUserType) {
+                          case "0": profileUserTypeValue = user;
+                            break;
+                          case "1": profileUserTypeValue = researchUser;
+                            break;
+                          case "2": profileUserTypeValue = investorUser;
+                            break;
+                          case "3": profileUserTypeValue = institutionStaffUser;
+                            break;
+                          case "4": profileUserTypeValue = serviceProviderUser;
+                            break;
+                          case "5": profileUserTypeValue = institution;
+                            break;
+                          case "6": profileUserTypeValue = researchInstitution;
+                            break;
+                          case "7": profileUserTypeValue = privateInstitution;
+                            break;
+                          case "8": profileUserTypeValue = publicInstitution;
+                            break;
+                          case "9": profileUserTypeValue = otherInstitution;
+                            break;
+                          case "10": profileUserTypeValue = team;
+                            break;
 
-                      }
-                      break;
-                    case "project_name": projectNameDecrypt = queryArray[key];
-                      break;
+                        }
+                        break;
+                      case "project_name": projectNameDecrypt = queryArray[key];
+                        break;
 
-                    case "project_url": projectUrlDecrypt = queryArray[key];
-                      break;
+                      case "project_url": projectUrlDecrypt = queryArray[key];
+                        break;
+                    }
                   }
                 }
               }
             }
           }
+          fetchData().then()
+            .catch(console.error);
+
+
+        } catch (err) {
+          console.log('could not return');
         }
-        fetchData().then()
-          .catch(console.error);
 
-
-      } catch (err) {
-        console.log('could not return');
-      }
-
-    })
-
+      })
+    }
     /* if (originPath.includes("=") & !originPath.includes("&")) {
        originPath = `profile/${originPath.split("=")[1]}`;
      } else if (originPath.includes("=") && originPath.includes("&")) {
@@ -261,7 +263,7 @@ export default function CreateItem() {
   async function createSale(url) {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
-    
+
     const provider = new ethers.providers.Web3Provider(connection);
     console.log("provider", provider)
     const signer = provider.getSigner();
@@ -290,7 +292,7 @@ export default function CreateItem() {
       environment: environmentValue,
       userType: profileUserTypeValue,
     };
-   
+
     const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset,
       urlParameters, {
       value: listingPrice,

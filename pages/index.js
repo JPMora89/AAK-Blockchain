@@ -114,7 +114,7 @@ export default function Home() {
             routeUserUrl = djangoAccountUrl;
           } else {
             routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
-            routeUserUrl = elggAccountUrl;
+            routeUserUrl = elggAccountUrl + '/profile/' +i.urlParameters.profileUserName;
           }
 
           if (i.urlParameters.userType.length > 1) {
@@ -343,7 +343,7 @@ export default function Home() {
               className="border shadow rounded-xl bg-black text-white"
               style={{ height: "90vh" }}
             >
-              <div style={{ width: '100%', height: '100%', top: '-175px', position: 'relative', display: 'block' }}>
+              <div style={{ width: '60%', height: '60%', margin: '-50px 50px', position: 'relative', display: 'block' }}>
                 <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} alt="sample" layout='fill' objectFit='contain' />
               </div>
               <div>
@@ -351,7 +351,7 @@ export default function Home() {
                   // href={`https://www.aaktelescience.com/${nft.origin}`}
                   target="_blank"
                 >
-                  <div className="p-4 " style={{margin: '-355px 0px'}}>
+                  <div className="p-4 " style={{margin: '-30px 0px'}}>
                     <div className="items-center text-center">
                       <p
                         style={{
@@ -371,24 +371,41 @@ export default function Home() {
                         </div> : ''}
 
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">
-                        <b>By: </b>
+                    <div style={{ display: "flex" }}>
+                      <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeUserUrl} passHref={true}>
-                          <p>{nft.profileName}</p>
+                          <p className="text-gray-400" style={{
+                          height: "40px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          whiteSpace: "nowrap"
+                        }}>{nft.profileName}</p>
                         </Link>
-                      </p>
+                      
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">
-                        <b>Related To: </b>
+                    <div style={{ display: "flex"}}>
+                      
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Related To: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeProjectUrl} passHref={true}>
-                          <p> {nft.projectName}</p>
+                          <p className="text-gray-400" style={{
+                          height: "60px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          whiteSpace: "nowrap"
+                        }}> {nft.projectName}</p>
                         </Link>
-                      </p>
+                    
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">{nft.description}</p>
+                    <div>
+                      <p className="text-gray-400" style={{
+                          height: "40px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          whiteSpace: "nowrap",
+                        }}>{nft.description}</p>
                     </div>
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
@@ -413,7 +430,7 @@ export default function Home() {
                     </div> */}
                   </div>
                 </a>
-                <div className="p-4 bg-black" style={{margin:'350px 0px'}}>
+                <div className="p-4 bg-black" style={{margin:'30px 0px'}}>
                   <p className="text-2xl mb-4 font-bold text-white">
                     {nft.price} Aero
                   </p>
