@@ -175,7 +175,7 @@ export default function AeroSwap() {
     const gasPrice = await provider.getGasPrice();
     const gas = ethers.utils.formatEther( gasPrice)
     const totalfee = (numberOfTokens * feePercent)/100;
-    const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + (gas * 5000000);
+    //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
     
       const tokenAmountinNum = Number(numberOfTokens)
       const tokenPriceinNum = Number(tokenPrice)
@@ -189,10 +189,12 @@ export default function AeroSwap() {
       }
 
       const totalAmount = (((tokenAmountinNum - totalfee)*tokenPriceinNum)).toFixed(6)
+      const ttlcost = Number(totalAmount) + (Number(gas)*5000000)
+      console.log("total", ttlcost)
       if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
         setTotalAmount(0.00000)
       }else{
-        setTotalAmount(ttlcost.toFixed(6))
+        setTotalAmount(ttlcost)
       }
      
   }

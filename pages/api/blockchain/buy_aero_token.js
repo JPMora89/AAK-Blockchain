@@ -1,5 +1,6 @@
 import {ethers} from 'ethers';
-import { aeroSwapInstance,provider } from '../../../helpers/contractInstance/aeroSwapInstance';
+import { createAeroSwapInstance ,provider } from '../../../helpers/contractInstance/aeroSwapInstance';
+import { aeroSwapAddress} from '../../../config';
 
 export default async function handler(req,res){
     if(req.method === 'POST'){
@@ -12,19 +13,9 @@ export default async function handler(req,res){
             res.status(400).json({success: false, msg: 'Number of tokens is required.'});
             return;
         }
-        //connect to user wallet
-        // console.log("before web3model")
-        // const web3Modal = new Web3Modal();
-        // console.log("After web3model")
-        // const connection = await web3Modal.connect();
-        // const provider = new ethers.providers.Web3Provider(connection);
-        // const signer = provider.getSigner();
         
         const feePercent = 3;
         const tokenPrice = 0.0168;
-
-        //Set up contract instance 
-       // const aeroSwapContract = new ethers.Contract(aeroSwapAddress,aeroSwapAbi.abi,signer);
         
         //Calculating total fee amount to pay
         const numberOfTokensinNum = Number(numberOfTokens)
@@ -32,6 +23,10 @@ export default async function handler(req,res){
         const totalfee = (numberOfTokensinNum * feePercent)/100;
         const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
         const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
+        const signer = provider.getSigner(userAddress)
+
+        //Set up contract instance 
+        const aeroSwapInstance = createAeroSwapInstance(aeroSwapAddress,signer)
 
         //Buy tokens
         try{
