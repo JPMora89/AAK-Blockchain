@@ -80,11 +80,10 @@ export default function MyAssets() {
     return (
       <div
         className="sweet-loading"
-        align="center"
-        style={{ marginTop: "200px" }}
+        style={{ marginTop: "200px", textAlign: "center" }}
       >
         <ClipLoader size={35} />
-        <p align="center" className="font-bold" style={{ color: "#3079AB" }}>
+        <p className="font-bold" style={{ color: "#3079AB", textAlign: "center" }}>
           Loading up your assets, please wait...
         </p>
       </div>
@@ -112,7 +111,7 @@ export default function MyAssets() {
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
             >
-              <img src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
 
               <div className="p-4">
                 {/* <a href={`https://www.aaktelescience.com/profile/${nft.origin}`} target="_blank"> */}
