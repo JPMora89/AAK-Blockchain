@@ -19,8 +19,24 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import Link from 'next/link';
 
 const options = ['View', 'Buy', 'Remove'];
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
 
 export default function CreatorDashboard() {
   const [nfts, setNfts] = useState([]);
@@ -52,11 +68,55 @@ export default function CreatorDashboard() {
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
     const data = await marketContract.fetchItemsCreated();
 
+
+    var routeProjectUrl = null;
+    var routeUserUrl = null;
+
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         const meta = await axios.get(tokenUri);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
+
+        console.log('meta: ', meta);
+        console.log('item: ',i);
+
+        if (i.urlParameters.environment.includes('web.')) {
+          routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
+          routeUserUrl = djangoAccountUrl;
+        } else {
+          routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
+          routeUserUrl = elggAccountUrl + '/profile/' +i.urlParameters.profileUserName;
+        }
+
+        if (i.urlParameters.userType.length > 1) {
+          switch (i.urlParameters.userType) {
+            case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
+              break;
+            case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
+              break;
+            case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
+              break;
+            case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
+              break;
+            case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
+              break;
+            case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
+              break;
+            case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              break;
+            case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+              break;
+
+          }
+        }
+
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
@@ -72,6 +132,14 @@ export default function CreatorDashboard() {
           terms: meta.data.terms,
           extraFilesUrl: meta.data.extraFiles,
           private: i.isPrivateAsset,
+          profileName: i.urlParameters.profileName,
+          profileUserName: i.urlParameters.profileUserName,
+          projectName: i.urlParameters.projectName,
+          projectSlug: i.urlParameters.projectSlug,
+          environment: i.urlParameters.environment,
+          userType: i.urlParameters.userType,
+          routeProjectUrl: routeProjectUrl,
+          routeUserUrl: routeUserUrl
         };
         return item;
       })
@@ -349,9 +417,12 @@ export default function CreatorDashboard() {
             <div
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
+              style={{ height: "75vh" }}
             >
 
-              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+             <div  style={{ width: '60%', height: '60%', margin: '-50px 50px', position: 'relative', display: 'block' }}>
+               <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]}  alt="sample" layout='fill' objectFit='contain' />
+             
               {
                 nft.private ? <div className="cursor-pointer share-icon-button" onClick={(e) => openSharingModal(nft)}>
                   <Image
@@ -362,7 +433,8 @@ export default function CreatorDashboard() {
                   />
                 </div> : ''
               }
-              <div className="p-4">
+              </div>
+              <div className="p-4"  style={{margin: '-30px 0px'}}>
                 <div className="flex items-center text-center">
                   <p
                     style={{
@@ -381,6 +453,34 @@ export default function CreatorDashboard() {
                       {`(private)`}
                     </div> : ''}
                 </div>
+
+                <div style={{ display: "flex" }}>
+                      <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeUserUrl} passHref={true}>
+                          <p className="text-gray-400" style={{
+                          height: "40px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          whiteSpace: "nowrap"
+                        }}>{nft.profileName}</p>
+                        </Link>
+                      
+                    </div>
+                    <div style={{ display: "flex"}}>
+                      
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Related To: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeProjectUrl} passHref={true}>
+                          <p className="text-gray-400" style={{
+                          height: "60px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          whiteSpace: "nowrap"
+                        }}> {nft.projectName}</p>
+                        </Link>
+                    
+                    </div>
 
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.description}</p>
