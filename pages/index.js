@@ -131,13 +131,13 @@ export default function Home() {
                 break;
               case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
                 break;
-              case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case researchInstitution: routeUserUrl += '/research_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case privateInstitution: routeUserUrl += '/private_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case publicInstitution: routeUserUrl += '/public_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
               case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
                 break;
