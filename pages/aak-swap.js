@@ -83,7 +83,7 @@ export default function AeroSwap() {
     } else {
       const numberOfTokensinNum = Number(numberOfTokens)
       const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
-      const totalfee = (numberOfTokensinNum * feePercent) / 100;
+      const totalfee = (numberOfTokensinNum * feePercent)/100;
       const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
       const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
 
@@ -175,28 +175,30 @@ export default function AeroSwap() {
     const provider = new ethers.providers.Web3Provider(connection);
 
     const gasPrice = await provider.getGasPrice();
-    const gas = ethers.utils.formatEther(gasPrice)
-    const totalfee = (numberOfTokens * feePercent) / 100;
-    const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + (gas * 5000000);
-
-    const tokenAmountinNum = Number(numberOfTokens)
-    const tokenPriceinNum = Number(tokenPrice)
-    const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
-    const tokensReceive = numberOfTokens - totalfee;
-    setTokenReceived(tokensReceive)
-    if (numberOfTokens == '' || numberOfTokens == undefined) {
-      setTokenReceived(0)
-    } else {
+    const gas = ethers.utils.formatEther( gasPrice)
+    const totalfee = (numberOfTokens * feePercent)/100;
+    //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
+    
+      const tokenAmountinNum = Number(numberOfTokens)
+      const tokenPriceinNum = Number(tokenPrice)
+      const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
+      const tokensReceive = numberOfTokens - totalfee;
       setTokenReceived(tokensReceive)
-    }
+      if(numberOfTokens == ''||numberOfTokens == undefined){
+        setTokenReceived(0)
+      }else{
+        setTokenReceived(tokensReceive)
+      }
 
-    const totalAmount = (((tokenAmountinNum - totalfee) * tokenPriceinNum)).toFixed(6)
-    if (numberOfTokens == '' || numberOfTokens == undefined || numberOfTokens == 0) {
-      setTotalAmount(0.00000)
-    } else {
-      setTotalAmount(ttlcost.toFixed(6))
-    }
-
+      const totalAmount = (((tokenAmountinNum - totalfee)*tokenPriceinNum)).toFixed(6)
+      const ttlcost = Number(totalAmount) + (Number(gas)*5000000)
+      console.log("total", ttlcost)
+      if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+        setTotalAmount(0.00000)
+      }else{
+        setTotalAmount(ttlcost.toFixed(4))
+      }
+     
   }
 
   //Handle to tal ETH amount the user receives onSelling
