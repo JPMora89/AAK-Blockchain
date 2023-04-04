@@ -232,7 +232,7 @@ export default function Home() {
               className="border shadow rounded-xl bg-black text-white"
               style={{ height: "80vh" }}
             >
-              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} height="211px" width="100%" />
               <div style={styles.nftContent}>
                 <a
                   // href={`https://www.aaktelescience.com/${nft.origin}`}

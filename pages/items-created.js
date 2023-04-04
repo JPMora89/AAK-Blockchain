@@ -124,7 +124,7 @@ export default function CreatorDashboard() {
     console.log(sharedAddrs);
     console.log(permissions);
 
-    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
+    let transaction = await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
     await transaction.wait();
     alert("Sharing succes to " + sharedAddrs);
   }
