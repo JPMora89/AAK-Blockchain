@@ -26,7 +26,7 @@ const options = ['View', 'Buy', 'Remove'];
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
-const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
 const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
 const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
 const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
