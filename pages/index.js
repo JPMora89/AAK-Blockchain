@@ -119,7 +119,7 @@ export default function Home() {
 
           if (i.urlParameters.userType.length > 0) {
             switch (i.urlParameters.userType) {
-              case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName
+              case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName;
                 break;
               case researchUser: routeUserUrl += '/researchers/' + i.urlParameters.profileUserName;
                 break;
@@ -139,7 +139,7 @@ export default function Home() {
                 break;
               case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+              case team: routeUserUrl += '/teams/' + i.urlParameters.projectSlug;
                 break;
 
             }
