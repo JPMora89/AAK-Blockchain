@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 //import Web3Modal from 'web3modal';
 import path from 'path';
 import fs from 'fs';
+import aeroSwapAddress from '../../config';
 require("dotenv").config({ path: path.resolve(__dirname, '.env.local') })
 
 export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
@@ -9,7 +10,7 @@ export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_I
 console.log(process.env.NEXT_PUBLIC_INFURA_KEY)
 
 export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
-//const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
+const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
 
 
 const aeroSwapContractAbi = () => {
@@ -43,13 +44,12 @@ const aeroSwapContractAbi = () => {
   }
 
 
-
-
-  // export const aeroSwapInstance = new ethers.Contract(
-  //   nftaddress,
+  // export const createAeroSwapInstance = new ethers.Contract(
+  //   aeroSwapAddress,
   //   aeroSwapContractAbi(),
   //   signer
   // )
+
   export const createAeroSwapInstance = (contractAddress, signer) => {
     return new ethers.Contract(
       contractAddress,
@@ -58,11 +58,11 @@ const aeroSwapContractAbi = () => {
     );
   }
 
-  export const createAeroInstance = (contractAddress, signer) => {
-    return new ethers.Contract(
-      contractAddress,
-      aeroContractAbi(),
-      signer
-    );
-  }
+  // export const createAeroInstance = (contractAddress, signer) => {
+  //   return new ethers.Contract(
+  //     contractAddress,
+  //     aeroContractAbi(),
+  //     signer
+  //   );
+  // }
   

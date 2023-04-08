@@ -82,9 +82,12 @@ export default function AeroSwap() {
       setErrorMessage('Please enter the number of Aero Tokens.');
     } else {
       const numberOfTokensinNum = Number(numberOfTokens)
+      console.log("numberOfTokensinNum",numberOfTokensinNum)
       const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
       const totalfee = (numberOfTokensinNum * feePercent)/100;
-      const totalAmount = (numberOfTokensinNum - totalfee) * tokenPrice
+      console.log("totalfee",totalfee)
+      const totalAmount = (numberOfTokensinNum + totalfee) * tokenPrice
+      console.log("totalAmount",totalAmount)
       const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
 
       try {
@@ -95,9 +98,9 @@ export default function AeroSwap() {
           gasLimit: 5000000
         });
 
-        await tx.wait();
-        setSuccessMessage('Transaction successful!');
-        //window.location.reload(false);
+       await tx.wait();
+       setSuccessMessage('Transaction successful!');
+        window.location.reload(false);
       }
       catch (error) {
         console.log(error);
@@ -182,7 +185,7 @@ export default function AeroSwap() {
       const tokenAmountinNum = Number(numberOfTokens)
       const tokenPriceinNum = Number(tokenPrice)
       const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
-      const tokensReceive = numberOfTokens - totalfee;
+      const tokensReceive = numberOfTokens;
       setTokenReceived(tokensReceive)
       if(numberOfTokens == ''||numberOfTokens == undefined){
         setTokenReceived(0)
@@ -190,13 +193,13 @@ export default function AeroSwap() {
         setTokenReceived(tokensReceive)
       }
 
-      const totalAmount = (((tokenAmountinNum - totalfee)*tokenPriceinNum)).toFixed(6)
-      const ttlcost = Number(totalAmount) + (Number(gas)*5000000)
-      console.log("total", ttlcost)
+      const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
+     // const ttlcost = Number(totalAmount) + (Number(gas)*5000000)
+      console.log("total", totalAmount)
       if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
         setTotalAmount(0.00000)
       }else{
-        setTotalAmount(ttlcost.toFixed(4))
+        setTotalAmount(totalAmount)
       }
      
   }
@@ -236,10 +239,10 @@ export default function AeroSwap() {
             {/* <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
             <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p> */}
-            <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>Tokens you receive: {tokenRecived} AER</p>
+            <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>ETH you pay: {totalAmount} ETH</p>
           </div>
           <input value={numberOfTokens} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokens(e.target.value)} />
-          <p>Your total value: {totalAmount} approx(*May vary based on the network traffic)</p>
+          <p>You will be paying the gas price and fee based on the network traffic.</p>
           <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyToken}>Buy Tokens</button>
           <div className="w-1/2 flex flex-col pb-12" style={{ marginTop: "2%" }}>
             {successMessage && (
