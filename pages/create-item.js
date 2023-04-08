@@ -20,19 +20,19 @@ import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 
 
-var profileNameDecrypt = null;
-var profileUsernameDecrypt = null;
-var projectNameDecrypt = null;
-var projectUrlDecrypt = null;
+var profileNameDecrypt = "";
+let profileUserNameDecrypt = "";
+var projectNameDecrypt = "";
+var projectUrlDecrypt = "";
 var profileUserType = "";
-var profileUserTypeValue = " ";
+let profileUserTypeValue = "";
 var environment;
 var environmentValue;
 
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
-const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
 const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
 const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
 const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
@@ -109,7 +109,8 @@ export default function CreateItem() {
                       case "profile_name": profileNameDecrypt = queryArray[key];
                         break;
 
-                      case "profile_username": profileUsernameDecrypt = queryArray[key];
+                      case "profile_username": profileUserNameDecrypt = queryArray[key];
+                                              console.log('profileUserNameDecrypt', profileUserNameDecrypt);
                         break;
 
                       case "profile_user_type": profileUserType = queryArray[key];
@@ -284,14 +285,23 @@ export default function CreateItem() {
     listingPrice = listingPrice.toString();
 
 
+    console.log('profileUserNameDecrypt before making ledger', profileUserNameDecrypt);
+    console.log('profileUserTypeValue before making ledger', profileUserTypeValue);
     let urlParameters = {
       profileName: profileNameDecrypt,
-      profileUserName: profileUsernameDecrypt,
+      profileUserName: profileUserNameDecrypt,
       projectName: projectNameDecrypt,
       projectSlug: projectUrlDecrypt,
       environment: environmentValue,
       userType: profileUserTypeValue,
     };
+
+    console.log('nftaddress before making ledger', nftaddress);
+    console.log('url before making ledger', url);
+    console.log('price before making ledger', price);
+    console.log('formInput.privateAsset before making ledger', formInput.privateAsset);
+    console.log('urlParameters before making ledger', urlParameters);
+    console.log('listingPrice before making ledger', listingPrice);
 
     const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset,
       urlParameters, {

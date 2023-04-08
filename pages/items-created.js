@@ -26,7 +26,7 @@ const options = ['View', 'Buy', 'Remove'];
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
-const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
 const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
 const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
 const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
@@ -91,27 +91,27 @@ export default function CreatorDashboard() {
 
         if (i.urlParameters.userType.length > 1) {
           switch (i.urlParameters.userType) {
-            case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
+            case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName;
               break;
-            case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
+            case researchUser: routeUserUrl += '/researchers/' + i.urlParameters.profileUserName;
               break;
-            case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
+            case investorUser: routeUserUrl += '/investors/' + i.urlParameters.profileUserName;
               break;
-            case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
+            case institutionStaffUser: routeUserUrl += '/institution_staff/' + i.urlParameters.profileUserName;
               break;
-            case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
+            case serviceProviderUser: routeUserUrl += '/service_providers/' + i.urlParameters.profileUserName;
               break;
-            case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
+            case institution: routeUserUrl += '/institutions/' + i.urlParameters.projectSlug;
               break;
-            case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case researchInstitution: routeUserUrl += '/research_institutions/profile/' + i.urlParameters.projectSlug;
               break;
-            case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+            case privateInstitution: routeUserUrl += '/private_institutions/profile/' + i.urlParameters.projectSlug;
               break;
-            case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+            case publicInstitution: routeUserUrl += '/public_institutions/profile/' + i.urlParameters.projectSlug;
               break;
-            case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+            case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
               break;
-            case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+            case team: routeUserUrl += '/teams/' + i.urlParameters.projectSlug;
               break;
 
           }
