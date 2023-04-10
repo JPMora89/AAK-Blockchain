@@ -58,11 +58,10 @@ const aeroSwapContractAbi = () => {
     );
   }
 
-  // export const createAeroInstance = (contractAddress, signer) => {
-  //   return new ethers.Contract(
-  //     contractAddress,
-  //     aeroContractAbi(),
-  //     signer
-  //   );
-  // }
-  
+  export const createAeroInstance = (contractAddress, signer) => {
+    return new ethers.Contract(
+      contractAddress,
+      aeroContractAbi(),
+      signer
+    );
+  }
