@@ -11,6 +11,7 @@ module.exports = (phase, { defaultConfig }) => {
           "os": false,
         }
       }
+
       return config
     },
     images: {
