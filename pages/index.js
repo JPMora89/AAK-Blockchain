@@ -374,37 +374,50 @@ export default function Home() {
                     <div style={{ display: "flex" }}>
                       <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeUserUrl} passHref={true}>
-                          <p className="text-gray-400" style={{
-                          height: "40px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "350px",
-                          whiteSpace: "nowrap"
-                        }}>{nft.profileName}</p>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "20px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            color: "#0070f3",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                          }}>{nft.profileName}</p></a>
                         </Link>
-                      
+
                     </div>
                     <div style={{ display: "flex"}}>
-                      
-                        <p className="text-gray-400" style={{height:'20px'}}><b>Related To: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Project: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeProjectUrl} passHref={true}>
-                          <p className="text-gray-400" style={{
-                          height: "60px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "350px",
-                          whiteSpace: "nowrap"
-                        }}> {nft.projectName}</p>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "20px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            color: "#0070f3",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                          }}> {nft.projectName}</p></a>
                         </Link>
-                    
+
                     </div>
                     <div>
                       <p className="text-gray-400" style={{
-                          height: "40px",
-                          overflow: "hidden",
+                          height: "68px",
+                          overflow: "auto",
                           textOverflow: "ellipsis",
                           maxWidth: "350px",
-                          whiteSpace: "nowrap",
+                          lineHeight: "1.4",
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                          textAlign: "justify",
+                          hyphens: "auto",
+                          paddingRight: "10px",
                         }}>{nft.description}</p>
                     </div>
                     <div style={{ overflow: "hidden" }}>

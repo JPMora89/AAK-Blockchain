@@ -27,7 +27,7 @@ export default async function handler(req,res){
 
         //Set up contract instance 
         const aeroSwapInstance = createAeroSwapInstance(aeroSwapAddress,signer)
-
+        console.log(aeroSwapInstance)
         //Buy tokens
         try{
            const tx = await aeroSwapInstance.functions.buyTokens(numberOftokensinWei,{

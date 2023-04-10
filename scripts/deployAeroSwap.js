@@ -1,15 +1,13 @@
 import { ethers } from "hardhat";
-import { aeroAddress , privateKey} from "../config";
+import { aeroAddress} from "../config";
 
 async function main() {
   
   const tokenPrice = ethers.utils.parseEther("0.0168");
   const feeAmount = 3;
   
-  const add = new ethers.Wallet(privateKey)
-  const feeAddress = add.address;
   const AeroSwap = await ethers.getContractFactory("AeroSwap");
-  const aeroSwap = await AeroSwap.deploy(aeroAddress, tokenPrice, feeAmount, feeAddress );
+  const aeroSwap = await AeroSwap.deploy(aeroAddress, tokenPrice, feeAmount);
 
   await aeroSwap.deployed();
   console.log("AeroSwap deployed to:", aeroSwap.address);
