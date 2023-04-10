@@ -288,13 +288,13 @@ export default function AeroSwap() {
           * Token value and our 3% fee are clearly stated on the page.<br />
           * How Fee works :<br />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We charge a 3% fee on token purchases, which means if you buy 1<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;token, 3% of it will be taken as a fee, resulting in you receiving only 0.97 tokens. Please <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;review the tokens &apos;you receive field&apos; before completing your purchase.<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;token, which is 0.0168 ETH 3% of it will be charged as a fee, So you will be paying 0.017304 ETH. Please <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;review the ETH &apos;you pay field&apos; before completing your purchase.<br />
           * Please ensure you have enough ETH in your wallet to complete the transaction; otherwise, it may fail.<br />
           * Note that the transaction price may vary based on the gas price and network traffic.<br />
           * Add Aero Token to your wallet using the token address: 0xA7C6009E88F6054c0FDBec12e80cB2Fdb0a8d0d3.<br />
-          * While selling tokens 3% of the eth will be deducted as fee, which means for 1 AER token it is 1.68 ETH<br />
-          &nbsp;&nbsp;&nbsp;&nbsp;after deduction of 3% you will receive 1.6296 ETH. Please review the &apos;Eth you receive&apos; field.
+          * While selling tokens 3% of the eth will be deducted as fee, which means for 1 AER token it is 0.0168 ETH<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;after deduction of 3% you will receive 0.016296 ETH. Please review the &apos;Eth you receive&apos; field.
         </p>
 
       </div>
