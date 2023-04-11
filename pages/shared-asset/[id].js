@@ -13,6 +13,23 @@ import Aero from "../../artifacts/contracts/v2/Aero.sol/Aero.json";
 import Market from "../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 import NFT from "../../artifacts/contracts/NFT.sol/NFT.json";
 
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
+
+
 export default function SharedAsset() {
   const router = useRouter();
   const id = router.query.id;
