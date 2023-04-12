@@ -26,6 +26,11 @@ const config: HardhatUserConfig = {
       url: `https://goerli.infura.io/v3/${infuraId}`,
       accounts: [`${privateKey}`],
     },
+
+    sepolia :{
+      url:  `https://sepolia.infura.io/v3/${infuraId}`,
+      accounts: [`${privateKey}`],
+    }
   },
   solidity: {
     version: '0.8.17',
