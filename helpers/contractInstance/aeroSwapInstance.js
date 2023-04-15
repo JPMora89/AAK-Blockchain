@@ -2,15 +2,13 @@ import { ethers } from 'ethers';
 //import Web3Modal from 'web3modal';
 import path from 'path';
 import fs from 'fs';
-import aeroSwapAddress from '../../config';
+import {aeroSwapAddress, aeroAddress} from '../../config';
 require("dotenv").config({ path: path.resolve(__dirname, '.env.local') })
 
 export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
 
-console.log(process.env.NEXT_PUBLIC_INFURA_KEY)
-
 export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
-const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
+//const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)
 
 
 const aeroSwapContractAbi = () => {
@@ -50,17 +48,19 @@ const aeroSwapContractAbi = () => {
   //   signer
   // )
 
-  export const createAeroSwapInstance = (contractAddress, signer) => {
+  export const createAeroSwapInstance = async(userSigner) => {
+    const signer = new ethers.Wallet(userSigner, provider)
     return new ethers.Contract(
-      contractAddress,
+      aeroSwapAddress,
       aeroSwapContractAbi(),
       signer
     );
   }
 
-  export const createAeroInstance = (contractAddress, signer) => {
+  export const createAeroInstance = (userSigner) => {
+    const signer = new ethers.Wallet(userSigner , provider)
     return new ethers.Contract(
-      contractAddress,
+      aeroAddress,
       aeroContractAbi(),
       signer
     );
