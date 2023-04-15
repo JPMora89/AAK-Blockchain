@@ -10,6 +10,22 @@ import { nftmarketaddress, nftaddress } from "../config";
 
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
+import Link from 'next/link';
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
 
 export default function MyAssets() {
   const [nfts, setNfts] = useState([]);
@@ -43,6 +59,8 @@ export default function MyAssets() {
     );
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
     const data = await marketContract.connect(signer).fetchMyNFTs();
+    var routeProjectUrl = null;
+    var routeUserUrl = null;
     console.log("My NFTS Data => ", data);
     const items = await Promise.all(
       data.map(async (i) => {
@@ -52,23 +70,101 @@ export default function MyAssets() {
         console.log("Meta:");
         console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
-        let item = {
-          price,
-          itemId: i.itemId.toNumber(),
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-          type: meta.data.type,
-          doc: meta.data.doc,
-          terms: meta.data.terms,
-          extraFilesUrl: meta.data.extraFiles,
-          origin: meta.data.origin,
-          private: i.isPrivateAsset,
-        };
-        return item;
+
+        //for url
+        let item;
+
+        if (i.hasOwnProperty('urlParameters')) {
+
+          if (i.urlParameters.environment.includes('web.')) {
+            routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
+            routeUserUrl = djangoAccountUrl;
+          } else {
+            routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
+            routeUserUrl = elggAccountUrl + '/profile/' +i.urlParameters.profileUserName;
+          }
+
+          if (i.urlParameters.userType.length > 1) {
+            switch (i.urlParameters.userType) {
+              case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName;
+                break;
+              case researchUser: routeUserUrl += '/researchers/' + i.urlParameters.profileUserName;
+                break;
+              case investorUser: routeUserUrl += '/investors/' + i.urlParameters.profileUserName;
+                break;
+              case institutionStaffUser: routeUserUrl += '/institution_staff/' + i.urlParameters.profileUserName;
+                break;
+              case serviceProviderUser: routeUserUrl += '/service_providers/' + i.urlParameters.profileUserName;
+                break;
+              case institution: routeUserUrl += '/institutions/' + i.urlParameters.projectSlug;
+                break;
+                case researchInstitution: routeUserUrl += '/research_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case privateInstitution: routeUserUrl += '/private_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case publicInstitution: routeUserUrl += '/public_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case team: routeUserUrl += '/teams/' + i.urlParameters.projectSlug;
+                break;
+
+            }
+          }
+
+          item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            private: i.isPrivateAsset,
+            profileName: i.urlParameters.profileName,
+            profileUserName: i.urlParameters.profileUserName,
+            projectName: i.urlParameters.projectName,
+            projectSlug: i.urlParameters.projectSlug,
+            environment: i.urlParameters.environment,
+            userType: i.urlParameters.userType,
+            routeProjectUrl: routeProjectUrl,
+            routeUserUrl: routeUserUrl,
+          };
+          return item;
+        }
+        else {
+          item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            private: i.isPrivateAsset,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            profileName: "",
+            profileUserName: "",
+            projectName: "",
+            projectSlug: "",
+            environment: "",
+            userType: "",
+            routeProjectUrl: "",
+            routeUserUrl: ""
+          };
+          return item;
+        }
       })
     );
 
@@ -110,9 +206,11 @@ export default function MyAssets() {
             <div
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
+              style={{ height: "90vh" }}
             >
-              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
-
+              <div  style={{ width: '60%', height: '60%', margin: '-50px 50px', position: 'relative', display: 'block' }}>
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} alt="sample" layout='fill' objectFit='contain' />
+          </div>
               <div className="p-4">
                 {/* <a href={`https://www.aaktelescience.com/profile/${nft.origin}`} target="_blank"> */}
                 <p
@@ -131,9 +229,53 @@ export default function MyAssets() {
                   <div className="ml-2">
                     {`(private)`}
                   </div> : ''}
-                <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.description}</p>
-                </div>
+
+                  <div style={{ display: "flex" }}>
+                      <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeUserUrl} passHref={true}>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "40px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            cursor: "pointer"
+                          }}>{nft.profileName}</p></a>
+                        </Link>
+
+                    </div>
+                    <div style={{ display: "flex"}}>
+
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Project: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeProjectUrl} passHref={true}>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "40px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            cursor: "pointer"
+                          }}> {nft.projectName}</p></a>
+                        </Link>
+
+                    </div>
+
+                    <div>
+                      <p className="text-gray-400" style={{
+                          height: "68px",
+                          overflow: "auto",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          lineHeight: "1.4",
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                          textAlign: "justify",
+                          hyphens: "auto",
+                          paddingRight: "10px",
+                        }}>{nft.description}</p>
+                    </div>
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
