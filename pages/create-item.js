@@ -28,8 +28,8 @@ var projectNameDecrypt = "";
 var projectUrlDecrypt = "";
 var profileUserType = "";
 let profileUserTypeValue = "";
-var environment;
-var environmentValue;
+var environment = "";
+var environmentValue = "";
 
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
