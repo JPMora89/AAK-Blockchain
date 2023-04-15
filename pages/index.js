@@ -23,7 +23,7 @@ if (process.env.NEXT_PUBLIC_WORKSPACE_URL) {
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
-const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
 const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
 const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
 const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
@@ -114,32 +114,32 @@ export default function Home() {
             routeUserUrl = djangoAccountUrl;
           } else {
             routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
-            routeUserUrl = elggAccountUrl;
+            routeUserUrl = elggAccountUrl + '/profile/' +i.urlParameters.profileUserName;
           }
 
-          if (i.urlParameters.userType.length > 1) {
+          if (i.urlParameters.userType.length > 0) {
             switch (i.urlParameters.userType) {
-              case user: routeUserUrl += '/profile/' + profileUsernameDecrypt
+              case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName;
                 break;
-              case researchUser: routeUserUrl += '/researchers/' + profileUsernameDecrypt;
+              case researchUser: routeUserUrl += '/researchers/' + i.urlParameters.profileUserName;
                 break;
-              case investorUser: routeUserUrl += '/investors/' + profileUsernameDecrypt;
+              case investorUser: routeUserUrl += '/investors/' + i.urlParameters.profileUserName;
                 break;
-              case institutionStaffUser: routeUserUrl += '/institution_staff/' + profileUsernameDecrypt;
+              case institutionStaffUser: routeUserUrl += '/institution_staff/' + i.urlParameters.profileUserName;
                 break;
-              case serviceProviderUser: routeUserUrl += '/service_providers/' + profileUsernameDecrypt;
+              case serviceProviderUser: routeUserUrl += '/service_providers/' + i.urlParameters.profileUserName;
                 break;
-              case institution: routeUserUrl += '/institutions/' + projectUrlDecrypt;
+              case institution: routeUserUrl += '/institutions/' + i.urlParameters.projectSlug;
                 break;
-              case researchInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case researchInstitution: routeUserUrl += '/research_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case privateInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case privateInstitution: routeUserUrl += '/private_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case publicInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case publicInstitution: routeUserUrl += '/public_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case otherInstitution: routeUserUrl += '/create_projects/profile/' + projectUrlDecrypt;
+              case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
                 break;
-              case team: routeUserUrl += '/teams/' + projectUrlDecrypt;
+              case team: routeUserUrl += '/teams/' + i.urlParameters.projectSlug;
                 break;
 
             }
@@ -343,7 +343,7 @@ export default function Home() {
               className="border shadow rounded-xl bg-black text-white"
               style={{ height: "90vh" }}
             >
-              <div style={{ width: '100%', height: '100%', top: '-175px', position: 'relative', display: 'block' }}>
+              <div style={{ width: '60%', height: '60%', margin: '-50px 50px', position: 'relative', display: 'block' }}>
                 <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} alt="sample" layout='fill' objectFit='contain' />
               </div>
               <div>
@@ -351,7 +351,7 @@ export default function Home() {
                   // href={`https://www.aaktelescience.com/${nft.origin}`}
                   target="_blank"
                 >
-                  <div className="p-4 " style={{margin: '-355px 0px'}}>
+                  <div className="p-4 " style={{margin: '-30px 0px'}}>
                     <div className="items-center text-center">
                       <p
                         style={{
@@ -371,24 +371,54 @@ export default function Home() {
                         </div> : ''}
 
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">
-                        <b>By: </b>
+                    <div style={{ display: "flex" }}>
+                      <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeUserUrl} passHref={true}>
-                          <p>{nft.profileName}</p>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "20px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            color: "#0070f3",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                          }}>{nft.profileName}</p></a>
                         </Link>
-                      </p>
+
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">
-                        <b>Related To: </b>
+                    <div style={{ display: "flex"}}>
+
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Project: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Link href={nft.routeProjectUrl} passHref={true}>
-                          <p> {nft.projectName}</p>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "20px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            color: "#0070f3",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                          }}> {nft.projectName}</p></a>
                         </Link>
-                      </p>
+
                     </div>
-                    <div style={{ overflow: "hidden" }}>
-                      <p className="text-gray-400">{nft.description}</p>
+                    <div>
+                      <p className="text-gray-400" style={{
+                          height: "68px",
+                          overflow: "auto",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          lineHeight: "1.4",
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                          textAlign: "justify",
+                          hyphens: "auto",
+                          paddingRight: "10px",
+                        }}>{nft.description}</p>
                     </div>
                     <div style={{ overflow: "hidden" }}>
                       <p className="text-gray-400">{nft.type}</p>
@@ -413,7 +443,7 @@ export default function Home() {
                     </div> */}
                   </div>
                 </a>
-                <div className="p-4 bg-black" style={{margin:'350px 0px'}}>
+                <div className="p-4 bg-black" style={{margin:'30px 0px'}}>
                   <p className="text-2xl mb-4 font-bold text-white">
                     {nft.price} Aero
                   </p>

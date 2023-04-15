@@ -19,8 +19,24 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import Link from 'next/link';
 
 const options = ['View', 'Buy', 'Remove'];
+
+//get values for endpoints
+const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
+const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
 
 export default function CreatorDashboard() {
   const [nfts, setNfts] = useState([]);
@@ -52,28 +68,113 @@ export default function CreatorDashboard() {
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider);
     const data = await marketContract.fetchItemsCreated();
 
+
+    var routeProjectUrl = null;
+    var routeUserUrl = null;
+
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
+        console.log(tokenUri);
         const meta = await axios.get(tokenUri);
+        console.log("Meta:");
+        console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
-        let item = {
-          price,
-          tokenId: i.tokenId.toNumber(),
-          itemId: i.itemId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          sold: i.sold,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-          type: meta.data.type,
-          doc: meta.data.doc,
-          terms: meta.data.terms,
-          extraFilesUrl: meta.data.extraFiles,
-          private: i.isPrivateAsset,
-        };
-        return item;
+
+        //for url
+        let item;
+
+        if (i.hasOwnProperty('urlParameters')) {
+
+          if (i.urlParameters.environment.includes('web.')) {
+            routeProjectUrl = djangoAccountUrl + '/aak_projects/' + i.urlParameters.projectSlug;
+            routeUserUrl = djangoAccountUrl;
+          } else {
+            routeProjectUrl = elggAccountUrl + '/create_projects/profile/' + i.urlParameters.projectSlug;
+            routeUserUrl = elggAccountUrl + '/profile/' +i.urlParameters.profileUserName;
+          }
+
+          if (i.urlParameters.userType.length > 1) {
+            switch (i.urlParameters.userType) {
+              case user: routeUserUrl += '/profile/' + i.urlParameters.profileUserName;
+                break;
+              case researchUser: routeUserUrl += '/researchers/' + i.urlParameters.profileUserName;
+                break;
+              case investorUser: routeUserUrl += '/investors/' + i.urlParameters.profileUserName;
+                break;
+              case institutionStaffUser: routeUserUrl += '/institution_staff/' + i.urlParameters.profileUserName;
+                break;
+              case serviceProviderUser: routeUserUrl += '/service_providers/' + i.urlParameters.profileUserName;
+                break;
+              case institution: routeUserUrl += '/institutions/' + i.urlParameters.projectSlug;
+                break;
+                case researchInstitution: routeUserUrl += '/research_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case privateInstitution: routeUserUrl += '/private_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case publicInstitution: routeUserUrl += '/public_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case otherInstitution: routeUserUrl += '/other_institutions/profile/' + i.urlParameters.projectSlug;
+                break;
+              case team: routeUserUrl += '/teams/' + i.urlParameters.projectSlug;
+                break;
+
+            }
+          }
+
+          item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            private: i.isPrivateAsset,
+            profileName: i.urlParameters.profileName,
+            profileUserName: i.urlParameters.profileUserName,
+            projectName: i.urlParameters.projectName,
+            projectSlug: i.urlParameters.projectSlug,
+            environment: i.urlParameters.environment,
+            userType: i.urlParameters.userType,
+            routeProjectUrl: routeProjectUrl,
+            routeUserUrl: routeUserUrl,
+          };
+          return item;
+        }
+        else {
+          item = {
+            price,
+            itemId: i.itemId.toNumber(),
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            private: i.isPrivateAsset,
+            image: meta.data.image,
+            name: meta.data.name,
+            description: meta.data.description,
+            type: meta.data.type,
+            doc: meta.data.doc,
+            terms: meta.data.terms,
+            extraFilesUrl: meta.data.extraFiles,
+            origin: meta.data.origin,
+            profileName: "",
+            profileUserName: "",
+            projectName: "",
+            projectSlug: "",
+            environment: "",
+            userType: "",
+            routeProjectUrl: "",
+            routeUserUrl: ""
+          };
+          return item;
+        }
       })
     );
     /* create a filtered array of items that have been sold */
@@ -124,7 +225,7 @@ export default function CreatorDashboard() {
     console.log(sharedAddrs);
     console.log(permissions);
 
-    await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
+    let transaction = await marketContract.setSharedAddress(privateNft.itemId, sharedAddrs, permissions);
     await transaction.wait();
     alert("Sharing succes to " + sharedAddrs);
   }
@@ -349,47 +450,81 @@ export default function CreatorDashboard() {
             <div
               key={i}
               className="border shadow rounded-xl overflow-hidden bg-black text-white"
+              style={{ height: "90vh" }}
             >
-
-              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} style={{ height: "211px", width: "100%" }} />
-              {
-                nft.private ? <div className="cursor-pointer share-icon-button" onClick={(e) => openSharingModal(nft)}>
-                  <Image
-                    src={"/icons8-share.svg"}
-                    alt="Share the asset to specified wallet"
-                    width={24}
-                    height={24}
-                  />
-                </div> : ''
-              }
+              <div  style={{ width: '60%', height: '60%', margin: '-50px 50px', position: 'relative', display: 'block' }}>
+              <Image src={"https://ipfs.io/ipfs/" + nft.image.split("ipfs://")[1]} alt="sample" layout='fill' objectFit='contain' />
+          </div>
               <div className="p-4">
-                <div className="flex items-center text-center">
-                  <p
-                    style={{
-                      height: "40px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: "250px",
-                      whiteSpace: "nowrap",
-                    }}
-                    className="text-2xl font-semibold"
-                  >
-                    {nft.name}
-                  </p>
-                  {nft.private ?
-                    <div className="ml-2">
-                      {`(private)`}
-                    </div> : ''}
-                </div>
+                {/* <a href={`https://www.aaktelescience.com/profile/${nft.origin}`} target="_blank"> */}
+                <p
+                  style={{
+                    height: "40px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxWidth: "250px",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="text-2xl font-semibold"
+                >
+                  {nft.name}
+                </p>
+                {nft.private ?
+                  <div className="ml-2">
+                    {`(private)`}
+                  </div> : ''}
 
-                <div style={{ overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.description}</p>
-                </div>
+                  <div style={{ display: "flex" }}>
+                      <p className="text-gray-400"><b>By: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeUserUrl} passHref={true}>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "40px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            cursor: "pointer"
+                          }}>{nft.profileName}</p></a>
+                        </Link>
+
+                    </div>
+                    <div style={{ display: "flex"}}>
+
+                        <p className="text-gray-400" style={{height:'20px'}}><b>Project: </b></p>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <Link href={nft.routeProjectUrl} passHref={true}>
+                          <a target="_blank">
+                            <p className="text-gray-400" style={{
+                            height: "40px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "250px",
+                            whiteSpace: "nowrap",
+                            cursor: "pointer"
+                          }}> {nft.projectName}</p></a>
+                        </Link>
+
+                    </div>
+
+                    <div>
+                      <p className="text-gray-400" style={{
+                          height: "68px",
+                          overflow: "auto",
+                          textOverflow: "ellipsis",
+                          maxWidth: "350px",
+                          lineHeight: "1.4",
+                          marginTop: "10px",
+                          marginBottom: "10px",
+                          textAlign: "justify",
+                          hyphens: "auto",
+                          paddingRight: "10px",
+                        }}>{nft.description}</p>
+                    </div>
                 <div style={{ overflow: "hidden" }}>
                   <p className="text-gray-400">{nft.type}</p>
                 </div>
                 <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.doc}`, nft.doc)}>
-                  <p className="text-gray-400 mr-2">Document</p>
+                  <p className="text-gray-400 mr-2">{nft.doc}</p>
                   <Image
                     src={"/download.svg"}
                     alt="Picture of the author"
@@ -398,7 +533,7 @@ export default function CreatorDashboard() {
                   />
                 </div>
                 <div className="cursor-pointer flex" style={{ overflow: "hidden" }} onClick={(e) => downloadFile(`${nft.extraFilesUrl}/${nft.terms}`, nft.terms)}>
-                  <p className="text-gray-400 mr-2">Terms and Conditions</p>
+                  <p className="text-gray-400 mr-2">{nft.terms}</p>
                   <Image
                     src={"/download.svg"}
                     alt="Picture of the author"
@@ -407,6 +542,7 @@ export default function CreatorDashboard() {
                   />
                 </div>
               </div>
+
               <div className="p-4 bg-black">
                 <p className="text-2xl mb-4 font-bold text-white">
                   {nft.price} Aero

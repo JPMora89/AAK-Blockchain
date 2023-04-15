@@ -20,19 +20,19 @@ import NFT from "../artifacts/contracts/NFT.sol/NFT.json";
 import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 
 
-var profileNameDecrypt = null;
-var profileUsernameDecrypt = null;
-var projectNameDecrypt = null;
-var projectUrlDecrypt = null;
+var profileNameDecrypt = "";
+let profileUserNameDecrypt = "";
+var projectNameDecrypt = "";
+var projectUrlDecrypt = "";
 var profileUserType = "";
-var profileUserTypeValue=" ";
+let profileUserTypeValue = "";
 var environment;
 var environmentValue;
 
 //get values for endpoints
 const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
-const user = process.env.NEXT_PROFILE_USER_TYPE_USER;
+const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
 const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
 const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
 const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
@@ -67,97 +67,100 @@ export default function CreateItem() {
   useEffect(() => {
     let originPath = router.asPath;
     console.log("originPath", originPath);
+    if (originPath.includes("?")) {
+      let paramString = originPath.split('?')[1];
 
-    let paramString = originPath.split('?')[1];
-
-    const paramArray = paramString.split(seperator);
-    let queryString = "";
-    let queryArray;
+      const paramArray = paramString.split(seperator);
+      let queryString = "";
+      let queryArray;
 
 
-    paramArray.forEach(function (value, index) {
-      try {
-        async function fetchData() {
-          const valueDecrypt = await decryptString(value);
-          queryString += valueDecrypt;
-          if (index == paramArray.length - 1) {
-            queryArray = queryString.split("&").reduce(function (obj, str, index) {
-              let strParts = str.split("=");
-              if (strParts[0] && strParts[1]) { //<-- Make sure the key & value are not undefined
-                obj[strParts[0].replace(/\s+/g, '')] = strParts[1].trim(); //<-- Get rid of extra spaces at beginning of value strings
-              }
-              return obj;
-            }, {});
-            console.log(queryArray);
+      paramArray.forEach(function (value, index) {
+        try {
+          async function fetchData() {
+            const decodeUri=decodeURIComponent(value);
+            console.log('decode URI value',decodeUri);
+            const valueDecrypt = await decryptString(decodeUri);
+            queryString += valueDecrypt;
+            if (index == paramArray.length - 1) {
+              queryArray = queryString.split("&").reduce(function (obj, str, index) {
+                let strParts = str.split("=");
+                if (strParts[0] && strParts[1]) { //<-- Make sure the key & value are not undefined
+                  obj[strParts[0].replace(/\s+/g, '')] = strParts[1].trim(); //<-- Get rid of extra spaces at beginning of value strings
+                }
+                return obj;
+              }, {});
+              console.log(queryArray);
 
-            for (let key in queryArray) {
-              if (queryArray.hasOwnProperty(key)) {
-                console.log("Key is: " + key+" Value is: " + queryArray[key]);
-                if (originPath.includes("?")) {
-                  switch (key) {
-                    case "new_env": environment = queryArray[key];
-                      if (environment == "0") {
-                        environmentValue = elggAccountUrl;
-                      }
-                      else if (environment == "1") {
-                        environmentValue = djangoAccountUrl;
-                      }
+              for (let key in queryArray) {
+                if (queryArray.hasOwnProperty(key)) {
+                  console.log("Key is: " + key + " Value is: " + queryArray[key]);
+                  if (originPath.includes("?")) {
+                    switch (key) {
+                      case "new_env": environment = queryArray[key];
+                        if (environment == "0") {
+                          environmentValue = elggAccountUrl;
+                        }
+                        else if (environment == "1") {
+                          environmentValue = djangoAccountUrl;
+                        }
 
-                      break;
-                    case "profile_name": profileNameDecrypt = queryArray[key];
-                      break;
+                        break;
+                      case "profile_name": profileNameDecrypt = queryArray[key];
+                        break;
 
-                    case "profile_username": profileUsernameDecrypt = queryArray[key];
-                      break;
+                      case "profile_username": profileUserNameDecrypt = queryArray[key];
+                                              console.log('profileUserNameDecrypt', profileUserNameDecrypt);
+                        break;
 
-                    case "profile_user_type": profileUserType = queryArray[key];
-                      switch (profileUserType) {
-                        case "0": profileUserTypeValue = user;
-                          break;
-                        case "1": profileUserTypeValue = researchUser;
-                          break;
-                        case "2": profileUserTypeValue = investorUser;
-                          break;
-                        case "3": profileUserTypeValue = institutionStaffUser;
-                          break;
-                        case "4": profileUserTypeValue = serviceProviderUser;
-                          break;
-                        case "5": profileUserTypeValue = institution;
-                          break;
-                        case "6": profileUserTypeValue = researchInstitution;
-                          break;
-                        case "7": profileUserTypeValue = privateInstitution;
-                          break;
-                        case "8": profileUserTypeValue = publicInstitution;
-                          break;
-                        case "9": profileUserTypeValue = otherInstitution;
-                          break;
-                        case "10": profileUserTypeValue = team;
-                          break;
+                      case "profile_user_type": profileUserType = queryArray[key];
+                        switch (profileUserType) {
+                          case "0": profileUserTypeValue = user;
+                            break;
+                          case "1": profileUserTypeValue = researchUser;
+                            break;
+                          case "2": profileUserTypeValue = investorUser;
+                            break;
+                          case "3": profileUserTypeValue = institutionStaffUser;
+                            break;
+                          case "4": profileUserTypeValue = serviceProviderUser;
+                            break;
+                          case "5": profileUserTypeValue = institution;
+                            break;
+                          case "6": profileUserTypeValue = researchInstitution;
+                            break;
+                          case "7": profileUserTypeValue = privateInstitution;
+                            break;
+                          case "8": profileUserTypeValue = publicInstitution;
+                            break;
+                          case "9": profileUserTypeValue = otherInstitution;
+                            break;
+                          case "10": profileUserTypeValue = team;
+                            break;
 
-                      }
-                      break;
-                    case "project_name": projectNameDecrypt = queryArray[key];
-                      break;
+                        }
+                        break;
+                      case "project_name": projectNameDecrypt = queryArray[key];
+                        break;
 
-                    case "project_url": projectUrlDecrypt = queryArray[key];
-                      break;
+                      case "project_url": projectUrlDecrypt = queryArray[key];
+                        break;
+                    }
                   }
                 }
               }
             }
           }
+          fetchData().then()
+            .catch(console.error);
+
+
+        } catch (err) {
+          console.log('could not return');
         }
-        fetchData().then()
-          .catch(console.error);
 
-
-      } catch (err) {
-        console.log('could not return');
-      }
-
-    })
-
+      })
+    }
     /* if (originPath.includes("=") & !originPath.includes("&")) {
        originPath = `profile/${originPath.split("=")[1]}`;
      } else if (originPath.includes("=") && originPath.includes("&")) {
@@ -261,7 +264,7 @@ export default function CreateItem() {
   async function createSale(url) {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
-    
+
     const provider = new ethers.providers.Web3Provider(connection);
     console.log("provider", provider)
     const signer = provider.getSigner();
@@ -282,15 +285,24 @@ export default function CreateItem() {
     listingPrice = listingPrice.toString();
 
 
+    console.log('profileUserNameDecrypt before making ledger', profileUserNameDecrypt);
+    console.log('profileUserTypeValue before making ledger', profileUserTypeValue);
     let urlParameters = {
       profileName: profileNameDecrypt,
-      profileUserName: profileUsernameDecrypt,
+      profileUserName: profileUserNameDecrypt,
       projectName: projectNameDecrypt,
       projectSlug: projectUrlDecrypt,
       environment: environmentValue,
       userType: profileUserTypeValue,
     };
-   
+
+    console.log('nftaddress before making ledger', nftaddress);
+    console.log('url before making ledger', url);
+    console.log('price before making ledger', price);
+    console.log('formInput.privateAsset before making ledger', formInput.privateAsset);
+    console.log('urlParameters before making ledger', urlParameters);
+    console.log('listingPrice before making ledger', listingPrice);
+
     const transaction = await marketContract.createMarketItem(nftaddress, url, price, formInput.privateAsset,
       urlParameters, {
       value: listingPrice,
