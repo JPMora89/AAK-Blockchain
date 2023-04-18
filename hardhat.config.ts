@@ -31,6 +31,11 @@ const config: HardhatUserConfig = {
       url: `https://eth-sepolia.g.alchemy.com/v2/${alchemyId}`,
       accounts: [`${privateKey}`],
     },
+
+    // sepolia :{
+    //   url:  `https://sepolia.infura.io/v3/${infuraId}`,
+    //   accounts: [`${privateKey}`],
+    // }
   },
   solidity: {
     version: '0.8.17',

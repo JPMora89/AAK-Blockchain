@@ -1,13 +1,13 @@
 import Head from "next/head";
 import "../styles/globals.css";
-import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
+import "@rainbow-me/rainbowkit/styles.css";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 import Link from "next/link";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLandmark,
@@ -15,12 +15,16 @@ import {
   faUserCircle,
   faWallet,
 } from "@fortawesome/free-solid-svg-icons";
-import Image from 'next/image'
+import Image from "next/image";
 
-const { chains, provider } = configureChains([chain.goerli,chain.sepolia], [publicProvider()]);
+
+const { chains, provider } = configureChains(
+  [chain.goerli, chain.sepolia],
+  [publicProvider()]
+);
 
 const { connectors } = getDefaultWallets({
-  appName: 'AAK Telescience',
+  appName: "AAK Telescience",
   chains,
 });
 
@@ -29,7 +33,6 @@ const wagmiClient = createClient({
   connectors,
   provider,
 });
-
 
 function Marketplace({ Component, pageProps }) {
   const styles = {
@@ -50,7 +53,6 @@ function Marketplace({ Component, pageProps }) {
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     provider.getSigner();
-
   }
 
   return (
@@ -59,7 +61,10 @@ function Marketplace({ Component, pageProps }) {
         <div style={{ height: "100vh" }}>
           <Head>
             <title>AAK Ventures</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1"
+            />
           </Head>
           <div style={styles.parent}>
             <div>
