@@ -1,7 +1,7 @@
 
-  export const aeroAddress = "0xA7C6009E88F6054c0FDBec12e80cB2Fdb0a8d0d3"
-  export const nftmarketaddress = "0x58Ff05879e6E670F54AA1F5D072dD6D282807179"
-  export const nftaddress = "0x71AEdE498c35Da82C95B77E8958b4A233a5c9f0d"
-  export const aeroSwapAddress = "0x989e3E7b51D205654f80D2d64fd259D06c2602F0"
+  export const aeroAddress = "0x405e2138F2fA38ebcB4d49D8fd45A70751378b33"
+  export const nftmarketaddress = "0x7E624a63F8B91b19795Ce4513A74dBdD500ec10d"
+  export const nftaddress = "0xa73852149F4574421b39D1048A0011cC54e95bC2"
+  export const aeroSwapAddress = "0xBE14D448ff87798148BAD98a65650785FE21E405"
 
   

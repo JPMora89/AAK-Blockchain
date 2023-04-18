@@ -9,6 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 
 const privateKey = process.env.PRIVATE_KEY
 const infuraId = process.env.INFURA_KEY
+const alchemyId = process.env.ALCHEMY_KEY
 
 // const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
@@ -22,8 +23,12 @@ const config: HardhatUserConfig = {
   //     url: `https://ropsten.infura.io/v3/${infuraId}`,
   //     accounts: [`${privateKey}`],
   //   },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${infuraId}`,
+    // goerli: {
+    //   url: `https://goerli.infura.io/v3/${infuraId}`,
+    //   accounts: [`${privateKey}`],
+    // },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${alchemyId}`,
       accounts: [`${privateKey}`],
     },
 
