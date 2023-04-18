@@ -5,8 +5,8 @@ import {
   provider,
   aeroInstance,
   nftmarketInstance,
-} from '../contractInstance/contractInstanceV2'
-import { nftmarketaddress, aeroaddress } from '../../configV2'
+} from '../contractInstance/contractInstanceV1'
+import { nftmarketaddress, aeroaddress } from '../../config'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 export default async function buyAssetHelper(buyer_metamask_id) {

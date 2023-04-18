@@ -1,4 +1,4 @@
-import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV2'
+import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV1'
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { asset_id, metamask_id, new_env } = req.query
