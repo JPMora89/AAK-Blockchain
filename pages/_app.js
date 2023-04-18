@@ -17,7 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Image from 'next/image'
 
-const { chains, provider } = configureChains([chain.goerli], [publicProvider()]);
+const { chains, provider } = configureChains([chain.goerli,chain.sepolia], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: 'AAK Telescience',
@@ -95,7 +95,7 @@ function Marketplace({ Component, pageProps }) {
                   </a>
                 </Link>
                 <div className="menu-item">
-                  <ConnectButton label="Connect Wallet" />
+                  <ConnectButton label="Connect Wallet"/>
                 </div>
               </div>
             </nav>
