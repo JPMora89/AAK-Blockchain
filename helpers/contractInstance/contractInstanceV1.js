@@ -29,7 +29,7 @@ const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
 const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
 const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
 
-export const infuraId = `https://goerli.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
+export const infuraId = `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_KEY}`
 
 export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId)
 const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)

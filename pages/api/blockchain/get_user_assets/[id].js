@@ -1,13 +1,13 @@
-import { nftmarketInstance, asset_item } from '../../../helpers/contractInstance/contractInstanceV1'
+import { nftmarketInstance, asset_item } from '../../../../helpers/contractInstance/contractInstanceV1'
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const user_id = req.query.id;
     const data = await nftmarketInstance.fetchMarketItems();
-
     const items =
       await Promise.all(
         data.filter((d) => {
-          if (d['isPrivateAsset'] == true) {
+          if (d['owner'] == user_id) {
             return d
           }
         }).map(async (i) => {
