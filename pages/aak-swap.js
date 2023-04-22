@@ -5,6 +5,7 @@ import TokenAbi from '../artifacts/contracts/v2/Aero.sol/Aero.json';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import { aeroAddress, aeroSwapAddress } from '../config';
+import { loadStripe } from '@stripe/stripe-js';
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -28,6 +29,8 @@ export default function AeroSwap() {
   const [errorColorSell, setErrorColorSell] = useState('red');
   const [totalEthreceived, setTotalEthReceived] = useState();
   const [sellGasPrice, setSellGasPrice] = useState();
+  const [sessionId, setSessionId]=useState(null);
+  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
   useEffect(() => {
     getInitialInfo();
@@ -84,9 +87,10 @@ export default function AeroSwap() {
       const numberOfTokensinNum = Number(numberOfTokens)
       console.log("numberOfTokensinNum",numberOfTokensinNum)
       const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokens))
-      const totalfee = (numberOfTokensinNum * feePercent)/100;
-      console.log("totalfee",totalfee)
-      const totalAmount = (numberOfTokensinNum + totalfee) * tokenPrice
+      console.log("numberOfTokensinNum",String(numberOftokensinWei))
+      const ttl = tokenPrice + (tokenPrice *(feePercent/100));
+      console.log(ttl)
+      const totalAmount = numberOfTokensinNum * ttl
       console.log("totalAmount",totalAmount)
       const totalAmountinWei = ethers.utils.parseEther(String(totalAmount))
 
@@ -140,6 +144,7 @@ export default function AeroSwap() {
         });
         await tx.wait();
         setSuccessMessageSell('Transaction successful!');
+        window.location.reload(false);
       }
       catch (error) {
         console.log(error)
@@ -204,7 +209,7 @@ export default function AeroSwap() {
      
   }
 
-  //Handle to tal ETH amount the user receives onSelling
+  //Handle total ETH amount the user receives onSelling
   const handleTotalEth = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -219,6 +224,34 @@ export default function AeroSwap() {
     } else {
       setTotalEthReceived(total.toFixed(4))
     }
+  }
+
+  //Handling Buy tokens with USD
+  const handleBuyTokenWithEth=async()=>{
+    console.log("Buy with USD")
+      const numberOfTokensinNum = Number(numberOfTokens)
+      const ttl = tokenPrice + (tokenPrice *(feePercent/100));
+      const totalAmount = numberOfTokensinNum * ttl
+      const amount  = Math.round(totalAmount*100) //converted to cents and rounded off
+
+      const dat = {
+        amount: amount,
+        quantity: 1
+       }
+       const stripe = await stripePromise;
+       //Send a request to the API route to create a new Checkout session
+        const response = await axios.post('/api/blockchain/buy_aero_usd ',
+            dat)
+        console.log("response",response)
+        //Redirect the user to checkout page
+        const result = await stripe.redirectToCheckout({
+            sessionId: response.data.sessionId,
+          });
+          console.log("result", result)
+          if(result.error){
+            console.log("error",result.error.message)
+        }
+      
   }
   return (
     <div>
@@ -243,7 +276,8 @@ export default function AeroSwap() {
           </div>
           <input value={numberOfTokens} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokens(e.target.value)} />
           <p>You will be paying the gas price and fee based on the network traffic.</p>
-          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyToken}>Buy Tokens</button>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyToken}>Buy Tokens with Eth</button>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyTokenWithEth}>Buy Tokens with USD</button>
           <div className="w-1/2 flex flex-col pb-12" style={{ marginTop: "2%" }}>
             {successMessage && (
               <p style={{ color: successColor }}>{successMessage}</p>
@@ -263,9 +297,6 @@ export default function AeroSwap() {
             Sell Aero Tokens
           </h1>
           <div className="flex justify-center">
-            {/* <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p> */}
             <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>ETH you receive: {totalEthreceived} ETH</p>
           </div>
           <input value={numberOfTokensToSell} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokensToSell(e.target.value)} />
