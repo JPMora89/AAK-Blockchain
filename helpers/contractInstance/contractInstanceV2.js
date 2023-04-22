@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { ethers } from 'ethers'
 // import dotenv from 'dotenv'
-import { nftmarketaddress, nftaddress, aeroaddress } from '../../configV2'
+import { nftmarketaddress, nftaddress, aeroaddress } from '../../config'
 require("dotenv").config({ path: path.resolve(__dirname, '.env.local') })
 // dotenv.config()
 

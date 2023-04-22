@@ -4,8 +4,8 @@ import dotenv from 'dotenv'
 import {
   nftmarketInstance,
   provider,
-} from '../../../helpers/contractInstance/contractInstanceV2'
-import { nftmarketaddress } from '../../../configV2'
+} from '../../../helpers/contractInstance/contractInstanceV1'
+import { nftmarketaddress } from '../../../config'
 import buyAssetHelper from '../../../helpers/scripts/buyAsset'
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 

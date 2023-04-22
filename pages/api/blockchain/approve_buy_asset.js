@@ -6,7 +6,7 @@ import {
   nftmarketInstance,
   aeroInstance,
   provider,
-} from '../../../helpers/contractInstance/contractInstanceV2'
+} from '../../../helpers/contractInstance/contractInstanceV1'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 

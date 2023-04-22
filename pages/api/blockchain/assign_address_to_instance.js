@@ -1,5 +1,5 @@
-import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV2'
-import { nftaddress, aeroaddress } from '../../../configV2'
+import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV1'
+import { nftaddress, aeroaddress } from '../../../config'
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     let data = await nftmarketInstance.assignDeployedAddressToInstance(
