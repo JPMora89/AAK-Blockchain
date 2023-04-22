@@ -44,7 +44,7 @@ contract AeroSwap {
         require(token.transferFrom(msg.sender, address(this), _numberOfTokens), "Token transfer failed");
         payable(msg.sender).transfer(totalAmount);
 
-        tokensSold += _numberOfTokens;
+        tokensSold -= _numberOfTokens;
         emit Sell(msg.sender, _numberOfTokens);
     }
 
