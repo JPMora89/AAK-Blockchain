@@ -241,12 +241,15 @@ export default function Home() {
     signerAddr,
     tokenAddr
   ) => {
+    console.log("getPermitSignature-1");
     const [nonce, name, version, chainId] = await Promise.all([
       token.nonces(signerAddr),
       token.name(),
       "1",
-      5,
+      chain.id,
     ]);
+
+    console.log([nonce, name, version, chainId]);
 
     return ethers.utils.splitSignature(
       await signer._signTypedData(
@@ -292,21 +295,26 @@ export default function Home() {
   };
 
   async function buyNft(nft) {
+    console.log("buy nft-1");
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
+    console.log("buy nft-2");
 
     const signerAddress = await signer.getAddress();
     const aeroContract = new ethers.Contract(aeroAddress, Aero.abi, signer);
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
     const deadline = ethers.constants.MaxUint256;
+    console.log("buy nft-3");
 
     const marketContract = new ethers.Contract(
       nftmarketaddress,
       Market.abi,
       signer
     );
+
+    console.log("buy nft-4");
 
     const { v, r, s } = await getPermitSignature(
       signer,
@@ -317,6 +325,8 @@ export default function Home() {
       signerAddress,
       aeroAddress
     );
+
+    console.log("buy nft-5");
 
     // const tx = await aeroContract.permit(signerAddress, nft.seller, price, deadline, v, r, s);
     // await tx.wait();

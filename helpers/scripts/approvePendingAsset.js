@@ -6,7 +6,7 @@ import {
   aeroInstance,
   nftmarketInstance,
 } from '../contractInstance/contractInstanceV1'
-import { nftmarketaddress, aeroaddress } from '../../config'
+import { nftmarketaddress, aeroAddress } from '../../config'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 export default async function buyAssetHelper(buyer_metamask_id) {
@@ -21,7 +21,7 @@ export default async function buyAssetHelper(buyer_metamask_id) {
     name: 'Aero',
     version: '1',
     chainId: chainId,
-    verifyingContract: aeroaddress,
+    verifyingContract: aeroAddress,
   }
   const types = {
     Permit: [

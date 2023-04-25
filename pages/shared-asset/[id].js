@@ -7,7 +7,7 @@ import fileDownloader from 'js-file-download'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { nftmarketaddress, nftaddress, aeroAddress } from "../../config";
-
+import { useNetwork } from "wagmi";
 
 import Aero from "../../artifacts/contracts/v2/Aero.sol/Aero.json";
 import Market from "../../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
@@ -32,6 +32,7 @@ const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
 
 export default function SharedAsset() {
   const router = useRouter();
+  const { chain } = useNetwork();
   const id = router.query.id;
   const [nfts, setNfts] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
@@ -212,7 +213,7 @@ export default function SharedAsset() {
       token.nonces(signerAddr),
       token.name(),
       "1",
-      5,
+      chain.id,
     ])
 
     return ethers.utils.splitSignature(
