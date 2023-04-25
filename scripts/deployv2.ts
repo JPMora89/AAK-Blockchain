@@ -33,7 +33,7 @@ export async function main() {
   `;
 
   let data : string = JSON.stringify(config);
-  fs.writeFileSync("configV2.js", JSON.parse(data));
+  fs.writeFileSync("config.js", JSON.parse(data));
 }
 
 main()
