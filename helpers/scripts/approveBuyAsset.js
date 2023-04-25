@@ -4,9 +4,9 @@ import dotenv from 'dotenv'
 import {
   provider,
   aeroInstance,
-  nftv2Instance,
+  nftInstance,
 } from '../contractInstance/contractInstanceV1'
-import { nftmarketaddress, aeroaddress } from '../../config'
+import { nftmarketaddress, aeroAddress } from '../../config'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 export default async function buyAssetHelper(buyer_metamask_id, token_id) {
@@ -21,7 +21,7 @@ export default async function buyAssetHelper(buyer_metamask_id, token_id) {
     name: 'Aero',
     version: '1',
     chainId: chainId,
-    verifyingContract: aeroaddress,
+    verifyingContract: aeroAddress,
   }
   const types = {
     Permit: [
@@ -48,7 +48,7 @@ export default async function buyAssetHelper(buyer_metamask_id, token_id) {
   const { v: vE, r: rE, s: sE } = sig
 
   //NFT
-  const ERC721_Nonce = await nftv2Instance.nonces(token_id)
+  const ERC721_Nonce = await nftInstance.nonces(token_id)
   const ERC721_TYPE = {
     Permit: [
       { name: 'spender', type: 'address' },
