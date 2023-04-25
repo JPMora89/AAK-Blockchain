@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import AeroSwapABI from '../artifacts/contracts/Aero-swap.sol/AeroSwap.json';
 import TokenAbi from '../artifacts/contracts/v2/Aero.sol/Aero.json';
+import AeroSwapUsdAbi from '../artifacts/contracts/Aero-swap-usd.sol/AeroSwapUsd.json';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
-import { aeroAddress, aeroSwapAddress } from '../config';
+import { aeroAddress, aeroSwapAddress, aeroSwapUsdAddress } from '../config';
 import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -18,6 +20,7 @@ export default function AeroSwap() {
   const [successColor, setSuccessColor] = useState('green');
   const [errorColor, setErrorColor] = useState('red');
   const [status, setStatus] = useState(false)
+  const [totalAmountinUSD , setTotalAmountinUSD] = useState()
   const [totalAmount, setTotalAmount] = useState();
   const contractAddress = aeroSwapAddress;
   const [feePercent, setFeePercent] = useState();
@@ -28,6 +31,7 @@ export default function AeroSwap() {
   const [successColorSell, setSuccessColorSell] = useState('green');
   const [errorColorSell, setErrorColorSell] = useState('red');
   const [totalEthreceived, setTotalEthReceived] = useState();
+  const[totalTokensSold, setTotalTokenSold] = useState()
   const [sellGasPrice, setSellGasPrice] = useState();
   const [sessionId, setSessionId]=useState(null);
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -51,7 +55,7 @@ export default function AeroSwap() {
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
     const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
-
+    const aerSwapUsdContract = new ethers.Contract(aeroSwapUsdAddress,AeroSwapUsdAbi.abi, signer)
     aeroSwapContract.tokenPrice()
       .then(price => {
         const val = ethers.utils.formatEther(price)
@@ -66,6 +70,11 @@ export default function AeroSwap() {
       .then(feePercent => {
         setFeePercent(Number(feePercent.toString()))
       })
+    aerSwapUsdContract.tokensSold()
+    .then(sold =>{
+      const total = Number(tokensSold) + Number(ethers.utils.formatEther(sold))
+      setTotalTokenSold(total)
+    })
 
   }
 
@@ -206,7 +215,18 @@ export default function AeroSwap() {
       }else{
         setTotalAmount(totalAmount)
       }
-     
+
+      //Total Usd calculation
+      const tokenPrice = 1.68;
+      const numberOfTokensinNum = Number(numberOfTokens)
+      const total = tokenPrice + (tokenPrice *(feePercent/100));
+      const totalAmountinUsd = numberOfTokensinNum * total
+      if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+        setTotalAmountinUSD(0)
+      }else{
+        setTotalAmountinUSD(totalAmountinUsd)
+      }
+      
   }
 
   //Handle total ETH amount the user receives onSelling
@@ -227,27 +247,28 @@ export default function AeroSwap() {
   }
 
   //Handling Buy tokens with USD
-  const handleBuyTokenWithEth=async()=>{
+  const handleBuyTokenWithUsd=async()=>{
     console.log("Buy with USD")
+      const tokenPrice = 1.68;
       const numberOfTokensinNum = Number(numberOfTokens)
-      const ttl = tokenPrice + (tokenPrice *(feePercent/100));
-      const totalAmount = numberOfTokensinNum * ttl
-      const amount  = Math.round(totalAmount*100) //converted to cents and rounded off
-
+      const total = tokenPrice + (tokenPrice *(feePercent/100));
+      //const totalAmount = numberOfTokensinNum * ttl
+      const amount  = Math.round(total*100) //converted to cents and rounded off
+      console.log(amount)
       const dat = {
         amount: amount,
-        quantity: 1
+        quantity: numberOfTokens
        }
        const stripe = await stripePromise;
        //Send a request to the API route to create a new Checkout session
         const response = await axios.post('/api/blockchain/buy_aero_usd ',
             dat)
-        console.log("response",response)
+        //console.log("response",response)
         //Redirect the user to checkout page
         const result = await stripe.redirectToCheckout({
             sessionId: response.data.sessionId,
           });
-          console.log("result", result)
+          //console.log("result", result)
           if(result.error){
             console.log("error",result.error.message)
         }
@@ -257,7 +278,8 @@ export default function AeroSwap() {
     <div>
       <div className="flex justify-center" style={{ border: 'solid black 2px', width: '50%', margin: '2% 25%', borderRadius: '3em' }}>
         <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>1.68 ETH = 100 AER</p>
-        <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>Tokens Sold: {tokensSold}</p>
+        <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>1 AER = $ 1.68</p>
+        <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>Tokens Sold: {totalTokensSold}</p>
         <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>Fee Percent: {feePercent}%</p>
       </div>
       <div className="flex justify-center" style={{ marginBottom: '-6%' }}>
@@ -269,15 +291,13 @@ export default function AeroSwap() {
             Buy Aero Tokens
           </h1>
           <div className="flex justify-center">
-            {/* <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>1.68 ETH = 1 AER</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Tokens Sold: {tokensSold}</p>
-            <p className="rounded mt-4 font-bold" style={{margin:'2%'}}>Fee Percent: {feePercent}%</p> */}
             <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>ETH you pay: {totalAmount} ETH</p>
+            <p className="rounded mt-4 font-bold" style={{ margin: '2%' }}>USD you pay: {totalAmountinUSD} USD</p>
           </div>
           <input value={numberOfTokens} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokens(e.target.value)} />
           <p>You will be paying the gas price and fee based on the network traffic.</p>
-          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyToken}>Buy Tokens with Eth</button>
-          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleBuyTokenWithEth}>Buy Tokens with USD</button>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleBuyToken()}>Buy Tokens with Eth</button>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleBuyTokenWithUsd()}>Buy Tokens with USD</button>
           <div className="w-1/2 flex flex-col pb-12" style={{ marginTop: "2%" }}>
             {successMessage && (
               <p style={{ color: successColor }}>{successMessage}</p>

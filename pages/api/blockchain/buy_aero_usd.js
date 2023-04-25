@@ -7,6 +7,7 @@ export default async function handler(req,res){
         try{
            // passing the total amount of the token Purchased
            const amount= req.body.amount;
+           const quantity = req.body.quantity;
            // Create a new Checkout session with Stripe API
            const session = await stripe.checkout.sessions.create({
                payment_method_types:['card'],
@@ -20,12 +21,12 @@ export default async function handler(req,res){
                           description: 'ERC20 token',
                         },
                       },
-                      quantity: 1,
+                      quantity: quantity,
                 },
                ],
                mode: 'payment',
-               success_url:'http://localhost:3000',
-               cancel_url:'http://localhost:3000',
+               success_url:`http://localhost:3000/buyAeroSuccess?status=true&quantity=${quantity}`,
+               cancel_url:'http://localhost:3000/buyAeroFail',
            });
            res.status(200).json({ sessionId: session.id });
         }
