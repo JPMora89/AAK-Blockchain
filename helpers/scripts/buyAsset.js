@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 import path from 'path'
 import dotenv from 'dotenv'
-import { provider, aeroInstance } from '../contractInstance/contractInstanceV2'
-import { nftmarketaddress, aeroaddress } from '../../configV2'
+import { provider, aeroInstance } from '../contractInstance/contractInstanceV1'
+import { nftmarketaddress, aeroaddress } from '../../config'
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 export default async function buyAssetHelper(buyer_metamask_id, amount) {

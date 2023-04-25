@@ -1,4 +1,4 @@
-import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV2'
+import { nftmarketInstance } from '../../../helpers/contractInstance/contractInstanceV1'
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     let { lowerBoundary, upperBoundary } = req.query
