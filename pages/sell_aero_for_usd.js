@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 
-export default function sellAeroWithUsd(){
+export default function SellAeroWithUsd(){
   const [recipientId, setRecipientId] = useState('');
   const [routingNumber, setRoutingNumber] = useState('');
   const [accountNumber, setAccountNumber] = useState('')
