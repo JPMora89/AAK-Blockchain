@@ -40,46 +40,133 @@ export default function AeroSwap() {
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
   useEffect(() => {
+    const getInitialInfo = async () => {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
+      const aerSwapUsdContract = new ethers.Contract(aeroSwapUsdAddress,AeroSwapUsdAbi.abi, signer)
+      aeroSwapContract.tokenPrice()
+        .then(price => {
+          const val = ethers.utils.formatEther(price)
+          setTokenPrice(Number(val))
+        });
+  
+      aeroSwapContract.tokensSold()
+        .then(sold => {
+          setTokensSold(ethers.utils.formatEther(sold))
+        });
+      aeroSwapContract.feePercent()
+        .then(feePercent => {
+          setFeePercent(Number(feePercent.toString()))
+        })
+      aerSwapUsdContract.tokensSold()
+      .then(sold =>{
+        const total = Number(tokensSold) + Number(ethers.utils.formatEther(sold))
+        setTotalTokenSold(total)
+      })
+  
+    }
+  
     getInitialInfo();
-  }, []);
+  }, [contractAddress, tokensSold]);
 
   useEffect(() => {
+    const handleTotalAmount = async (e) => {
+
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+  
+      const gasPrice = await provider.getGasPrice();
+      const gas = ethers.utils.formatEther( gasPrice)
+      const totalfee = (numberOfTokens * feePercent)/100;
+      //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
+      
+        const tokenAmountinNum = Number(numberOfTokens)
+        const tokenPriceinNum = Number(tokenPrice)
+        const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
+        const tokensReceive = numberOfTokens;
+        setTokenReceived(tokensReceive)
+        if(numberOfTokens == ''||numberOfTokens == undefined){
+          setTokenReceived(0)
+        }else{
+          setTokenReceived(tokensReceive)
+        }
+  
+        const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
+        console.log("total", totalAmount)
+        if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+          setTotalAmount(0.00000)
+        }else{
+          setTotalAmount(totalAmount)
+        }
+  
+        //Total Usd calculation
+        const tokenPriceForUSD = 1.68;
+        const numberOfTokensinNum = Number(numberOfTokens)
+        const total = tokenPriceForUSD + (tokenPriceForUSD *(feePercent/100));
+        const totalAmountinUsd = numberOfTokensinNum * total
+        if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+          setTotalAmountinUSD(0)
+        }else{
+          setTotalAmountinUSD(totalAmountinUsd)
+        }
+        
+    }
     handleTotalAmount();
-  }, [numberOfTokens])
+  }, [numberOfTokens, feePercent, tokenPrice])
 
   useEffect(() => {
-    handleTotalEth();
-  }, [numberOfTokensToSell])
-
-  //getting information from contract
-  const getInitialInfo = async () => {
+    //Handle total ETH amount the user receives onSelling
+  const handleTotalEth = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
-    const aerSwapUsdContract = new ethers.Contract(aeroSwapUsdAddress,AeroSwapUsdAbi.abi, signer)
-    aeroSwapContract.tokenPrice()
-      .then(price => {
-        const val = ethers.utils.formatEther(price)
-        setTokenPrice(Number(val))
-      });
 
-    aeroSwapContract.tokensSold()
-      .then(sold => {
-        setTokensSold(ethers.utils.formatEther(sold))
-      });
-    aeroSwapContract.feePercent()
-      .then(feePercent => {
-        setFeePercent(Number(feePercent.toString()))
-      })
-    aerSwapUsdContract.tokensSold()
-    .then(sold =>{
-      const total = Number(tokensSold) + Number(ethers.utils.formatEther(sold))
-      setTotalTokenSold(total)
-    })
-
+    const gasPrice = await provider.getGasPrice();
+    const gas = Number(ethers.utils.formatEther(gasPrice))
+    const totalfee = (numberOfTokensToSell * feePercent) / 100;
+    const total = (numberOfTokensToSell - totalfee) * tokenPrice;
+    if (numberOfTokensToSell == '' || numberOfTokensToSell == undefined || numberOfTokensToSell == 0) {
+      setTotalEthReceived(0)
+    } else {
+      setTotalEthReceived(total.toFixed(4))
+    }
   }
+    handleTotalEth();
+  }, [numberOfTokensToSell, feePercent, tokenPrice])
+
+  //getting information from contract
+  // const getInitialInfo = async () => {
+  //   const web3Modal = new Web3Modal();
+  //   const connection = await web3Modal.connect();
+  //   const provider = new ethers.providers.Web3Provider(connection);
+  //   const signer = provider.getSigner();
+  //   const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
+  //   const aerSwapUsdContract = new ethers.Contract(aeroSwapUsdAddress,AeroSwapUsdAbi.abi, signer)
+  //   aeroSwapContract.tokenPrice()
+  //     .then(price => {
+  //       const val = ethers.utils.formatEther(price)
+  //       setTokenPrice(Number(val))
+  //     });
+
+  //   aeroSwapContract.tokensSold()
+  //     .then(sold => {
+  //       setTokensSold(ethers.utils.formatEther(sold))
+  //     });
+  //   aeroSwapContract.feePercent()
+  //     .then(feePercent => {
+  //       setFeePercent(Number(feePercent.toString()))
+  //     })
+  //   aerSwapUsdContract.tokensSold()
+  //   .then(sold =>{
+  //     const total = Number(tokensSold) + Number(ethers.utils.formatEther(sold))
+  //     setTotalTokenSold(total)
+  //   })
+
+  // }
 
   //Function lets user buy AER token 
   const handleBuyToken = async () => {
@@ -188,65 +275,65 @@ export default function AeroSwap() {
     }
   }
   //runs when the token Amount changes
-  const handleTotalAmount = async (e) => {
+  // const handleTotalAmount = async (e) => {
 
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
+  //   const web3Modal = new Web3Modal();
+  //   const connection = await web3Modal.connect();
+  //   const provider = new ethers.providers.Web3Provider(connection);
 
-    const gasPrice = await provider.getGasPrice();
-    const gas = ethers.utils.formatEther( gasPrice)
-    const totalfee = (numberOfTokens * feePercent)/100;
-    //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
+  //   const gasPrice = await provider.getGasPrice();
+  //   const gas = ethers.utils.formatEther( gasPrice)
+  //   const totalfee = (numberOfTokens * feePercent)/100;
+  //   //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
     
-      const tokenAmountinNum = Number(numberOfTokens)
-      const tokenPriceinNum = Number(tokenPrice)
-      const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
-      const tokensReceive = numberOfTokens;
-      setTokenReceived(tokensReceive)
-      if(numberOfTokens == ''||numberOfTokens == undefined){
-        setTokenReceived(0)
-      }else{
-        setTokenReceived(tokensReceive)
-      }
+  //     const tokenAmountinNum = Number(numberOfTokens)
+  //     const tokenPriceinNum = Number(tokenPrice)
+  //     const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
+  //     const tokensReceive = numberOfTokens;
+  //     setTokenReceived(tokensReceive)
+  //     if(numberOfTokens == ''||numberOfTokens == undefined){
+  //       setTokenReceived(0)
+  //     }else{
+  //       setTokenReceived(tokensReceive)
+  //     }
 
-      const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
-      console.log("total", totalAmount)
-      if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
-        setTotalAmount(0.00000)
-      }else{
-        setTotalAmount(totalAmount)
-      }
+  //     const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
+  //     console.log("total", totalAmount)
+  //     if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+  //       setTotalAmount(0.00000)
+  //     }else{
+  //       setTotalAmount(totalAmount)
+  //     }
 
-      //Total Usd calculation
-      const tokenPriceForUSD = 1.68;
-      const numberOfTokensinNum = Number(numberOfTokens)
-      const total = tokenPriceForUSD + (tokenPriceForUSD *(feePercent/100));
-      const totalAmountinUsd = numberOfTokensinNum * total
-      if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
-        setTotalAmountinUSD(0)
-      }else{
-        setTotalAmountinUSD(totalAmountinUsd)
-      }
+  //     //Total Usd calculation
+  //     const tokenPriceForUSD = 1.68;
+  //     const numberOfTokensinNum = Number(numberOfTokens)
+  //     const total = tokenPriceForUSD + (tokenPriceForUSD *(feePercent/100));
+  //     const totalAmountinUsd = numberOfTokensinNum * total
+  //     if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
+  //       setTotalAmountinUSD(0)
+  //     }else{
+  //       setTotalAmountinUSD(totalAmountinUsd)
+  //     }
       
-  }
+  // }
 
-  //Handle total ETH amount the user receives onSelling
-  const handleTotalEth = async () => {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
+  // //Handle total ETH amount the user receives onSelling
+  // const handleTotalEth = async () => {
+  //   const web3Modal = new Web3Modal();
+  //   const connection = await web3Modal.connect();
+  //   const provider = new ethers.providers.Web3Provider(connection);
 
-    const gasPrice = await provider.getGasPrice();
-    const gas = Number(ethers.utils.formatEther(gasPrice))
-    const totalfee = (numberOfTokensToSell * feePercent) / 100;
-    const total = (numberOfTokensToSell - totalfee) * tokenPrice;
-    if (numberOfTokensToSell == '' || numberOfTokensToSell == undefined || numberOfTokensToSell == 0) {
-      setTotalEthReceived(0)
-    } else {
-      setTotalEthReceived(total.toFixed(4))
-    }
-  }
+  //   const gasPrice = await provider.getGasPrice();
+  //   const gas = Number(ethers.utils.formatEther(gasPrice))
+  //   const totalfee = (numberOfTokensToSell * feePercent) / 100;
+  //   const total = (numberOfTokensToSell - totalfee) * tokenPrice;
+  //   if (numberOfTokensToSell == '' || numberOfTokensToSell == undefined || numberOfTokensToSell == 0) {
+  //     setTotalEthReceived(0)
+  //   } else {
+  //     setTotalEthReceived(total.toFixed(4))
+  //   }
+  // }
 
   //Handling Buy tokens with USD
   const handleBuyTokenWithUsd=async()=>{
