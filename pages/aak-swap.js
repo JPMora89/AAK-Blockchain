@@ -8,6 +8,8 @@ import Web3Modal from 'web3modal';
 import { aeroAddress, aeroSwapAddress, aeroSwapUsdAddress } from '../config';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
+import { useRouter } from 'next/router';
+import { Router } from 'react-router-dom';
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -34,6 +36,7 @@ export default function AeroSwap() {
   const[totalTokensSold, setTotalTokenSold] = useState()
   const [sellGasPrice, setSellGasPrice] = useState();
   const [sessionId, setSessionId]=useState(null);
+  const route = useRouter()
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
   useEffect(() => {
@@ -208,7 +211,6 @@ export default function AeroSwap() {
       }
 
       const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
-     // const ttlcost = Number(totalAmount) + (Number(gas)*5000000)
       console.log("total", totalAmount)
       if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
         setTotalAmount(0.00000)
@@ -217,9 +219,9 @@ export default function AeroSwap() {
       }
 
       //Total Usd calculation
-      const tokenPrice = 1.68;
+      const tokenPriceForUSD = 1.68;
       const numberOfTokensinNum = Number(numberOfTokens)
-      const total = tokenPrice + (tokenPrice *(feePercent/100));
+      const total = tokenPriceForUSD + (tokenPriceForUSD *(feePercent/100));
       const totalAmountinUsd = numberOfTokensinNum * total
       if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
         setTotalAmountinUSD(0)
@@ -274,6 +276,20 @@ export default function AeroSwap() {
         }
       
   }
+
+  //Handling selling tokens with USD
+  const handleSellTokenWithUsd=()=>{
+    console.log(numberOfTokensToSell)
+    if(numberOfTokensToSell==0|| numberOfTokensToSell=='' || numberOfTokensToSell == undefined){
+      setErrorMessageSell("Please enter a valid number of tokens")
+    }else{
+      route.push({
+        pathname:'/sell_aero_for_usd',
+        query:{numberOfTokens: numberOfTokensToSell}})
+    }
+     
+  }
+
   return (
     <div>
       <div className="flex justify-center" style={{ border: 'solid black 2px', width: '50%', margin: '2% 25%', borderRadius: '3em' }}>
@@ -321,7 +337,9 @@ export default function AeroSwap() {
           </div>
           <input value={numberOfTokensToSell} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokensToSell(e.target.value)} />
           <p>You will be paying the gas price and fee based on the network traffic.</p>
-          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={handleSellToken}>Sell Tokens</button>
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleSellToken()}>Sell Tokens for ETH</button>
+  
+          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleSellTokenWithUsd()}>Sell Tokens for USD</button>
           <div className="w-1/2 flex flex-col pb-12" style={{ marginTop: "2%" }}>
             {successMessageSell && (
               <p style={{ color: successColorSell }}>{successMessageSell}</p>
