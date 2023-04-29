@@ -4,7 +4,7 @@ import { useState,useEffect,useRef } from 'react';
 import { aeroSwapUsdAddress } from '../config';
 import aeroSwapUsdAbi from '../artifacts/contracts/Aero-swap-usd.sol/AeroSwapUsd.json';
 
-export default function success(){
+export default function Success(){
     const [successMessage, setSuccessMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [successColor, setSuccessColor] = useState('green');
