@@ -9,7 +9,8 @@ import { aeroAddress, aeroSwapAddress, aeroSwapUsdAddress } from '../config';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { Router } from 'react-router-dom';
+import 'reactjs-popup/dist/index.css';
+import Popup from 'reactjs-popup';
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -82,7 +83,6 @@ export default function AeroSwap() {
       const gasPrice = await provider.getGasPrice();
       const gas = ethers.utils.formatEther( gasPrice)
       const totalfee = (numberOfTokens * feePercent)/100;
-      //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
       
         const tokenAmountinNum = Number(numberOfTokens)
         const tokenPriceinNum = Number(tokenPrice)
@@ -138,35 +138,6 @@ export default function AeroSwap() {
     handleTotalEth();
   }, [numberOfTokensToSell, feePercent, tokenPrice])
 
-  //getting information from contract
-  // const getInitialInfo = async () => {
-  //   const web3Modal = new Web3Modal();
-  //   const connection = await web3Modal.connect();
-  //   const provider = new ethers.providers.Web3Provider(connection);
-  //   const signer = provider.getSigner();
-  //   const aeroSwapContract = new ethers.Contract(contractAddress, AeroSwapABI.abi, signer)
-  //   const aerSwapUsdContract = new ethers.Contract(aeroSwapUsdAddress,AeroSwapUsdAbi.abi, signer)
-  //   aeroSwapContract.tokenPrice()
-  //     .then(price => {
-  //       const val = ethers.utils.formatEther(price)
-  //       setTokenPrice(Number(val))
-  //     });
-
-  //   aeroSwapContract.tokensSold()
-  //     .then(sold => {
-  //       setTokensSold(ethers.utils.formatEther(sold))
-  //     });
-  //   aeroSwapContract.feePercent()
-  //     .then(feePercent => {
-  //       setFeePercent(Number(feePercent.toString()))
-  //     })
-  //   aerSwapUsdContract.tokensSold()
-  //   .then(sold =>{
-  //     const total = Number(tokensSold) + Number(ethers.utils.formatEther(sold))
-  //     setTotalTokenSold(total)
-  //   })
-
-  // }
 
   //Function lets user buy AER token 
   const handleBuyToken = async () => {
@@ -254,7 +225,7 @@ export default function AeroSwap() {
 
   }
 
-  //Approve token
+  //Approve token with ETH
   async function approve() {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -274,66 +245,28 @@ export default function AeroSwap() {
       return false
     }
   }
-  //runs when the token Amount changes
-  // const handleTotalAmount = async (e) => {
-
+  
+  // //Approve token with USD
+  // async function approveWithUsd() {
   //   const web3Modal = new Web3Modal();
   //   const connection = await web3Modal.connect();
   //   const provider = new ethers.providers.Web3Provider(connection);
-
-  //   const gasPrice = await provider.getGasPrice();
-  //   const gas = ethers.utils.formatEther( gasPrice)
-  //   const totalfee = (numberOfTokens * feePercent)/100;
-  //   //const ttlcost = ((tokenPrice + totalfee) * numberOfTokens) + gas;
-    
-  //     const tokenAmountinNum = Number(numberOfTokens)
-  //     const tokenPriceinNum = Number(tokenPrice)
-  //     const gasLimit = ethers.utils.parseEther(String(5000000)).toString()
-  //     const tokensReceive = numberOfTokens;
-  //     setTokenReceived(tokensReceive)
-  //     if(numberOfTokens == ''||numberOfTokens == undefined){
-  //       setTokenReceived(0)
-  //     }else{
-  //       setTokenReceived(tokensReceive)
-  //     }
-
-  //     const totalAmount = (((tokenAmountinNum + totalfee)*tokenPriceinNum)).toFixed(6)
-  //     console.log("total", totalAmount)
-  //     if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
-  //       setTotalAmount(0.00000)
-  //     }else{
-  //       setTotalAmount(totalAmount)
-  //     }
-
-  //     //Total Usd calculation
-  //     const tokenPriceForUSD = 1.68;
-  //     const numberOfTokensinNum = Number(numberOfTokens)
-  //     const total = tokenPriceForUSD + (tokenPriceForUSD *(feePercent/100));
-  //     const totalAmountinUsd = numberOfTokensinNum * total
-  //     if(numberOfTokens == ''||numberOfTokens == undefined || numberOfTokens == 0){
-  //       setTotalAmountinUSD(0)
-  //     }else{
-  //       setTotalAmountinUSD(totalAmountinUsd)
-  //     }
-      
-  // }
-
-  // //Handle total ETH amount the user receives onSelling
-  // const handleTotalEth = async () => {
-  //   const web3Modal = new Web3Modal();
-  //   const connection = await web3Modal.connect();
-  //   const provider = new ethers.providers.Web3Provider(connection);
-
-  //   const gasPrice = await provider.getGasPrice();
-  //   const gas = Number(ethers.utils.formatEther(gasPrice))
-  //   const totalfee = (numberOfTokensToSell * feePercent) / 100;
-  //   const total = (numberOfTokensToSell - totalfee) * tokenPrice;
-  //   if (numberOfTokensToSell == '' || numberOfTokensToSell == undefined || numberOfTokensToSell == 0) {
-  //     setTotalEthReceived(0)
-  //   } else {
-  //     setTotalEthReceived(total.toFixed(4))
+  //   const signer = provider.getSigner();
+  //   const tokenAddress = aeroAddress;
+  //   const tokenContract = new ethers.Contract(tokenAddress, TokenAbi.abi, signer);
+  //   try {
+  //     const approveTx = await tokenContract.approve(
+  //       aeroSwapUsdAddress,
+  //       ethers.constants.MaxUint256
+  //     );
+  //     await approveTx.wait();
+  //     return true
+  //   } catch (error) {
+  //     console.log(error);
+  //     return false
   //   }
   // }
+
 
   //Handling Buy tokens with USD
   const handleBuyTokenWithUsd=async()=>{
@@ -341,7 +274,7 @@ export default function AeroSwap() {
       const tokenPrice = 1.68;
       const numberOfTokensinNum = Number(numberOfTokens)
       const total = tokenPrice + (tokenPrice *(feePercent/100));
-      //const totalAmount = numberOfTokensinNum * ttl
+    
       const amount  = Math.round(total*100) //converted to cents and rounded off
       console.log(amount)
       const dat = {
@@ -365,16 +298,44 @@ export default function AeroSwap() {
   }
 
   //Handling selling tokens with USD
-  const handleSellTokenWithUsd=()=>{
-    console.log(numberOfTokensToSell)
-    if(numberOfTokensToSell==0|| numberOfTokensToSell=='' || numberOfTokensToSell == undefined){
-      setErrorMessageSell("Please enter a valid number of tokens")
-    }else{
-      route.push({
-        pathname:'/sell_aero_for_usd',
-        query:{numberOfTokens: numberOfTokensToSell}})
-    }
+  const handleYES=async()=>{
+    // const web3Modal = new Web3Modal();
+    // const connection = await web3Modal.connect();
+    // const provider = new ethers.providers.Web3Provider(connection);
+    // const signer = provider.getSigner();
+    
+    // const aeroSwapUsdInstance = new ethers.Contract(aeroSwapUsdAddress, AeroSwapUsdAbi.abi,signer)
+
+    // if(numberOfTokensToSell==0|| numberOfTokensToSell=='' || numberOfTokensToSell == undefined){
+    //   setErrorMessageSell("Please enter a valid number of tokens")
+    // }else{
+    //   //await approveWithUsd()
+      
+    //   const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokensToSell))
+      
+    //   try{
+        // const tx = await aeroSwapUsdInstance.sellTokens(numberOftokensinWei, {
+        //   gasLimit: 5000000
+        // });
+        // await tx.wait();
+        // setSuccessMessage('Transaction successful!');
+      //   route.push({
+      //   pathname:'/sell_aero_for_usd',
+      //   query:{numberOfTokens: numberOfTokensToSell}})
+        
+      // }
+      // catch(error){
+      //   console.log(error)
+      //   setErrorMessage("Transaction Failed")
+      // }
+      
+    // }
+   window.location.href='/create_connected_stripe_account'
      
+  }
+
+  const handleNO=()=>{
+    window.location.href='/sell_aero_for_usd'
   }
 
   return (
@@ -425,8 +386,14 @@ export default function AeroSwap() {
           <input value={numberOfTokensToSell} className="mt-2 border rounded p-4" placeholder="Number of Aero coins" onChange={(e) => setNumberOfTokensToSell(e.target.value)} />
           <p>You will be paying the gas price and fee based on the network traffic.</p>
           <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleSellToken()}>Sell Tokens for ETH</button>
-  
-          <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }} onClick={()=>handleSellTokenWithUsd()}>Sell Tokens for USD</button>
+          <Popup trigger={<button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", marginTop: "2%" }}>Sell Tokens for USD</button>} 
+            position="top center">
+              
+              <div style={{width:'100%'}}>Are selling AERO with us for the first time ?
+              <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", margin: "2%" }} onClick={()=>handleYES()}>YES</button>
+              <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", margin: "2%" }} onClick={()=>handleNO()}>NO</button>
+              </div>
+          </Popup>
           <div className="w-1/2 flex flex-col pb-12" style={{ marginTop: "2%" }}>
             {successMessageSell && (
               <p style={{ color: successColorSell }}>{successMessageSell}</p>
