@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import 'reactjs-popup/dist/index.css';
 import Popup from 'reactjs-popup';
+import Stripe from 'stripe';
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -246,27 +247,41 @@ export default function AeroSwap() {
     }
   }
   
-  // //Approve token with USD
-  // async function approveWithUsd() {
-  //   const web3Modal = new Web3Modal();
-  //   const connection = await web3Modal.connect();
-  //   const provider = new ethers.providers.Web3Provider(connection);
-  //   const signer = provider.getSigner();
-  //   const tokenAddress = aeroAddress;
-  //   const tokenContract = new ethers.Contract(tokenAddress, TokenAbi.abi, signer);
-  //   try {
-  //     const approveTx = await tokenContract.approve(
-  //       aeroSwapUsdAddress,
-  //       ethers.constants.MaxUint256
-  //     );
-  //     await approveTx.wait();
-  //     return true
-  //   } catch (error) {
-  //     console.log(error);
-  //     return false
-  //   }
-  // }
-
+  //Stripe functions to buy AERO
+  const buyAeroWithUsdStripe=async(amount, quantity)=>{
+    const stripe = Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY, {
+      apiVersion: '2022-11-15'
+    }); 
+    try{
+      // Create a new Checkout session with Stripe API
+      const session = await stripe.checkout.sessions.create({
+          payment_method_types:['card'],
+          line_items:[
+           {
+               price_data: {
+                   currency: 'usd',
+                   unit_amount: amount,
+                   product_data: {
+                     name: 'AERO',
+                     description: 'ERC20 token',
+                   },
+                 },
+                 quantity: quantity,
+           },
+          ],
+          mode: 'payment',
+          success_url:`${process.env.NEXT_PUBLIC_HOST_URL}/buyAeroSuccess?status=true&quantity=${quantity}`,
+          cancel_url:`${process.env.NEXT_PUBLIC_HOST_URL}/buyAeroFail`,
+      });
+      console.log("session",session)
+      const sessionId = session.id
+      return sessionId
+   }
+   catch(error){
+      
+       console.log(error)
+   } 
+  }
 
   //Handling Buy tokens with USD
   const handleBuyTokenWithUsd=async()=>{
@@ -276,19 +291,18 @@ export default function AeroSwap() {
       const total = tokenPrice + (tokenPrice *(feePercent/100));
     
       const amount  = Math.round(total*100) //converted to cents and rounded off
-      console.log(amount)
-      const dat = {
-        amount: amount,
-        quantity: numberOfTokens
-       }
+      //console.log(amount)
+      // const dat = {
+      //   amount: amount,
+      //   quantity: numberOfTokens
+      //  }
        const stripe = await stripePromise;
        //Send a request to the API route to create a new Checkout session
-        const response = await axios.post('/api/blockchain/buy_aero_usd ',
-            dat)
-        //console.log("response",response)
+        const sessionId = await buyAeroWithUsdStripe(amount,numberOfTokens)
+        console.log(sessionId)
         //Redirect the user to checkout page
         const result = await stripe.redirectToCheckout({
-            sessionId: response.data.sessionId,
+            sessionId: sessionId,
           });
           //console.log("result", result)
           if(result.error){
@@ -299,37 +313,6 @@ export default function AeroSwap() {
 
   //Handling selling tokens with USD
   const handleYES=async()=>{
-    // const web3Modal = new Web3Modal();
-    // const connection = await web3Modal.connect();
-    // const provider = new ethers.providers.Web3Provider(connection);
-    // const signer = provider.getSigner();
-    
-    // const aeroSwapUsdInstance = new ethers.Contract(aeroSwapUsdAddress, AeroSwapUsdAbi.abi,signer)
-
-    // if(numberOfTokensToSell==0|| numberOfTokensToSell=='' || numberOfTokensToSell == undefined){
-    //   setErrorMessageSell("Please enter a valid number of tokens")
-    // }else{
-    //   //await approveWithUsd()
-      
-    //   const numberOftokensinWei = ethers.utils.parseEther(String(numberOfTokensToSell))
-      
-    //   try{
-        // const tx = await aeroSwapUsdInstance.sellTokens(numberOftokensinWei, {
-        //   gasLimit: 5000000
-        // });
-        // await tx.wait();
-        // setSuccessMessage('Transaction successful!');
-      //   route.push({
-      //   pathname:'/sell_aero_for_usd',
-      //   query:{numberOfTokens: numberOfTokensToSell}})
-        
-      // }
-      // catch(error){
-      //   console.log(error)
-      //   setErrorMessage("Transaction Failed")
-      // }
-      
-    // }
    window.location.href='/create_connected_stripe_account'
      
   }
