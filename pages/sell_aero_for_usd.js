@@ -7,11 +7,9 @@ import Web3Modal from 'web3modal';
 import { ethers } from "ethers";
 import { aeroAddress } from "../config";
 import TokenAbi from '../artifacts/contracts/v2/Aero.sol/Aero.json';
+import Stripe from "stripe";
 
 export default function SellAeroWithUsd(){
-  //const [emailId, setRecipientId] = useState('');
-  //const [routingNumber, setRoutingNumber] = useState('');
-  //const [accountNumber, setAccountNumber] = useState('')
 
   const [emailId , setEmailId] = useState('')
   const [ttlUsd, setTtlUsd]=useState()
@@ -58,16 +56,31 @@ export default function SellAeroWithUsd(){
     }
   }
 
+  const stripeTransfer=async(amount,connectAccountId)=>{
+    const stripe = Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY, {
+      apiVersion: '2022-11-15'
+    });
+    try {
+      const transfer = await stripe.transfers.create({
+        amount: amount,
+        currency: 'usd',
+        destination: connectAccountId,
+      });
+      console.log(transfer)
+      const sessionId = transfer.id
+      return sessionId
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+
   const handleTransfer = async () => {
     const stripe = await stripePromise;
     const total = await totalCalcualtion()
     const ttl = numberOfTokens * total;
     const totalPayout =Math.round(ttl*100)
     console.log(totalPayout)
-
-    let payoutData = {
-      amount: totalPayout,
-    };
 
      if(connectAccountId==0||connectAccountId == undefined|| connectAccountId == ''){
       setErrorMessage("get your account id")
@@ -97,21 +110,12 @@ export default function SellAeroWithUsd(){
          console.log(err)
         }
 
-      payoutData.connectAccountId = connectAccountId
-
-      const response = await fetch('/api/blockchain/sell_aero_usd', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payoutData)
-      });
+      const sessionId = await stripeTransfer(totalPayout, connectAccountId)
   
-      const { sessionId } = await response.json();
       console.log("sessionId", sessionId)
       if (sessionId) {
         setSuccessMessage("Transaction Successfull")
-        window.location.href = "http://localhost:3000/aak-swap"
+        window.location.href = `${process.env.NEXT_PUBLIC_HOST_URL}/aak-swap`
       }else{
         setErrorMessage("Transaction Failed Please try again later")
       }
@@ -126,20 +130,21 @@ export default function SellAeroWithUsd(){
     const total = pricePerToken - (pricePerToken* (tokenfee/100));
     return total
   }
+//getId from db
 
   //Get Account Id from DB
-  const getAccountId=async()=>{
-    const res = await fetch('/api/blockchain/find_connect_id',{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(emailId)
-    })
-    const { receipentAccountId } = await res.json();
-    console.log(receipentAccountId)
-    setConnectAccountId(receipentAccountId)
-  }
+  // const getAccountId=async()=>{
+  //   const res = await fetch('/api/blockchain/find_connect_id',{
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(emailId)
+  //   })
+  //   const { receipentAccountId } = await res.json();
+  //   console.log(receipentAccountId)
+  //   setConnectAccountId(receipentAccountId)
+  // }
 
     return(
        <>
@@ -147,11 +152,11 @@ export default function SellAeroWithUsd(){
        <h1><b><center>Sell Tokens</center></b></h1>
        <hr/>
       <div style={{margin:'2%'}}>
-        <label>Email Id:   </label>
+        {/* <label>Email Id:   </label>
         <input type="text" className="mt-2 border rounded p-4" value={emailId} onChange={(e) => setEmailId(e.target.value)}  placeholder="Your Email Id"/>
-        <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", margin: "1%" }} onClick={getAccountId}>Get Account Id</button><br/>
+        <button className="font-bold text-white rounded p-4 shadow-lg" style={{ backgroundColor: "#3079AB", margin: "1%" }} onClick={getAccountId}>Get Account Id</button><br/> */}
         <label>Account Id: </label>
-        <input type="text" className="mt-2 border rounded p-4" value={connectAccountId}/><br/><br/>
+        <input type="text" className="mt-2 border rounded p-4" onChange={(e)=>setConnectAccountId(e.target.value)}/><br/><br/>
         <label>USD you receive: {ttlUsd}</label><br/>
         <label>Number Of tokens: </label>
         <input type="text" className="mt-2 border rounded p-4" placeholder="Number of tokens" onChange={(e)=>setNumberOfTokens(e.target.value)}/><br/>
