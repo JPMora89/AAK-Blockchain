@@ -25,8 +25,8 @@ export default async function handler(req,res){
                 },
                ],
                mode: 'payment',
-               success_url:`http://localhost:3000/buyAeroSuccess?status=true&quantity=${quantity}`,
-               cancel_url:'http://localhost:3000/buyAeroFail',
+               success_url:`${process.env.NEXT_PUBLIC_HOST_URL}/buyAeroSuccess?status=true&quantity=${quantity}`,
+               cancel_url:`${process.env.NEXT_PUBLIC_HOST_URL}/buyAeroFail`,
            });
            res.status(200).json({ sessionId: session.id });
         }
