@@ -64,6 +64,7 @@ export default function CreateConnectedStripeAccount(){
             title: 'Account Id',
             text:`${recipientAccountId} Save this account id ,it cannot be recovered later`,
             confirmButtonText: 'OK',
+            allowOutsideClick: false,
             denyButtonText: `Don't save`,
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
