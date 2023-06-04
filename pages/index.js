@@ -113,20 +113,22 @@ export default function Home() {
         let item;
 
         if (i.hasOwnProperty("urlParameters")) {
-          if (i.urlParameters.environment.includes("web.")) {
-            routeProjectUrl =
-              djangoAccountUrl + "/aak_projects/" + i.urlParameters.projectSlug;
-            routeUserUrl = djangoAccountUrl;
-          } else {
-            routeProjectUrl =
-              elggAccountUrl +
-              "/create_projects/profile/" +
-              i.urlParameters.projectSlug;
-            routeUserUrl =
-              elggAccountUrl + "/profile/" + i.urlParameters.profileUserName;
+
+          if (i.urlParameters.projectName.length > 0 && i.urlParameters.projectSlug.length > 0) {
+            if (i.urlParameters.environment.includes("web.")) {
+              routeProjectUrl =
+                djangoAccountUrl + "/project-details/" + i.urlParameters.projectSlug;
+            } else {
+              routeProjectUrl =
+                elggAccountUrl +
+                "/create_projects/profile/" +
+                i.urlParameters.projectSlug;
+            }
           }
 
-          if (i.urlParameters.userType.length > 0) {
+
+
+          if (i.urlParameters.userType.length > 0 && i.urlParameters.profileName.length > 0 && i.urlParameters.profileUserName.length > 0) {
             switch (i.urlParameters.userType) {
               case user:
                 routeUserUrl += "/profile/" + i.urlParameters.profileUserName;
@@ -147,28 +149,28 @@ export default function Home() {
                   "/service_providers/" + i.urlParameters.profileUserName;
                 break;
               case institution:
-                routeUserUrl += "/institutions/" + i.urlParameters.projectSlug;
+                routeUserUrl += "/institution-details/" + i.urlParameters.profileUserName;
                 break;
               case researchInstitution:
                 routeUserUrl +=
                   "/research_institutions/profile/" +
-                  i.urlParameters.projectSlug;
+                  i.urlParameters.profileUserName;
                 break;
               case privateInstitution:
                 routeUserUrl +=
                   "/private_institutions/profile/" +
-                  i.urlParameters.projectSlug;
+                  i.urlParameters.profileUserName;
                 break;
               case publicInstitution:
                 routeUserUrl +=
-                  "/public_institutions/profile/" + i.urlParameters.projectSlug;
+                  "/public_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case otherInstitution:
                 routeUserUrl +=
-                  "/other_institutions/profile/" + i.urlParameters.projectSlug;
+                  "/other_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case team:
-                routeUserUrl += "/teams/" + i.urlParameters.projectSlug;
+                routeUserUrl += "/teams/" + i.urlParameters.profileUserName;
                 break;
             }
           }
