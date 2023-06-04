@@ -131,46 +131,48 @@ export default function Home() {
           if (i.urlParameters.userType.length > 0 && i.urlParameters.profileName.length > 0 && i.urlParameters.profileUserName.length > 0) {
             switch (i.urlParameters.userType) {
               case user:
-                routeUserUrl += "/profile/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  elggAccountUrl + "/profile/" + i.urlParameters.profileUserName;
                 break;
               case researchUser:
-                routeUserUrl +=
-                  "/researchers/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName;
                 break;
               case investorUser:
-                routeUserUrl += "/investors/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/investors/" + i.urlParameters.profileUserName;
                 break;
               case institutionStaffUser:
-                routeUserUrl +=
-                  "/institution_staff/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/institution_staff/" + i.urlParameters.profileUserName;
                 break;
               case serviceProviderUser:
-                routeUserUrl +=
-                  "/service_providers/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/service_providers/" + i.urlParameters.profileUserName;
                 break;
               case institution:
-                routeUserUrl += "/institution-details/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/institution-details/" + i.urlParameters.profileUserName;
                 break;
               case researchInstitution:
-                routeUserUrl +=
-                  "/research_institutions/profile/" +
-                  i.urlParameters.profileUserName;
+                routeUserUrl =
+                  elggAccountUrl + "/research_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case privateInstitution:
-                routeUserUrl +=
-                  "/private_institutions/profile/" +
-                  i.urlParameters.profileUserName;
+                routeUserUrl =
+                  elggAccountUrl + "/private_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case publicInstitution:
-                routeUserUrl +=
-                  "/public_institutions/profile/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  elggAccountUrl + "/public_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case otherInstitution:
-                routeUserUrl +=
-                  "/other_institutions/profile/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  elggAccountUrl + "/other_institutions/profile/" + i.urlParameters.profileUserName;
                 break;
               case team:
-                routeUserUrl += "/teams/" + i.urlParameters.profileUserName;
+                routeUserUrl =
+                  djangoAccountUrl + "/teams/" + i.urlParameters.profileUserName;
                 break;
             }
           }
