@@ -22,23 +22,19 @@ if (process.env.NEXT_PUBLIC_WORKSPACE_URL) {
 }
 
 //get values for endpoints
-const elggAccountUrl = `${process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL}`;
+const elggAccountUrl = process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
 const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
-const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
-const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
-const institutionStaffUser =
-  process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
-const serviceProviderUser =
-  process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
-const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
-const researchInstitution =
-  process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
-const privateInstitution =
-  process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
-const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
-const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
-const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
+const researchUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_TEAM;
 
 export default function Home() {
   const { chain } = useNetwork();
@@ -115,15 +111,38 @@ export default function Home() {
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
 
         //for url
-        let item;
+        let item = {
+          price,
+          itemId: i.itemId.toNumber(),
+          tokenId: i.tokenId.toNumber(),
+          seller: i.seller,
+          owner: i.owner,
+          private: i.isPrivateAsset,
+          image: meta.data.image,
+          name: meta.data.name,
+          description: meta.data.description,
+          type: meta.data.type,
+          doc: meta.data.doc,
+          terms: meta.data.terms,
+          extraFilesUrl: meta.data.extraFiles,
+          origin: meta.data.origin,
+          profileName: i.urlParameters.profileName,
+          profileUserName: i.urlParameters.profileUserName,
+          projectName: i.urlParameters.projectName,
+          projectSlug: i.urlParameters.projectSlug,
+          environment: i.urlParameters.environment,
+          userType: i.urlParameters.userType,
+          routeProjectUrl: routeProjectUrl,
+          routeUserUrl: routeUserUrl,
+        };
 
         if (i.hasOwnProperty("urlParameters")) {
 
           if (i.urlParameters.projectName.length > 0 && i.urlParameters.projectSlug.length > 0) {
             if (i.urlParameters.environment.includes("web.")) {
-              setRouteProjectUrl(djangoAccountUrl + "/project-details/" + i.urlParameters.projectSlug);
+              item.routeProjectUrl = (djangoAccountUrl + "/project-details/" + i.urlParameters.projectSlug);
             } else {
-              setRouteProjectUrl(elggAccountUrl + "/create_projects/profile/" + i.urlParameters.projectSlug);
+              item.routeProjectUrl = (elggAccountUrl + "/create_projects/profile/" + i.urlParameters.projectSlug);
             }
           }
 
@@ -133,65 +152,68 @@ export default function Home() {
           if (i.urlParameters.userType.length > 0 && i.urlParameters.profileName.length > 0 && i.urlParameters.profileUserName.length > 0) {
             switch (i.urlParameters.userType) {
               case user:
-                setRouteUserUrl(elggAccountUrl + "/profile/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (elggAccountUrl + "/profile/" + i.urlParameters.profileUserName);
                 break;
               case researchUser:
-                setRouteUserUrl(djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName);
                 break;
               case investorUser:
-                setRouteUserUrl(djangoAccountUrl + "/investors/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/investors/" + i.urlParameters.profileUserName);
                 break;
               case institutionStaffUser:
-                setRouteUserUrl(djangoAccountUrl + "/institution_staff/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/institution_staff/" + i.urlParameters.profileUserName);
                 break;
               case serviceProviderUser:
-                setRouteUserUrl(djangoAccountUrl + "/service_providers/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/service_providers/" + i.urlParameters.profileUserName);
                 break;
               case institution:
-                setRouteUserUrl(djangoAccountUrl + "/institution-details/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/institution-details/" + i.urlParameters.profileUserName);
                 break;
               case researchInstitution:
-                setRouteUserUrl(elggAccountUrl + "/research_institutions/profile/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (elggAccountUrl + "/research_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case privateInstitution:
-                setRouteUserUrl(elggAccountUrl + "/private_institutions/profile/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (elggAccountUrl + "/private_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case publicInstitution:
-                setRouteUserUrl(elggAccountUrl + "/public_institutions/profile/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (elggAccountUrl + "/public_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case otherInstitution:
-                setRouteUserUrl(elggAccountUrl + "/other_institutions/profile/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (elggAccountUrl + "/other_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case team:
-                setRouteUserUrl(djangoAccountUrl + "/teams/" + i.urlParameters.profileUserName);
+                item.routeUserUrl = (djangoAccountUrl + "/teams/" + i.urlParameters.profileUserName);
+                break;
+              default:
+                item.routeUserUrl = (djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName);
                 break;
             }
           }
 
-          item = {
-            price,
-            itemId: i.itemId.toNumber(),
-            tokenId: i.tokenId.toNumber(),
-            seller: i.seller,
-            owner: i.owner,
-            private: i.isPrivateAsset,
-            image: meta.data.image,
-            name: meta.data.name,
-            description: meta.data.description,
-            type: meta.data.type,
-            doc: meta.data.doc,
-            terms: meta.data.terms,
-            extraFilesUrl: meta.data.extraFiles,
-            origin: meta.data.origin,
-            profileName: i.urlParameters.profileName,
-            profileUserName: i.urlParameters.profileUserName,
-            projectName: i.urlParameters.projectName,
-            projectSlug: i.urlParameters.projectSlug,
-            environment: i.urlParameters.environment,
-            userType: i.urlParameters.userType,
-            routeProjectUrl: routeProjectUrl,
-            routeUserUrl: routeUserUrl,
-          };
+          // item = {
+          //   price,
+          //   itemId: i.itemId.toNumber(),
+          //   tokenId: i.tokenId.toNumber(),
+          //   seller: i.seller,
+          //   owner: i.owner,
+          //   private: i.isPrivateAsset,
+          //   image: meta.data.image,
+          //   name: meta.data.name,
+          //   description: meta.data.description,
+          //   type: meta.data.type,
+          //   doc: meta.data.doc,
+          //   terms: meta.data.terms,
+          //   extraFilesUrl: meta.data.extraFiles,
+          //   origin: meta.data.origin,
+          //   profileName: i.urlParameters.profileName,
+          //   profileUserName: i.urlParameters.profileUserName,
+          //   projectName: i.urlParameters.projectName,
+          //   projectSlug: i.urlParameters.projectSlug,
+          //   environment: i.urlParameters.environment,
+          //   userType: i.urlParameters.userType,
+          //   routeProjectUrl: routeProjectUrl,
+          //   routeUserUrl: routeUserUrl,
+          // };
 
           return item;
         } else {
@@ -375,6 +397,18 @@ export default function Home() {
         No items in marketplace
       </h1>
     );
+  }
+  /*
+environment: "https://web.aak-telescience.com"
+profileUserName: "abdoohossamm"
+projectName: "ASIC Implementation of Energy-Optimized Successive Cancellation Polar Decoders for Internet of Things"
+projectSlug: "69"
+userType: "/"
+   */
+  function getUserUrl(nft){
+    if (nft.userType === ""){
+
+    }
   }
 
   return (
