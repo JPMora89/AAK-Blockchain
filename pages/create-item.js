@@ -53,7 +53,14 @@ export default function CreateItem() {
   const [profileUserTypeValue, setProfileUserTypeValue] = useState("/");
   const [environment, setEnvironment] = useState("/");
   const [environmentValue, setEnvironmentValue] = useState("/");
-
+  const [urlParameters, setUrlParameters] = useState({
+    profileName: profileNameDecrypt,
+    profileUserName: profileUserNameDecrypt,
+    projectName: projectNameDecrypt,
+    projectSlug: projectUrlDecrypt,
+    environment: environmentValue,
+    userType: profileUserTypeValue,
+  })
   const styles = {
     customFileUpload: {
       display: "inline-block",
@@ -314,14 +321,14 @@ export default function CreateItem() {
       "profileUserTypeValue before making ledger",
       profileUserTypeValue
     );
-    let urlParameters = {
+    setUrlParameters({
       profileName: profileNameDecrypt,
       profileUserName: profileUserNameDecrypt,
       projectName: projectNameDecrypt,
       projectSlug: projectUrlDecrypt,
       environment: environmentValue,
       userType: profileUserTypeValue,
-    };
+    });
 
     console.log("nftaddress before making ledger", nftaddress);
     console.log("url before making ledger", url);
