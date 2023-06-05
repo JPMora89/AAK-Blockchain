@@ -80,7 +80,7 @@ export default function CreateItem() {
     let originPath = router.asPath;
     console.log("originPath", originPath);
     if (originPath.includes("?")) {
-      let paramString = originPath.split("create-item?")[1];
+      let paramString = originPath.split("create-item.html?")[1];
 
       const paramArray = paramString.split(seperator);
       let queryString = "";
