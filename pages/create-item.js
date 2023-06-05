@@ -124,10 +124,6 @@ export default function CreateItem() {
 
                       case "profile_username":
                         profileUserNameDecrypt = queryArray[key];
-                        console.log(
-                          "profileUserNameDecrypt",
-                          profileUserNameDecrypt
-                        );
                         break;
 
                       case "profile_user_type":
@@ -192,7 +188,7 @@ export default function CreateItem() {
      } else if (originPath.includes("=") && originPath.includes("&")) {
        originPath = `create_projects/profile/${originPath.split("=")[2]}`;
      }
- 
+
      //setPathToAAK(originPath);
      */
   }, []);
