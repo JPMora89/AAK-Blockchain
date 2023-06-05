@@ -54,8 +54,9 @@ export default function Home() {
   const [nfts, setNfts] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
 
-  //const [routeUserUrl, setRouteUserUrl] = useState(["/"]);
-  //const [routeProjectUrl, setRouteProjectUrl] = useState(["/"]);
+  const [routeUserUrl, setRouteUserUrl] = useState("/");
+  const [routeProjectUrl, setRouteProjectUrl] = useState("/");
+
   useEffect(() => {
     loadNFTs();
     //getting session storage values
@@ -97,14 +98,18 @@ export default function Home() {
     );
     const data = await marketContract.fetchMarketItems();
 
-    var routeProjectUrl = null;
-    var routeUserUrl = null;
-
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await tokenContract.tokenURI(i.tokenId);
         console.log(tokenUri);
-        const meta = await axios.get(tokenUri);
+        let meta;
+        await axios.get(tokenUri).then(function (response) {
+          console.log(response);
+          meta = response
+        }).catch(function (error) {
+          console.log(error);
+        });
+        // console.log("response: ", response);
         console.log("Meta:");
         console.log(meta.data);
         let price = ethers.utils.formatUnits(i.price.toString(), "ether");
@@ -116,66 +121,53 @@ export default function Home() {
 
           if (i.urlParameters.projectName.length > 0 && i.urlParameters.projectSlug.length > 0) {
             if (i.urlParameters.environment.includes("web.")) {
-              routeProjectUrl =
-                djangoAccountUrl + "/project-details/" + i.urlParameters.projectSlug;
+              setRouteProjectUrl(djangoAccountUrl + "/project-details/" + i.urlParameters.projectSlug);
             } else {
-              routeProjectUrl =
-                elggAccountUrl +
-                "/create_projects/profile/" +
-                i.urlParameters.projectSlug;
+              setRouteProjectUrl(elggAccountUrl + "/create_projects/profile/" + i.urlParameters.projectSlug);
             }
           }
+
 
 
 
           if (i.urlParameters.userType.length > 0 && i.urlParameters.profileName.length > 0 && i.urlParameters.profileUserName.length > 0) {
             switch (i.urlParameters.userType) {
               case user:
-                routeUserUrl =
-                  elggAccountUrl + "/profile/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(elggAccountUrl + "/profile/" + i.urlParameters.profileUserName);
                 break;
               case researchUser:
-                routeUserUrl =
-                  djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/researchers/" + i.urlParameters.profileUserName);
                 break;
               case investorUser:
-                routeUserUrl =
-                  djangoAccountUrl + "/investors/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/investors/" + i.urlParameters.profileUserName);
                 break;
               case institutionStaffUser:
-                routeUserUrl =
-                  djangoAccountUrl + "/institution_staff/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/institution_staff/" + i.urlParameters.profileUserName);
                 break;
               case serviceProviderUser:
-                routeUserUrl =
-                  djangoAccountUrl + "/service_providers/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/service_providers/" + i.urlParameters.profileUserName);
                 break;
               case institution:
-                routeUserUrl =
-                  djangoAccountUrl + "/institution-details/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/institution-details/" + i.urlParameters.profileUserName);
                 break;
               case researchInstitution:
-                routeUserUrl =
-                  elggAccountUrl + "/research_institutions/profile/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(elggAccountUrl + "/research_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case privateInstitution:
-                routeUserUrl =
-                  elggAccountUrl + "/private_institutions/profile/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(elggAccountUrl + "/private_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case publicInstitution:
-                routeUserUrl =
-                  elggAccountUrl + "/public_institutions/profile/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(elggAccountUrl + "/public_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case otherInstitution:
-                routeUserUrl =
-                  elggAccountUrl + "/other_institutions/profile/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(elggAccountUrl + "/other_institutions/profile/" + i.urlParameters.profileUserName);
                 break;
               case team:
-                routeUserUrl =
-                  djangoAccountUrl + "/teams/" + i.urlParameters.profileUserName;
+                setRouteUserUrl(djangoAccountUrl + "/teams/" + i.urlParameters.profileUserName);
                 break;
             }
           }
+
           item = {
             price,
             itemId: i.itemId.toNumber(),
@@ -200,6 +192,7 @@ export default function Home() {
             routeProjectUrl: routeProjectUrl,
             routeUserUrl: routeUserUrl,
           };
+
           return item;
         } else {
           item = {
@@ -352,7 +345,7 @@ export default function Home() {
       s
     );
     await transaction.wait();
-    loadNFTs();
+    await loadNFTs();
   }
 
   function setprogressBar() {
