@@ -26,16 +26,16 @@ import Market from "../artifacts/contracts/NFTMarket.sol/NFTMarket.json";
 const elggAccountUrl = process.env.NEXT_PUBLIC_ELGG_ACCOUNT_URL;
 const djangoAccountUrl = process.env.NEXT_PUBLIC_DJANGO_ACCOUNT_URL;
 const user = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_USER;
-const researchUser = process.env.NEXT_PROFILE_USER_TYPE_RESEARCHER_USER;
-const investorUser = process.env.NEXT_PROFILE_USER_TYPE_INVERSTOR_USER;
-const institutionStaffUser = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
-const serviceProviderUser = process.env.NEXT_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
-const institution = process.env.NEXT_PROFILE_USER_TYPE_INSTITUTION;
-const researchInstitution = process.env.NEXT_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
-const privateInstitution = process.env.NEXT_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
-const publicInstitution = process.env.NEXT_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
-const otherInstitution = process.env.NEXT_PROFILE_USER_TYPE_OTHER_INSTITUTION;
-const team = process.env.NEXT_PROFILE_USER_TYPE_TEAM;
+const researchUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_RESEARCHER_USER;
+const investorUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INVERSTOR_USER;
+const institutionStaffUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INSTITUTION_STAFF_USER;
+const serviceProviderUser = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_SERVICE_PROVIDER_USER;
+const institution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_INSTITUTION;
+const researchInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_RESEARCH_INSTITUTION;
+const privateInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_PRIVATE_INSTITUTION;
+const publicInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_PUBLIC_INSTITUTION;
+const otherInstitution = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_OTHER_INSTITUTION;
+const team = process.env.NEXT_PUBLIC_PROFILE_USER_TYPE_TEAM;
 const seperator = process.env.NEXT_PUBLIC_ENCODING_SEPERATOR;
 
 export default function CreateItem() {
@@ -52,15 +52,16 @@ export default function CreateItem() {
   const [profileUserType, setProfileUserType] = useState("/");
   const [profileUserTypeValue, setProfileUserTypeValue] = useState("/");
   const [environment, setEnvironment] = useState("/");
-  const [environmentValue, setEnvironmentValue] = useState("/");
-  const [urlParameters, setUrlParameters] = useState({
-    profileName: profileNameDecrypt,
-    profileUserName: profileUserNameDecrypt,
-    projectName: projectNameDecrypt,
-    projectSlug: projectUrlDecrypt,
-    environment: environmentValue,
-    userType: profileUserTypeValue,
-  })
+  const [environmentValue, setEnvironmentValue] = useState(djangoAccountUrl);
+
+  let urlParameters = {
+      profileName: "",
+      profileUserName: "",
+      projectName: "",
+      projectSlug: "",
+      environment: "",
+      userType: ""
+  }
   const styles = {
     customFileUpload: {
       display: "inline-block",
@@ -79,7 +80,7 @@ export default function CreateItem() {
     let originPath = router.asPath;
     console.log("originPath", originPath);
     if (originPath.includes("?")) {
-      let paramString = originPath.split("create-item.html?")[1];
+      let paramString = originPath.split("create-item?")[1];
 
       const paramArray = paramString.split(seperator);
       let queryString = "";
@@ -113,10 +114,9 @@ export default function CreateItem() {
                   if (originPath.includes("?")) {
                     switch (key) {
                       case "new_env":
-                        setEnvironment(queryArray[key]);
-                        if (environment == "0") {
+                        if (queryArray[key] === "0") {
                           setEnvironmentValue(elggAccountUrl);
-                        } else if (environment == "1") {
+                        } else if (queryArray[key] === "1") {
                           setEnvironmentValue(djangoAccountUrl);
                         }
 
@@ -131,7 +131,7 @@ export default function CreateItem() {
 
                       case "profile_user_type":
                         setProfileUserType(queryArray[key]);
-                        switch (profileUserType) {
+                        switch (queryArray[key]) {
                           case "0":
                             setProfileUserTypeValue(user);
                             break;
@@ -168,11 +168,11 @@ export default function CreateItem() {
                         }
                         break;
                       case "project_name":
-                        projectNameDecrypt(queryArray[key]);
+                        setProjectNameDecrypt(queryArray[key]);
                         break;
 
                       case "project_url":
-                        projectUrlDecrypt(queryArray[key]);
+                        setProjectUrlDecrypt(queryArray[key]);
                         break;
                     }
                   }
@@ -208,7 +208,6 @@ export default function CreateItem() {
     origin: pathToAAK,
   });
 
-  console.log("pathToAAK", pathToAAK);
 
   async function onChange(e) {
     const file = e.target.files[0];
@@ -279,6 +278,21 @@ export default function CreateItem() {
     console.log("Final CID => ", finalCID);
 
     const url = `https://ipfs.io/ipfs/${finalCID}/metadata.json`;
+
+
+    console.log(urlParameters)
+    console.log(profileNameDecrypt)
+    console.log(environment)
+    console.log(environmentValue)
+    urlParameters = {
+      profileName: profileNameDecrypt,
+      profileUserName: profileUserNameDecrypt,
+      projectName: projectNameDecrypt,
+      projectSlug: projectUrlDecrypt,
+      environment: environmentValue,
+      userType: profileUserTypeValue,
+    };
+    console.log(urlParameters)
     await createSale(url);
     setSubmitLoading(false);
   }
@@ -321,14 +335,6 @@ export default function CreateItem() {
       "profileUserTypeValue before making ledger",
       profileUserTypeValue
     );
-    setUrlParameters({
-      profileName: profileNameDecrypt,
-      profileUserName: profileUserNameDecrypt,
-      projectName: projectNameDecrypt,
-      projectSlug: projectUrlDecrypt,
-      environment: environmentValue,
-      userType: profileUserTypeValue,
-    });
 
     console.log("nftaddress before making ledger", nftaddress);
     console.log("url before making ledger", url);
