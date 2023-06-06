@@ -6,17 +6,17 @@ module.exports = (phase, { defaultConfig }) => {
       config.resolve = {
         ...config.resolve,
         fallback: {
-          "fs": false,
-          "path": false,
-          "os": false,
-        }
-      }
+          fs: false,
+          path: false,
+          os: false,
+        },
+      };
 
-      return config
+      return config;
     },
     images: {
-        unoptimized: true
+      unoptimized: true,
     },
-    reactStrictMode: true
-  }
-}
+    reactStrictMode: true,
+  };
+};
