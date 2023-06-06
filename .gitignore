@@ -23,4 +23,4 @@ _static
 
 .env.local
 public.pem
-privateKey.pem
+public/privateKey.pem
