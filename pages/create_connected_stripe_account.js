@@ -29,7 +29,7 @@ export default function CreateConnectedStripeAccount(){
   
            recipientAccountId = customAccount.id;
            console.log("recipientAccountId", recipientAccountId)
-
+           console.log("routing Number",routingNumber)
            const recepientBankAccountToken = await stripe.tokens.create({
             bank_account: {
               country: 'US',
