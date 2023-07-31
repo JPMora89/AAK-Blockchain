@@ -6,7 +6,7 @@ import { aeroSwapAddress, aeroAddress } from "../../config";
 require("dotenv").config({ path: path.resolve(__dirname, ".env.local") });
 
 const alchemyId = process.env.ALCHEMY_KEY;
-export const infuraId = `https://eth-sepolia.g.alchemy.com/v2/${alchemyId}`;
+export const infuraId = `https://eth-sepolia.g.alchemy.com/v2/QdetfdEykTy0OXPlBzrS7A1AlUBegoWd`;
 
 export const provider = new ethers.providers.StaticJsonRpcProvider(infuraId);
 //const signer = new ethers.Wallet(process.env.NEXT_PRIVATE_KEY, provider)

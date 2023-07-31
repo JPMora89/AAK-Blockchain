@@ -141,7 +141,7 @@ export default function AeroSwap() {
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
-
+      console.log("provider", provider)
       const gasPrice = await provider.getGasPrice();
       const gas = Number(ethers.utils.formatEther(gasPrice));
       const totalfee = (numberOfTokensToSell * feePercent) / 100;
@@ -164,6 +164,7 @@ export default function AeroSwap() {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(connection);
+   
     const signer = provider.getSigner();
     await window.ethereum.enable();
 
@@ -276,7 +277,7 @@ export default function AeroSwap() {
 
   //Stripe functions to buy AERO
   const buyAeroWithUsdStripe = async (amount, quantity) => {
-    const stripe = Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY, {
+    const stripe = Stripe('sk_test_51N1Ru0GyACoklI4QW7K3ajCvhHNepIVjU1x2e73kxYeN99bIeedisd7OOQZvHLMfQ2wxgUHNG177chVpqHncB4Bb00QYLMK83P', {
       apiVersion: "2022-11-15",
     });
     try {
