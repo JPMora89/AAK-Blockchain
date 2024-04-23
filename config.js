@@ -1,5 +1,7 @@
-export const aeroAddress = "0x405e2138F2fA38ebcB4d49D8fd45A70751378b33";
-export const nftmarketaddress = "0x7E624a63F8B91b19795Ce4513A74dBdD500ec10d";
-export const nftaddress = "0xa73852149F4574421b39D1048A0011cC54e95bC2";
-export const aeroSwapAddress = "0xEAF2a219D2223602486777f3fBF9e0fd1c321307";
-export const aeroSwapUsdAddress = "0xa5125182Dbe028007D45bb17d3eD373b2020fFeF";
+
+  export const aeroAddress = "0xB02a8b3E19B1783DEf4bf93aa0bdb74c838e07Ca"
+  export const nftmarketaddress = "0xB20Ec7999BCb56f707C2805277ce0Db96Aa014a9"
+  export const nftaddress = "0x2d00d86D025Ceee1D28eF675967C502Ad54cac30"
+  export const aeroSwapAddress = "0x8275407d49A3c22d326f6c09893267DAAa2C7Bf5"
+  export const privateKey = "b1746c0133b5e1d696fda2d98d3c240fcf96ddaeeddd688b86baab2e53111a12"
+  

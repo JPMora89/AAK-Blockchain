@@ -58,7 +58,6 @@
     "js-file-download": "^0.4.12",
     "mongodb": "^5.4.0",
     "mongoose": "^7.1.0",
-    "next": "^12.3.1",
     "next-auth": "^4.20.1",
     "nft.storage": "^7.0.0",
     "path": "^0.12.7",

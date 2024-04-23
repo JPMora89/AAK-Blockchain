@@ -23,10 +23,10 @@ const config: HardhatUserConfig = {
   //     url: `https://ropsten.infura.io/v3/${infuraId}`,
   //     accounts: [`${privateKey}`],
   //   },
-    // goerli: {
-    //   url: `https://goerli.infura.io/v3/${infuraId}`,
-    //   accounts: [`${privateKey}`],
-    // },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${infuraId}`,
+      accounts: [`${privateKey}`],
+    },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${alchemyId}`,
       accounts: [`${privateKey}`],
